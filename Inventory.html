@@ -460,8 +460,10 @@
   </style>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const TOOL_USER = 'admin';
-      const TOOL_PASS = 'Access2025!';
+      const ACCOUNTS = [
+        { user: 'admin', pass: 'adminmnt', role: 'admin' },
+        { user: 'rcortez', pass: 'cortezmnt', role: 'moderator' }
+      ];
 
       const modal = document.getElementById('toolModal');
       const toolBtn = document.getElementById('toolButton');
@@ -488,8 +490,11 @@
       function handleLogin() {
         const user = userInput.value.trim();
         const pass = passInput.value.trim();
-        if (user === TOOL_USER && pass === TOOL_PASS) {
+        const account = ACCOUNTS.find(a => a.user === user && a.pass === pass);
+        if (account) {
           localStorage.setItem('inventoryAdminAuth', 'true');
+          localStorage.setItem('inventoryAuthUser', account.user);
+          localStorage.setItem('inventoryAuthRole', account.role);
           window.location.href = 'control-panel.html';
         } else {
           alert('Invalid username or password.');
@@ -770,7 +775,7 @@
   <div class="modal-backdrop" id="toolModal">
     <div class="modal">
       <h3>Admin Access Required</h3>
-      <p>Sign in to open the inventory control panel and edit vehicle listings.</p>
+      <p>Sign in with <strong>admin/adminmnt</strong> (admin) or <strong>rcortez/cortezmnt</strong> (moderator) to edit vehicle listings.</p>
       <label for="toolUser">Username</label>
       <input id="toolUser" name="toolUser" type="text" placeholder="Enter username" autocomplete="username" />
       <label for="toolPass">Password</label>
@@ -779,7 +784,7 @@
         <button class="ghost" type="button" id="toolCancel">Cancel</button>
         <button class="primary" type="button" id="toolConfirm">Continue</button>
       </div>
-      <p style="margin-top:8px;color:#666;font-size:11px;">Tip: Update the credentials in the codebase to match your preferred admin login.</p>
+      <p style="margin-top:8px;color:#666;font-size:11px;">Tip: Save your selection to stay signed in while updating listings.</p>
     </div>
   </div>
 

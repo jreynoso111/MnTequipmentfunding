@@ -48,6 +48,7 @@
     <div class="card">
       <h2>Sign in</h2>
       <p class="muted">Enter the same credentials used on the Inventory page to access the control panel.</p>
+      <p class="muted" style="margin-top:-4px;">Admin: admin / adminmnt &bull; Moderator: rcortez / cortezmnt</p>
       <label for="authUser">Username</label>
       <input id="authUser" type="text" autocomplete="username" />
       <label for="authPass" style="margin-top:10px;">Password</label>
@@ -61,6 +62,7 @@
 
   <div id="panel" style="display:none;">
     <h1>Inventory Control Panel</h1>
+    <p id="userMeta" class="muted" style="margin-top:-6px;"></p>
     <p class="lead">Add, edit, or remove vehicle listings. Changes are saved in your browser and will appear on the Units for Sale page.</p>
 
     <div class="notice">Security reminder: This panel uses a simple browser check. For production use, place behind a server-side login.</div>
@@ -151,8 +153,10 @@
   </div>
 
   <script>
-    const TOOL_USER = 'admin';
-    const TOOL_PASS = 'Access2025!';
+    const ACCOUNTS = [
+      { user: 'admin', pass: 'adminmnt', role: 'admin' },
+      { user: 'rcortez', pass: 'cortezmnt', role: 'moderator' }
+    ];
     const storageKey = 'inventoryData';
 
     let units = [];
@@ -273,11 +277,32 @@
       URL.revokeObjectURL(url);
     }
 
+    function setSession(account) {
+      localStorage.setItem('inventoryAdminAuth', 'true');
+      localStorage.setItem('inventoryAuthUser', account.user);
+      localStorage.setItem('inventoryAuthRole', account.role);
+    }
+
+    function getSessionDetails() {
+      return {
+        user: localStorage.getItem('inventoryAuthUser') || 'admin',
+        role: localStorage.getItem('inventoryAuthRole') || 'admin'
+      };
+    }
+
+    function updateUserMeta() {
+      const meta = document.getElementById('userMeta');
+      if (!meta) return;
+      const { user, role } = getSessionDetails();
+      meta.textContent = `Signed in as ${user} (${role})`;
+    }
+
     function showPanel() {
       document.getElementById('authGate').style.display = 'none';
       document.getElementById('panel').style.display = 'block';
       units = loadUnits();
       renderTable();
+      updateUserMeta();
     }
 
     function requireAuth() {
@@ -292,8 +317,9 @@
     function tryLogin() {
       const u = document.getElementById('authUser').value.trim();
       const p = document.getElementById('authPass').value.trim();
-      if (u === TOOL_USER && p === TOOL_PASS) {
-        localStorage.setItem('inventoryAdminAuth', 'true');
+      const account = ACCOUNTS.find(a => a.user === u && a.pass === p);
+      if (account) {
+        setSession(account);
         showPanel();
       } else {
         alert('Invalid credentials');
@@ -308,6 +334,7 @@
     document.getElementById('authPass').addEventListener('keyup', (e) => { if (e.key === 'Enter') tryLogin(); });
 
     requireAuth();
+    updateUserMeta();
   </script>
 </body>
 </html>
