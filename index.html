@@ -5,13 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>M&T Equipment Funding LLC</title>
   <link rel="icon" href="https://i.imgur.com/kopRNDu.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    html {
+      font-family: var(--font-main);
+    }
+    *, *::before, *::after {
+      box-sizing: border-box;
+      font-family: inherit;
+    }
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      color: #002f2f;
-      background: #f5f5f5;
+      font-family: inherit;
+      line-height: 1.5;
+      color: #0b2520;
+      background: #f5f7f6;
       position: relative;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
     }
 
     /* Top bar + header */
@@ -26,6 +51,12 @@
     header img {
       max-height: 80px;
       height: auto;
+    }
+
+    @media (max-width: 720px) {
+      header {
+        padding: 10px 16px;
+      }
     }
 
     /* Hero */
@@ -107,6 +138,21 @@
       gap: 12px;
     }
 
+    @media (max-width: 640px) {
+      .hero-inner {
+        flex-direction: column;
+      }
+
+      .hero-cta {
+        flex-direction: column;
+      }
+
+      .hero-form {
+        width: 100%;
+        max-width: none;
+      }
+    }
+
     /* Hero form card */
     .hero-form {
       flex: 0 1 360px;
@@ -172,6 +218,12 @@
       max-width: 1100px;
       margin: 0 auto;
       padding: 30px 20px 50px;
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        padding: 24px 16px 40px;
+      }
     }
 
     .section {
@@ -319,39 +371,37 @@
     }
 
     /* Contact card */
-    .contact-card {
-      max-width: 720px;
-      margin: 0 auto;
-      text-align: left;
+    .contact-shell {
+      background:#0f2f2f;
+      border-radius:14px;
+      padding:26px 28px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.18);
+      color:#e9f8f3;
+      overflow:hidden;
+      position:relative;
     }
-    .contact-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 24px;
-      margin: 12px 0 8px;
+    .contact-shell::after {
+      content:"";
+      position:absolute;
+      inset:16px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.08);
+      pointer-events:none;
     }
-    .contact-col {
-      flex: 1 1 220px;
-      min-width: 200px;
-    }
-    .contact-col h3 {
-      margin: 0 0 6px;
-      font-size: 16px;
-      color: #004d4d;
-    }
-    .contact-col p {
-      margin: 0;
-      font-size: 14px;
-    }
-    .contact-actions-inline {
-      margin-top: 18px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
+    .contact-header {display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+    .contact-left {flex:1 1 280px;min-width:240px;}
+    .contact-right {display:flex;flex-direction:column;gap:10px;min-width:220px;}
+    .contact-title {font-size:26px;margin:0 0 8px;}
+    .contact-sub {margin:0 0 14px;font-size:15px;line-height:1.6;color:#c5e7dc;}
+    .contact-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+    .contact-chip {display:flex;gap:10px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);align-items:flex-start;}
+    .contact-icon {width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#00c79c,#008d74);display:flex;align-items:center;justify-content:center;font-weight:800;color:#0f2f2f;flex-shrink:0;}
+    .contact-chip h3 {margin:0;font-size:15px;color:#fff;}
+    .contact-chip p {margin:2px 0 0;font-size:14px;color:#d8f0e7;line-height:1.5;}
+    .contact-actions-inline {margin-top:12px;display:flex;gap:12px;flex-wrap:wrap;}
+    .contact-actions-inline a {display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;}
+    .contact-actions-inline .btn-primary {background:#00a376;color:#fff;border:1px solid #00c79c;}
+    .contact-actions-inline .btn-secondary {background:transparent;color:#e9f8f3;border:1px solid rgba(255,255,255,0.35);}    
 
     footer {
       position: relative;
@@ -399,11 +449,11 @@
     <img src="Media/LogoTransparent.png" alt="M&T Logo" style="margin-left:150px;" />
     <nav>
       <ul class="main-nav" style="display:flex; list-style:none; gap:28px; margin:0; padding:0; font-size:16px; font-weight:bold;">
-        <li><a href="Pages/Home.html" class="nav-active" style="color:white; text-decoration:none;">Home</a></li>
-        <li><a href="Pages/Applications.html" style="color:white; text-decoration:none;">Applications</a></li>
-        <li><a href="Pages/services.html" style="color:white; text-decoration:none;">Services</a></li>
-        <li><a href="Pages/SecPages/Units for Sale.html" style="color:white; text-decoration:none;">Inventory</a></li>
-        <li><a href="Pages/About us.html" style="color:white; text-decoration:none;">About Us</a></li>
+        <li><a href="index.html" class="nav-active" style="color:white; text-decoration:none;">Home</a></li>
+        <li><a href="Applications.html" style="color:white; text-decoration:none;">Applications</a></li>
+        <li><a href="Services.html" style="color:white; text-decoration:none;">Services</a></li>
+        <li><a href="Inventory.html" style="color:white; text-decoration:none;">Inventory</a></li>
+        <li><a href="About us.html" style="color:white; text-decoration:none;">About Us</a></li>
         
       </ul>
     </nav>
@@ -518,28 +568,41 @@
   </section>
 
 
-  <section id="contact" class="section" style="padding: 40px 24px; background:#e8f5f2; border:1px solid #c8e3dd;">
-    <div class="contact-card" style="text-align:center;">
-      <h2 style="text-align:center;">Contact Us</h2>
-      <div class="contact-grid">
-        <div class="contact-col">
-          <h3>General Email</h3>
-          <p><a href="mailto:Info@Mntfunding.com">Info@Mntfunding.com</a></p>
+  <section id="contact" class="section" style="padding: 0; background:transparent; border:none;">
+    <div class="contact-shell">
+      <div class="contact-header">
+        <div class="contact-left">
+          <h2 class="contact-title">Contact Our Team</h2>
+          <p class="contact-sub">Speak directly with our specialists for quick answers on applications, inventory, or funding timelines.</p>
+          <div class="contact-actions-inline">
+            <a class="btn-primary" href="Applications.html">Start your application</a>
+            <a class="btn-secondary" href="tel:2012013551">Call 201-201-3551</a>
+          </div>
         </div>
-        <div class="contact-col">
-          <h3>Sales Team</h3>
-          <p><a href="mailto:MDereshevkaia@MntFunding.com">MDereshevkaia@MntFunding.com</a><br>
-          <a href="mailto:RCortez@Mntfunding.com">RCortez@Mntfunding.com</a></p>
+        <div class="contact-right contact-grid">
+          <div class="contact-chip">
+            <div class="contact-icon">@</div>
+            <div>
+              <h3>General Inbox</h3>
+              <p><a href="mailto:info@mntfunding.com" style="color:inherit;">info@mntfunding.com</a></p>
+            </div>
+          </div>
+          <div class="contact-chip">
+            <div class="contact-icon">S</div>
+            <div>
+              <h3>Sales Team</h3>
+              <p><a href="mailto:MDereshevkaia@mntfunding.com" style="color:inherit;">MDereshevkaia@mntfunding.com</a><br>
+              <a href="mailto:RCortez@mntfunding.com" style="color:inherit;">RCortez@mntfunding.com</a></p>
+            </div>
+          </div>
+          <div class="contact-chip">
+            <div class="contact-icon">☎</div>
+            <div>
+              <h3>Phone</h3>
+              <p><a href="tel:2012013551" style="color:inherit;">201-201-3551</a></p>
+            </div>
+          </div>
         </div>
-        <div class="contact-col">
-          <h3>Phone</h3>
-          <p><a href="tel:2012010000">201-201-xxxx</a></p>
-        </div>
-      </div>
-      <p>Reach out to our team for fast, direct support on your next truck or equipment purchase.</p>
-      <div class="contact-actions-inline">
-        <a class="btn-primary" href="Applications.html">START YOUR APPLICATION</a>
-        
       </div>
     </div>
   </section>
