@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>M&T Equipment Funding LLC – Inventory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="https://i.imgur.com/kopRNDu.png" type="image/png" />
+  <style>
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:Arial,Helvetica,sans-serif; background:#f5f7f6; color:#111; line-height:1.4; }
+    a { text-decoration:none; color:inherit; }
+
+    /* HEADER */
+    header { background:#ffffff; box-shadow:0 2px 6px rgba(0,0,0,.08); position:sticky; top:0; z-index:10; }
+    .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:12px 20px; }
+    .logo{display:flex;align-items:center;gap:10px;}
+    .logo img { width:120px; height:auto; }
+    .logo-mark{width:120px;height:auto;border-radius:0;object-fit:contain;}
+    .logo-text{font-size:16px;font-weight:700;line-height:1.2;}
+    .logo-sub{font-size:11px;font-weight:400;color:#555;}
+    .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
+    .nav-links a{padding:6px 10px;border-radius:999px;}
+    .nav-links a:hover{background:rgba(0,94,74,.08);}
+    .nav-links .active{background:#005e4a;color:#fff;}
+    .btn-small {
+      border-radius:999px;
+      border:1px solid #005e4a;
+      padding:10px 22px;
+      font-size:14px;
+      font-weight:600;
+      color:#005e4a;
+      background:#fff;
+      cursor:pointer;
+    }
+    .btn-small:hover { background:#005e4a; color:#fff; }
+
+    main { max-width:1100px; margin:24px auto 60px; padding:0 20px 40px; }
+
+    /* HERO */
+    .inv-hero {
+      background:#ffffff;
+      border-radius:14px;
+      padding:24px 22px 22px;
+      box-shadow:0 4px 14px rgba(0,0,0,.05);
+      border:1px solid #e3ece9;
+      display:flex;
+      flex-wrap:wrap;
+      gap:20px;
+      align-items:flex-start;
+    }
+    .inv-hero-main { flex:1 1 260px; }
+    .inv-kicker {
+      font-size:11px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:#008060;
+      margin-bottom:6px;
+    }
+    .inv-title {
+      font-size:24px;
+      font-weight:800;
+      color:#0b2520;
+      margin-bottom:6px;
+    }
+    .inv-sub {
+      font-size:13px;
+      color:#444;
+      max-width:620px;
+      margin-bottom:10px;
+    }
+    .inv-badges {
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:6px;
+    }
+    .inv-badge {
+      font-size:11px;
+      background:#f0faf7;
+      color:#005e4a;
+      border-radius:999px;
+      padding:5px 10px;
+      border:1px solid rgba(0,94,74,.2);
+    }
+    .inv-note {
+      font-size:11px;
+      color:#666;
+      margin-top:8px;
+    }
+
+    .inv-hero-side {
+      flex:0 0 260px;
+      border-radius:12px;
+      background:linear-gradient(135deg,#005e4a,#11a57f);
+      color:#fff;
+      padding:16px 16px 14px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .inv-hero-side h3 { font-size:15px; margin-bottom:2px; }
+    .inv-hero-side p { font-size:12px; opacity:.95; }
+    .inv-hero-side small { font-size:11px; opacity:.9; }
+
+    /* INVENTORY GRID */
+    .inv-section-head {
+      margin-top:26px;
+      margin-bottom:10px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .inv-section-title { font-size:17px; font-weight:700; color:#0b2520; }
+    .inv-section-sub { font-size:12px; color:#555; }
+    .inv-section-actions {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      max-width:360px;
+      text-align:right;
+    }
+    .see-all-link {
+      border-radius:999px;
+      border:1px solid #cfe7e2;
+      padding:6px 14px;
+      font-size:11px;
+      font-weight:600;
+      background:#ffffff;
+      color:#005e4a;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .see-all-link:hover {
+      background:#005e4a;
+      color:#fff;
+      border-color:#005e4a;
+    }
+
+    .inventory-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:14px;
+    }
+    .unit-card {
+      background:#ffffff;
+      border-radius:12px;
+      border:1px solid #d8e5e0;
+      box-shadow:0 3px 10px rgba(0,0,0,.03);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+    }
+    .unit-img-wrap {
+      width:100%;
+      height:160px;
+      overflow:hidden;
+      background:#e3ece9;
+    }
+    .unit-img-wrap img {
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .unit-body {
+      padding:12px 14px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      font-size:12px;
+    }
+    .unit-tag {
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:#008060;
+      font-weight:700;
+    }
+    .unit-title {
+      font-size:14px;
+      font-weight:700;
+      color:#0b2520;
+    }
+    .unit-specs {
+      font-size:11px;
+      color:#444;
+      margin-top:4px;
+      line-height:1.5;
+    }
+    .unit-specs span { display:inline-block; margin-right:8px; }
+    .unit-meta {
+      font-size:11px;
+      color:#777;
+      margin-top:4px;
+    }
+    .unit-foot {
+      padding:10px 14px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-top:1px solid #edf2f0;
+      font-size:11px;
+    }
+    .unit-price {
+      font-weight:700;
+      color:#005e4a;
+      font-size:13px;
+    }
+    .unit-cta {
+      border-radius:999px;
+      border:1px solid #005e4a;
+      padding:6px 10px;
+      font-size:11px;
+      font-weight:600;
+      background:#ffffff;
+      color:#005e4a;
+      cursor:pointer;
+    }
+    .unit-cta:hover {
+      background:#005e4a;
+      color:#fff;
+    }
+
+    /* REP + FAQ */
+    .rep-row {
+      margin-top:26px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:18px;
+    }
+    .rep-card {
+      flex:1 1 280px;
+      background:#004038;
+      color:#ffffff;
+      border-radius:14px;
+      padding:18px 18px 16px;
+      display:flex;
+      gap:16px;
+      align-items:flex-start;
+      box-shadow:0 4px 14px rgba(0,0,0,.18);
+    }
+    .rep-text {
+      flex:1 1 auto;
+      font-size:12px;
+    }
+    .rep-label {
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      opacity:.9;
+      margin-bottom:4px;
+    }
+    .rep-name {
+      font-size:18px;
+      font-weight:700;
+      margin-bottom:2px;
+    }
+    .rep-role {
+      font-size:12px;
+      margin-bottom:10px;
+      opacity:.95;
+    }
+    .rep-line { margin-bottom:4px; }
+    .rep-note { margin-top:8px; font-size:11px; opacity:.9; }
+
+    .rep-img-wrap {
+      flex:0 0 120px;
+      background:#002b25;
+      border-radius:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px;
+    }
+    .rep-img-wrap img {
+      width:100%;
+      height:auto;
+      display:block;
+    }
+
+    .faq-card {
+      flex:1 1 280px;
+      background:#ffffff;
+      border-radius:14px;
+      border:1px solid #e3ece9;
+      box-shadow:0 3px 12px rgba(0,0,0,.04);
+      padding:16px 18px 14px;
+      font-size:12px;
+    }
+    .faq-title {
+      font-size:15px;
+      font-weight:700;
+      margin-bottom:8px;
+      color:#0b2520;
+    }
+    .faq-item { margin-top:8px; padding-top:8px; border-top:1px solid #f0f3f2; }
+    .faq-item:first-of-type { border-top:none; padding-top:0; }
+    .faq-q {
+      font-size:12px;
+      font-weight:700;
+      margin-bottom:2px;
+      color:#111;
+    }
+    .faq-a { font-size:12px; color:#555; }
+
+    /* INFO + CTA */
+    .inv-info {
+      margin-top:26px;
+      background:#ffffff;
+      border-radius:12px;
+      padding:16px 16px 14px;
+      border:1px solid #ffe4b6;
+      background-image:linear-gradient(135deg,rgba(255,210,140,.2),rgba(255,255,255,0));
+      font-size:12px;
+      color:#6a3a00;
+    }
+    .inv-info h2 {
+      font-size:14px;
+      font-weight:700;
+      margin-bottom:4px;
+    }
+    .inv-info p { margin-bottom:6px; }
+
+    .cta-bar {
+      margin-top:26px;
+      background:#005e4a;
+      border-radius:14px;
+      padding:14px 16px 12px;
+      color:#fff;
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:10px;
+    }
+    .cta-main { font-size:14px; font-weight:700; }
+    .cta-sub { font-size:11px; opacity:.92; }
+    .cta-btn {
+      margin-left:auto;
+      border-radius:999px;
+      border:none;
+      padding:8px 18px;
+      font-size:12px;
+      font-weight:700;
+      background:#ffffff;
+      color:#005e4a;
+      cursor:pointer;
+    }
+    .cta-btn:hover { background:#f0faf7; }
+
+    footer {
+      border-top:1px solid #dde6e2;
+      padding:10px 20px 22px;
+      font-size:11px;
+      color:#777;
+      text-align:center;
+      background:#ffffff;
+    }
+
+    /* FOOTER BANNER (marquee) */
+    .footer-banner {
+      width:100%;
+      background:#003737;
+      color:#ffffff;
+      padding:14px 0;
+      margin-top:0;
+      overflow:hidden;
+      white-space:nowrap;
+      font-size:14px;
+    }
+    .footer-banner-inner {
+      display:inline-block;
+      padding-left:100%;
+      animation:marquee 18s linear infinite;
+    }
+    @keyframes marquee {
+      0% { transform:translateX(0%); }
+      100% { transform:translateX(-100%); }
+    }
+
+    @media (max-width:768px) {
+      main { padding:0 14px 32px; }
+      .cta-bar { flex-direction:column; align-items:flex-start; }
+      .cta-btn { margin-left:0; width:100%; text-align:center; }
+    }
+
+    /* DROPDOWN */
+    .dropdown{position:relative;}
+    .dropdown-menu{
+      display:none;
+      position:absolute;
+      top:28px;
+      left:0;
+      background:#ffffff;
+      border:1px solid #d8e5e0;
+      border-radius:8px;
+      min-width:160px;
+      box-shadow:0 4px 14px rgba(0,0,0,.08);
+      padding:6px 0;
+      z-index:20;
+      transition:opacity .2s ease;
+      opacity:0;
+      pointer-events:none;
+    }
+    .dropdown-menu a{
+      display:block;
+      padding:8px 14px;
+      font-size:13px;
+      color:#005e4a;
+      border-radius:6px;
+    }
+    .dropdown-menu a:hover{background:#f0faf7;}
+    .dropdown:hover .dropdown-menu{display:block; opacity:1; pointer-events:auto;}
+    .dropdown.delay-hide .dropdown-menu{display:block; opacity:1; pointer-events:auto;}
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Dropdown delayed hide
+      const dropdown = document.querySelector('.dropdown');
+      let hideTimeout;
+      if (dropdown) {
+        dropdown.addEventListener('mouseleave', () => {
+          hideTimeout = setTimeout(() => {
+            dropdown.classList.remove('delay-hide');
+          }, 2000);
+          dropdown.classList.add('delay-hide');
+        });
+
+        dropdown.addEventListener('mouseenter', () => {
+          if (hideTimeout) {
+            clearTimeout(hideTimeout);
+          }
+          dropdown.classList.remove('delay-hide');
+        });
+      }
+
+      // Rotating "Representative units" cards
+      const featuredContainer = document.getElementById('featured-units');
+      if (!featuredContainer) return;
+
+      // This list should mirror the units in "Units for Sale.html"
+      const allUnits = [
+        {
+          tag: 'Truck',
+          title: '2020 Freightliner Cascadia PT126SLP',
+          img: 'https://images.pexels.com/photos/2199293/pexels-photo-2199293.jpeg',
+          mileage: '729,771',
+          location: 'CTTS',
+          state: 'CA',
+          vin: '1FUJHHDR1LLKS7083',
+          price: '$38,386*'
+        },
+        {
+          tag: 'Truck',
+          title: '2019 Freightliner Cascadia PT126SLP',
+          img: 'https://images.pexels.com/photos/2199294/pexels-photo-2199294.jpeg',
+          mileage: '732,806',
+          location: 'CTTS',
+          state: 'CA',
+          vin: '1FUJHHDR2KLKM3646',
+          price: '$25,864*'
+        },
+        {
+          tag: 'Truck',
+          title: '2020 Freightliner Cascadia PT126SLP',
+          img: 'https://images.pexels.com/photos/2199295/pexels-photo-2199295.jpeg',
+          mileage: '777,777',
+          location: 'Copart',
+          state: '',
+          vin: '1FUJHHDR2LLKS3768',
+          price: '$37,080*'
+        },
+        {
+          tag: 'Truck',
+          title: '2019 Freightliner Cascadia PT126SLP',
+          img: 'https://images.pexels.com/photos/2199296/pexels-photo-2199296.jpeg',
+          mileage: '644,939',
+          location: 'Copart',
+          state: '',
+          vin: '1FUJHHDR4KLKC2700',
+          price: '$35,830*'
+        }
+        // Add more units here to rotate through a larger list
+      ];
+
+      const visibleCount = 4;
+      let startIndex = 0;
+
+      function renderFeatured() {
+        featuredContainer.innerHTML = '';
+        for (let i = 0; i < visibleCount; i++) {
+          const unit = allUnits[(startIndex + i) % allUnits.length];
+          const card = document.createElement('article');
+          card.className = 'unit-card';
+          card.innerHTML = `
+            <div class="unit-img-wrap">
+              <img src="${unit.img}" alt="${unit.title}" />
+            </div>
+            <div class="unit-body">
+              <div class="unit-tag">${unit.tag}</div>
+              <h2 class="unit-title">${unit.title}</h2>
+              <div class="unit-specs">
+                <span>Mileage: ${unit.mileage}</span>
+                <span>Location: ${unit.location}</span>
+                ${unit.state ? `<span>State: ${unit.state}</span>` : ''}
+              </div>
+              <div class="unit-meta">VIN: ${unit.vin}</div>
+            </div>
+            <div class="unit-foot">
+              <span class="unit-price">${unit.price}</span>
+              <button class="unit-cta" type="button">Ask about this unit</button>
+            </div>
+          `;
+
+          const btn = card.querySelector('.unit-cta');
+          if (btn) {
+            const subject = `Inventory Inquiry – ${unit.title} (${unit.vin})`;
+            const bodyLines = [
+              'Hello Roy,',
+              '',
+              'I\'m interested in this unit:',
+              `- Title: ${unit.title}`,
+              `- VIN: ${unit.vin}`,
+              `- Mileage: ${unit.mileage}`,
+              `- Location: ${unit.location}${unit.state ? ' ' + unit.state : ''}`,
+              '',
+              'Please let me know availability and next steps.',
+              '',
+              'Thank you.'
+            ];
+            const body = encodeURIComponent(bodyLines.join('\n'));
+            const mailto = `mailto:RCortez@MntFunding.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+            btn.addEventListener('click', () => {
+              window.location.href = mailto;
+            });
+          }
+
+          featuredContainer.appendChild(card);
+        }
+      }
+
+      renderFeatured();
+
+      // Rotate the starting index every 6 seconds
+      if (allUnits.length > visibleCount) {
+        setInterval(() => {
+          startIndex = (startIndex + 1) % allUnits.length;
+          renderFeatured();
+        }, 6000);
+      }
+    });
+  </script>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="logo">
+        <img class="logo-mark" src="Media/Logo White - Copy.png" alt="M&T Equipment Funding Logo" />
+        <div>
+          <div class="logo-text">M&T Equipment Funding LLC</div>
+          <div class="logo-sub">Commercial truck &amp; trailer financing</div>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="Applications.html">Applications</a>
+        <a href="Services.html">Services</a>
+        <div class="dropdown">
+          <a href="Inventory.html" class="active">Inventory ▾</a>
+          <div class="dropdown-menu">
+            <a href="Units for Sale.html">All Units for Sale</a>
+          </div>
+        </div>
+        <a href="About us.html">About Us</a>
+        <button class="btn-small" type="button" onclick="window.location.href='mailto:RCortez@MntFunding.com?subject=Inventory%20Inquiry'">Talk to Representative</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="inv-hero">
+      <div class="inv-hero-main">
+        <div class="inv-kicker">Inventory</div>
+        <h1 class="inv-title">Available Inventory for Sale</h1>
+        <p class="inv-sub">
+          Browse our current trucks and trailers available for purchase. Inventory updates frequently and units shown here are
+          ready for sale unless marked otherwise.
+        </p>
+        <div class="inv-badges">
+          <span class="inv-badge">Day cabs &amp; sleepers</span>
+          <span class="inv-badge">Box trucks &amp; straight trucks</span>
+          <span class="inv-badge">Dry vans, reefers &amp; flatbeds</span>
+        </div>
+        <p class="inv-note">
+          Pricing and availability shown here are for illustration only and do not constitute a commitment to lend.
+          All credit decisions are subject to full underwriting and approval.
+        </p>
+      </div>
+      <aside class="inv-hero-side">
+        <h3>Already found a truck?</h3>
+        <p>
+          If you are already working with a dealer or private seller, we can review the unit details and structure financing
+          around your route, mileage, and down payment.
+        </p>
+        <small>Send the spec sheet or listing link for a quick review.</small>
+        <button style="margin-top:8px;border-radius:999px;border:none;padding:8px 14px;font-size:12px;font-weight:600;background:#ffffff;color:#005e4a;cursor:pointer;" onclick="window.location.href='mailto:info@mntfunding.com?subject=Unit%20Review%20Request&body=Hello%2C%0A%0AI%20have%20already%20found%20a%20unit.%20Here%20are%20the%20details%3A%0A%0A-%20Year%3A%20%0A-%20Make%3A%20%0A-%20Model%3A%20%0A-%20Mileage%3A%20%0A-%20VIN%3A%20%0A-%20Seller%20(Dealer%20or%20Private)%3A%20%0A%0APlease%20let%20me%20know%20the%20next%20steps.%0A%0AThank%20you.'">Email Unit Details</button>
+      </aside>
+    </section>
+
+    <div class="inv-section-head">
+      <div>
+        <div class="inv-section-title">Representative units</div>
+        <div class="inv-section-sub">A small sample of what we can help you finance through our dealer network.</div>
+      </div>
+      <div class="inv-section-actions">
+        <button class="see-all-link" type="button" onclick="window.location.href='Units for Sale.html'">See all inventory</button>
+      </div>
+    </div>
+
+    <section class="inventory-grid" id="featured-units">
+      <!-- Featured units will be injected here by JavaScript -->
+    </section>
+
+    <section class="inv-info">
+      <h2>How our inventory program works</h2>
+      <p>
+        We are not a public truck lot. In most cases, you will be buying from a dealer, fleet, or private seller of your choice.
+        Our role is to evaluate the truck or trailer, confirm the value, and structure the financing.
+      </p>
+      <p>
+        If you already have a specific VIN or stock number, include it with your application so we can review mileage,
+        condition, and route to make sure the numbers make sense for you.
+      </p>
+      <p>
+        <strong>*All payment examples shown are estimates only.</strong> Actual terms, down payment, and monthly payments will
+        depend on your time in business, credit profile, miles, and the type of work you do.
+      </p>
+    </section>
+
+    <section class="rep-row">
+      <article class="rep-card">
+        <div class="rep-text">
+          <div class="rep-label">YOUR REPRESENTATIVE</div>
+          <h2 class="rep-name">Rogelio Cortez</h2>
+          <div class="rep-role">Sales Representative — M&amp;T Equipment Funding LLC</div>
+          <p class="rep-line"><strong>Phone:</strong> (000) 000-0000</p>
+          <p class="rep-line"><strong>Email:</strong> RCortez@MntFunding.com</p>
+          <p class="rep-note">Send any inventory questions, truck listings, or spec sheets directly to Rogelio for a quick review.</p>
+        </div>
+        <div class="rep-img-wrap">
+          <img src="https://as2.ftcdn.net/v2/jpg/02/14/34/09/1000_F_214340987_iYuLVLrP61oepILx6yiUTOO7xsdvmX9K.jpg" alt="Representative silhouette" />
+        </div>
+      </article>
+
+      <article class="faq-card">
+        <h2 class="faq-title">Inventory FAQ</h2>
+        <div class="faq-item">
+          <div class="faq-q">Do you list every truck on this page?</div>
+          <div class="faq-a">No. This page shows representative examples. Actual inventory changes daily and we also work with outside dealers and fleets.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Can you help if I already found a truck somewhere else?</div>
+          <div class="faq-a">Yes. Send us the VIN or stock number and a spec sheet or online listing link. We’ll review mileage, condition, and route to see if it fits our programs.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Do you finance trailers and multiple units?</div>
+          <div class="faq-a">We can look at single trucks, trailers, or packages with several units depending on your time in business, credit profile, and work type.</div>
+        </div>
+      </article>
+    </section>
+
+    <section class="cta-bar">
+      <div>
+        <div class="cta-main">Ready to talk about a specific truck or trailer?</div>
+        <div class="cta-sub">
+          Share a link, spec sheet, or VIN and we&apos;ll let you know if it fits our programs before you spend money on an inspection or travel.
+        </div>
+      </div>
+      <button class="cta-btn" type="button" onclick="window.location.href='mailto:RCortez@MntFunding.com?subject=Inventory%20Inquiry'">Talk to Representative</button>
+    </section>
+  </main>
+
+  <footer>
+    <div>&copy; 2025 M&amp;T Equipment Funding LLC &mdash; Commercial Truck &amp; Trailer Financing</div>
+    <div>All programs subject to credit approval, verification of information, and acceptable collateral.</div>
+  </footer>
+
+  <div class="footer-banner">
+    <div class="footer-banner-inner">
+      📞 Phone: (000) 000&ndash;0000 &nbsp; | &nbsp; 📧 Email: info@mtequipmentfunding.com &nbsp; | &nbsp; 🔗 Instagram: @MTequipmentfunding &nbsp; | &nbsp; 🔗 Facebook: M&amp;T Equipment Funding LLC &nbsp; | &nbsp; &copy; 2025 M&amp;T Equipment Funding LLC &mdash; All Rights Reserved &nbsp; | &nbsp; Commercial Truck &amp; Trailer Financing
+    </div>
+  </div>
+</body>
+</html>
