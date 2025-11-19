@@ -5,10 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>All Units for Sale – M&T Equipment Funding LLC</title>
   <link rel="icon" href="https://i.imgur.com/kopRNDu.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:Arial,Helvetica,sans-serif;background:#f5f7f6;color:#111;line-height:1.4;}
+    :root {
+      --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    html { font-family: var(--font-main); }
+    *, *::before, *::after { box-sizing:border-box; font-family: inherit; margin:0; padding:0; }
+    body{font-family:inherit;background:#f5f7f6;color:#0b2520;line-height:1.5;}
     a{text-decoration:none;color:inherit;}
+    img{max-width:100%;height:auto;display:block;}
 
     /* HEADER */
     header{background:#ffffff;box-shadow:0 2px 6px rgba(0,0,0,.08);position:sticky;top:0;z-index:200;}
@@ -24,6 +34,12 @@
 
     .btn-small{border-radius:999px;border:1px solid #005e4a;padding:6px 14px;font-size:13px;font-weight:600;color:#005e4a;background:#fff;cursor:pointer;}
     .btn-small:hover{background:#005e4a;color:#fff;}
+
+    @media (max-width: 720px){
+      .nav{flex-direction:column;align-items:flex-start;gap:10px;}
+      .nav-links{flex-wrap:wrap;width:100%;}
+      .btn-small{width:100%;text-align:center;}
+    }
 
     /* PAGE */
     main{max-width:1400px;margin:30px auto;padding:0 20px 40px;}
@@ -106,7 +122,7 @@
       </div>
 
       <a href="About us.html">About Us</a>
-      <button class="btn-small" onclick="window.location.href='tel:+10000000000'">Talk to Representative</button>
+      <button class="btn-small" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
     </nav>
   </div>
 </header>
@@ -196,289 +212,189 @@
     </aside>
 
     <section class="results-wrapper">
-      <div class="grid">
-
-        <!-- 8 SAMPLE FREIGHTLINER LISTINGS -->
-        <div class="unit-card" data-type="Truck" data-brand="Freightliner" data-price="38386" data-mileage="729771" data-color="Unknown" data-state="Unknown">
-          <div class="status-tag available">Available</div>
-          <img src="https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg"/>
-          <div class="unit-body">
-            <div class="unit-title">2020 Freightliner Cascadia PT126SLP</div>
-            <div class="unit-info">VIN: 1FUJHHDR1LLXXXXXX<br>Mileage: 729771<br>Value: USD$ 38386</div>
-            <div class="btn-row">
-              <div class="btn-green email-btn">Contact us</div>
-              <a class="btn-white" href="Unit details.html">See Details</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="unit-card" data-type="Truck" data-brand="Freightliner" data-price="25864" data-mileage="732806" data-color="Unknown" data-state="Unknown">
-          <div class="status-tag sold">SOLD</div>
-          <img src="https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg"/>
-          <div class="unit-body">
-            <div class="unit-title">2019 Freightliner Cascadia PT126SLP</div>
-            <div class="unit-info">VIN: 1FUJHHDR2KLXXXXXX<br>Mileage: 732806<br>Value: USD$ 25864</div>
-            <div class="btn-row">
-              <div class="btn-green email-btn">Contact us</div>
-              <a class="btn-white" href="Unit details.html">See Details</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="unit-card" data-type="Truck" data-brand="Freightliner" data-price="37080" data-mileage="777777" data-color="Unknown" data-state="Unknown">
-          <div class="status-tag available">Available</div>
-          <img src="https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg"/>
-          <div class="unit-body">
-            <div class="unit-title">2020 Freightliner Cascadia PT126SLP</div>
-            <div class="unit-info">VIN: 1FUJHHDR2LLXXXXXX<br>Mileage: 777777<br>Value: USD$ 37080</div>
-            <div class="btn-row">
-              <div class="btn-green email-btn">Contact us</div>
-              <a class="btn-white" href="Unit details.html">See Details</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="unit-card" data-type="Truck" data-brand="Freightliner" data-price="35830" data-mileage="644939" data-color="Unknown" data-state="Unknown">
-          <div class="status-tag available">Available</div>
-          <img src="https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg"/>
-          <div class="unit-body">
-            <div class="unit-title">2019 Freightliner Cascadia PT126SLP</div>
-            <div class="unit-info">VIN: 1FUJHHDR4KLXXXXXX<br>Mileage: 644939<br>Value: USD$ 35830</div>
-            <div class="btn-row">
-              <div class="btn-green email-btn">Contact us</div>
-              <a class="btn-white" href="Unit details.html">See Details</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="unit-card" data-type="Truck" data-brand="Freightliner" data-price="52902" data-mileage="530288" data-color="Unknown" data-state="Unknown">
-          <div class="status-tag available">Available</div>
-          <img src="https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg"/>
-          <div class="unit-body">
-            <div class="unit-title">2020 Freightliner Cascadia PT126SLP</div>
-            <div class="unit-info">VIN: 1FUJHHDR4LLXXXXXX<br>Mileage: 530288<br>Value: USD$ 52902</div>
-            <div class="btn-row">
-              <div class="btn-green email-btn">Contact us</div>
-              <a class="btn-white" href="Unit details.html">See Details</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="unit-card" data-type="Truck" data-brand="Freightliner" data-price="34900" data-mileage="777777" data-color="Unknown" data-state="Unknown">
-          <div class="status-tag available">Available</div>
-          <img src="https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg"/>
-          <div class="unit-body">
-            <div class="unit-title">2020 Freightliner Cascadia PT126SLP</div>
-            <div class="unit-info">VIN: 1FUJHHDR7LLXXXXXX<br>Mileage: 777777<br>Value: USD$ 34900</div>
-            <div class="btn-row">
-              <div class="btn-green email-btn">Contact us</div>
-              <a class="btn-white" href="Unit details.html">See Details</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="unit-card" data-type="Truck" data-brand="Freightliner" data-price="23249" data-mileage="777777" data-color="Unknown" data-state="Unknown">
-          <div class="status-tag available">Available</div>
-          <img src="https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg"/>
-          <div class="unit-body">
-            <div class="unit-title">2020 Freightliner Cascadia PT126SLP</div>
-            <div class="unit-info">VIN: 1FUJHHDR8LLXXXXXX<br>Mileage: 777777<br>Value: USD$ 23249</div>
-            <div class="btn-row">
-              <div class="btn-green email-btn">Contact us</div>
-              <a class="btn-white" href="Unit details.html">See Details</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="unit-card" data-type="Truck" data-brand="Freightliner" data-price="55052" data-mileage="414073" data-color="Unknown" data-state="Unknown">
-          <div class="status-tag available">Available</div>
-          <img src="https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg"/>
-          <div class="unit-body">
-            <div class="unit-title">2019 Freightliner Cascadia PT126SLP</div>
-            <div class="unit-info">VIN: 1FUJHHDR9KLXXXXXX<br>Mileage: 414073<br>Value: USD$ 55052</div>
-            <div class="btn-row">
-              <div class="btn-green email-btn">Contact us</div>
-              <a class="btn-white" href="Unit details.html">See Details</a>
-            </div>
-          </div>
-        </div>
-
+      <div class="grid" id="unitsGrid">
+        <!-- Inventory cards rendered by JavaScript -->
       </div>
+      <div id="pagination" style="margin-top:18px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;"></div>
     </section>
   </div>
 </main>
 
 <script>
-// Format mileage with commas
-function formatMileage() {
-  var cards = document.querySelectorAll('.unit-card');
-  cards.forEach(function(card) {
-    var info = card.querySelector('.unit-info');
-    if (!info) return;
-    var mileageAttr = card.getAttribute('data-mileage');
-    if (!mileageAttr) return;
-    var n = parseInt(mileageAttr, 10);
-    if (isNaN(n)) return;
+const ITEMS_PER_PAGE = 20;
+let currentPage = 1;
+let units = [];
+let filteredUnits = [];
 
-    var parts = info.innerHTML.split('<br>');
-    for (var i = 0; i < parts.length; i++) {
-      var trimmed = parts[i].trim();
-      if (trimmed.indexOf('Mileage:') === 0) {
-        parts[i] = 'Mileage: ' + n.toLocaleString('en-US');
-      }
-    }
-    info.innerHTML = parts.join('<br>');
-  });
+function defaultUnits() {
+  return [
+    { status: 'Available', type: 'Truck', brand: 'Freightliner', price: 38386, mileage: 729771, color: 'Unknown', state: 'Unknown', vin: '1FUJHHDR1LLXXXXXX', title: '2020 Freightliner Cascadia PT126SLP', image: 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg' },
+    { status: 'Sold', type: 'Truck', brand: 'Freightliner', price: 25864, mileage: 732806, color: 'Unknown', state: 'Unknown', vin: '1FUJHHDR2KLXXXXXX', title: '2019 Freightliner Cascadia PT126SLP', image: 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg' },
+    { status: 'Available', type: 'Truck', brand: 'Freightliner', price: 37080, mileage: 777777, color: 'Unknown', state: 'Unknown', vin: '1FUJHHDR2LLXXXXXX', title: '2020 Freightliner Cascadia PT126SLP', image: 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg' },
+    { status: 'Available', type: 'Truck', brand: 'Freightliner', price: 35830, mileage: 644939, color: 'Unknown', state: 'Unknown', vin: '1FUJHHDR4KLXXXXXX', title: '2019 Freightliner Cascadia PT126SLP', image: 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg' },
+    { status: 'Available', type: 'Truck', brand: 'Freightliner', price: 52902, mileage: 530288, color: 'Unknown', state: 'Unknown', vin: '1FUJHHDR4LLXXXXXX', title: '2020 Freightliner Cascadia PT126SLP', image: 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg' },
+    { status: 'Available', type: 'Truck', brand: 'Freightliner', price: 34900, mileage: 777777, color: 'Unknown', state: 'Unknown', vin: '1FUJHHDR7LLXXXXXX', title: '2020 Freightliner Cascadia PT126SLP', image: 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg' },
+    { status: 'Available', type: 'Truck', brand: 'Freightliner', price: 23249, mileage: 777777, color: 'Unknown', state: 'Unknown', vin: '1FUJHHDR8LLXXXXXX', title: '2020 Freightliner Cascadia PT126SLP', image: 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg' },
+    { status: 'Available', type: 'Truck', brand: 'Freightliner', price: 55052, mileage: 414073, color: 'Unknown', state: 'Unknown', vin: '1FUJHHDR9KLXXXXXX', title: '2019 Freightliner Cascadia PT126SLP', image: 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg' }
+  ];
 }
 
-// Format value as USD$ with commas
-function formatValues() {
-  var cards = document.querySelectorAll('.unit-card');
-  cards.forEach(function(card) {
-    var info = card.querySelector('.unit-info');
-    if (!info) return;
-    var priceAttr = card.getAttribute('data-price');
-    if (!priceAttr) return;
-    var n = parseInt(priceAttr, 10);
-    if (isNaN(n)) return;
-
-    var parts = info.innerHTML.split('<br>');
-    for (var i = 0; i < parts.length; i++) {
-      var trimmed = parts[i].trim();
-      if (trimmed.indexOf('Value:') === 0) {
-        parts[i] = 'Value: USD$ ' + n.toLocaleString('en-US');
-      }
+function loadUnits() {
+  try {
+    const saved = localStorage.getItem('inventoryData');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length) return parsed;
     }
-    info.innerHTML = parts.join('<br>');
-  });
+  } catch (e) {
+    console.warn('Unable to load saved inventory, using defaults');
+  }
+  return defaultUnits();
 }
 
-// Filter cards by type, brand, price, mileage, color, and state
-function applyFilters() {
-  var typeSel = document.getElementById('typeFilter').value;
-  var brandSel = document.getElementById('brandFilter').value;
-  var priceSel = document.getElementById('priceFilter').value;
-  var mileageSel = document.getElementById('mileageFilter') ? document.getElementById('mileageFilter').value : 'all';
-  var colorSel = document.getElementById('colorFilter') ? document.getElementById('colorFilter').value : 'all';
-  var stateSel = document.getElementById('stateFilter') ? document.getElementById('stateFilter').value : 'all';
-  var cards = document.querySelectorAll('.unit-card');
-
-  cards.forEach(function(card) {
-    var visible = true;
-
-    var unitType = card.getAttribute('data-type') || 'Truck';
-    var brand = card.getAttribute('data-brand') || '';
-    var color = card.getAttribute('data-color') || 'Unknown';
-    var state = card.getAttribute('data-state') || 'Unknown';
-    var price = parseInt(card.getAttribute('data-price') || '0', 10) || 0;
-    var mileage = parseInt(card.getAttribute('data-mileage') || '0', 10) || 0;
-
-    // Type filter
-    if (typeSel !== 'all' && unitType !== typeSel) {
-      visible = false;
-    }
-
-    // Brand filter
-    if (brandSel !== 'all' && brand !== brandSel) {
-      visible = false;
-    }
-
-    // Price filter
-    if (priceSel !== 'all') {
-      var range = priceSel.split('-');
-      var min = parseInt(range[0], 10);
-      var max = parseInt(range[1], 10);
-      if (price < min || price > max) {
-        visible = false;
-      }
-    }
-
-    // Mileage filter
-    if (mileageSel !== 'all') {
-      var mRange = mileageSel.split('-');
-      var mMin = parseInt(mRange[0], 10);
-      var mMax = parseInt(mRange[1], 10);
-      if (mileage < mMin || mileage > mMax) {
-        visible = false;
-      }
-    }
-
-    // Color filter
-    if (colorSel !== 'all' && color !== colorSel) {
-      visible = false;
-    }
-
-    // State filter
-    if (stateSel !== 'all' && state !== stateSel) {
-      visible = false;
-    }
-
-    card.style.display = visible ? 'flex' : 'none';
-  });
+function formatNumber(n) {
+  return Number(n || 0).toLocaleString('en-US');
 }
 
-// Setup email buttons for "Contact us"
-function setupEmailButtons() {
-  var buttons = document.querySelectorAll('.btn-green.email-btn');
-  buttons.forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var card = btn.closest('.unit-card');
-      if (!card) return;
+function buildCard(unit) {
+  const card = document.createElement('div');
+  card.className = 'unit-card';
+  card.dataset.type = unit.type;
+  card.dataset.brand = unit.brand;
+  card.dataset.price = unit.price;
+  card.dataset.mileage = unit.mileage;
+  card.dataset.color = unit.color || 'Unknown';
+  card.dataset.state = unit.state || 'Unknown';
 
-      var titleEl = card.querySelector('.unit-title');
-      var infoEl = card.querySelector('.unit-info');
+  const statusClass = unit.status && unit.status.toLowerCase() === 'sold' ? 'sold' : 'available';
 
-      var title = titleEl ? titleEl.textContent.trim() : 'Unit';
-      var infoTxt = infoEl ? infoEl.innerText : '';
+  card.innerHTML = `
+    <div class="status-tag ${statusClass}">${unit.status || 'Available'}</div>
+    <img src="${unit.image}" alt="${unit.title}" />
+    <div class="unit-body">
+      <div class="unit-title">${unit.title}</div>
+      <div class="unit-info">
+        VIN: ${unit.vin}<br>
+        Mileage: ${formatNumber(unit.mileage)}<br>
+        Value: USD$ ${formatNumber(unit.price)}
+      </div>
+      <div class="btn-row">
+        <div class="btn-green email-btn">Contact us</div>
+        <a class="btn-white" href="Unit details.html">See Details</a>
+      </div>
+    </div>
+  `;
+  return card;
+}
 
-      var vin = '';
-      var label = 'VIN:';
-      var vinPos = infoTxt.indexOf(label);
-      if (vinPos !== -1) {
-        var rest = infoTxt.substring(vinPos + label.length).trim();
-        var mileageIndex = rest.indexOf('Mileage:');
-        if (mileageIndex !== -1) {
-          rest = rest.substring(0, mileageIndex);
-        }
-        vin = rest.trim();
-      }
-
-      var subject = 'Interest in ' + title + ' (' + vin + ')';
-      var body = 'Hello Roy,\n\n' +
-                 'I am interested in the following unit:\n\n' +
-                 title + '\n' +
-                 'VIN: ' + vin + '\n\n' +
-                 'Please let me know more details about this unit and financing options.\n\n' +
-                 'Thank you,\n' +
-                 '[Your Name]\n' +
-                 '[Your Phone Number]';
-
-      var mailtoUrl = 'mailto:rcortez@mntfunding.com' +
-        '?subject=' + encodeURIComponent(subject) +
-        '&body=' + encodeURIComponent(body);
-
-      window.location.href = mailtoUrl;
+function wireEmailButtons() {
+  document.querySelectorAll('.btn-green.email-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.unit-card');
+      const title = card.querySelector('.unit-title')?.textContent?.trim() || 'Unit';
+      const vinLine = card.querySelector('.unit-info')?.innerText?.split('\n').find(line => line.includes('VIN:')) || '';
+      const vin = vinLine.replace('VIN:', '').trim();
+      const subject = `Interest in ${title} (${vin})`;
+      const body = `Hello Roy,\n\nI am interested in the following unit:\n\n${title}\nVIN: ${vin}\n\nPlease let me know more details about this unit and financing options.\n\nThank you,\n[Your Name]\n[Your Phone Number]`;
+      window.location.href = `mailto:rcortez@mntfunding.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     });
   });
 }
 
-// Basic smoke tests in console
-console.log('Test: functions exist', typeof applyFilters, typeof formatMileage, typeof setupEmailButtons);
-console.log('Test: cards count', document.querySelectorAll('.unit-card').length);
+function renderPagination(totalPages) {
+  const container = document.getElementById('pagination');
+  if (!container) return;
+  container.innerHTML = '';
+  if (totalPages <= 1) return;
 
-// Init on load
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', function() {
-    formatMileage();
-    formatValues();
-    applyFilters();
-    setupEmailButtons();
+  const info = document.createElement('span');
+  info.style.fontSize = '12px';
+  info.textContent = `Page ${currentPage} of ${totalPages}`;
+  container.appendChild(info);
+
+  const prev = document.createElement('button');
+  prev.textContent = 'Prev';
+  prev.className = 'btn-small';
+  prev.disabled = currentPage === 1;
+  prev.style.padding = '6px 12px';
+  prev.onclick = () => { currentPage--; renderUnits(); };
+  container.appendChild(prev);
+
+  const next = document.createElement('button');
+  next.textContent = 'Next';
+  next.className = 'btn-small';
+  next.disabled = currentPage === totalPages;
+  next.style.padding = '6px 12px';
+  next.onclick = () => { currentPage++; renderUnits(); };
+  container.appendChild(next);
+}
+
+function renderUnits() {
+  const grid = document.getElementById('unitsGrid');
+  if (!grid) return;
+
+  const start = (currentPage - 1) * ITEMS_PER_PAGE;
+  const end = start + ITEMS_PER_PAGE;
+  const totalPages = Math.max(1, Math.ceil(filteredUnits.length / ITEMS_PER_PAGE));
+  if (currentPage > totalPages) currentPage = totalPages;
+
+  grid.innerHTML = '';
+
+  const pageUnits = filteredUnits.slice(start, end);
+  if (!pageUnits.length) {
+    grid.innerHTML = '<p style="grid-column:1/-1;font-size:13px;color:#555;">No units match these filters right now.</p>';
+  } else {
+    pageUnits.forEach(unit => grid.appendChild(buildCard(unit)));
+  }
+
+  wireEmailButtons();
+  renderPagination(totalPages);
+}
+
+function applyFilters() {
+  const typeSel = document.getElementById('typeFilter')?.value || 'all';
+  const brandSel = document.getElementById('brandFilter')?.value || 'all';
+  const priceSel = document.getElementById('priceFilter')?.value || 'all';
+  const mileageSel = document.getElementById('mileageFilter')?.value || 'all';
+  const colorSel = document.getElementById('colorFilter')?.value || 'all';
+  const stateSel = document.getElementById('stateFilter')?.value || 'all';
+
+  filteredUnits = units.filter(unit => {
+    const price = Number(unit.price) || 0;
+    const mileage = Number(unit.mileage) || 0;
+
+    if (typeSel !== 'all' && unit.type !== typeSel) return false;
+    if (brandSel !== 'all' && unit.brand !== brandSel) return false;
+    if (colorSel !== 'all' && unit.color !== colorSel) return false;
+    if (stateSel !== 'all' && unit.state !== stateSel) return false;
+
+    if (priceSel !== 'all') {
+      const [min, max] = priceSel.split('-').map(Number);
+      if (price < min || price > max) return false;
+    }
+
+    if (mileageSel !== 'all') {
+      const [mMin, mMax] = mileageSel.split('-').map(Number);
+      if (mileage < mMin || mileage > mMax) return false;
+    }
+
+    return true;
   });
-} else {
-  formatMileage();
-  formatValues();
+
+  currentPage = 1;
+  renderUnits();
+}
+
+function init() {
+  units = loadUnits();
+  filteredUnits = units.slice();
   applyFilters();
-  setupEmailButtons();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
 }
 </script>
 
