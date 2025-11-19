@@ -50,6 +50,25 @@
     .value-title{font-size:15px;font-weight:700;margin-bottom:4px;color:#005e4a;}
     .value-text{font-size:13px;color:#444;}
 
+    .comparison-card{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center;}
+    .comparison-text h2{font-size:20px;font-weight:700;color:#0b2520;margin-bottom:10px;}
+    .comparison-text p{font-size:14px;color:#444;margin-bottom:10px;}
+    .comparison-text ul{margin-left:18px;color:#0b2520;font-size:14px;}
+    .comparison-widget{width:100%;}
+    .comparison-viewport{position:relative;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.12);}
+    .comparison-viewport img{display:block;width:100%;height:320px;object-fit:cover;}
+    .comparison-image-after{position:absolute;top:0;left:0;height:100%;width:50%;overflow:hidden;}
+    .comparison-image-after img{height:100%;width:100%;object-fit:cover;}
+    .comparison-slider{width:100%;margin-top:14px;-webkit-appearance:none;height:6px;border-radius:999px;background:#e0ece7;outline:none;}
+    .comparison-slider::-webkit-slider-thumb{appearance:none;width:22px;height:22px;border-radius:50%;background:#005e4a;box-shadow:0 2px 8px rgba(0,0,0,.25);border:2px solid #fff;cursor:pointer;}
+    .comparison-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#005e4a;box-shadow:0 2px 8px rgba(0,0,0,.25);border:2px solid #fff;cursor:pointer;}
+    .comparison-labels{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#003737;margin-top:6px;text-transform:uppercase;letter-spacing:.04em;}
+
+    @media(max-width:900px){
+      .comparison-card{grid-template-columns:1fr;}
+      .comparison-viewport img{height:240px;}
+    }
+
     .team-card{background:#003737;color:#fff;border-radius:14px;padding:20px;}
     .team-title{font-size:18px;font-weight:700;margin-bottom:6px;}
     .team-sub{font-size:13px;margin-bottom:10px;opacity:.9;}
@@ -79,24 +98,27 @@
           <a href="Units for Sale.html" style="display:block;padding:10px 14px;">All Units for Sale</a>
         </div>
       </div>
-      <a href="About.html" class="active" style="background:#005e4a;color:#fff;">About Us</a>
+      <a href="About us.html" class="active" style="background:#005e4a;color:#fff;">About Us</a>
+      <button class="btn-small" type="button" onclick="window.location.href='tel:2012013551';">Talk to Representative</button>
     </nav>
 
 <script>
-let dropdown = document.querySelector('.dropdown');
-let menu = document.querySelector('.dropdown-content');
+const dropdown = document.querySelector('.dropdown');
+const menu = document.querySelector('.dropdown-content');
 let timeout;
 
-dropdown.addEventListener('mouseenter', () => {
-  clearTimeout(timeout);
-  menu.style.display = 'block';
-});
+if (dropdown && menu) {
+  dropdown.addEventListener('mouseenter', () => {
+    clearTimeout(timeout);
+    menu.style.display = 'block';
+  });
 
-dropdown.addEventListener('mouseleave', () => {
-  timeout = setTimeout(() => {
-    menu.style.display = 'none';
-  }, 2000); // 2 seconds delay
-});
+  dropdown.addEventListener('mouseleave', () => {
+    timeout = setTimeout(() => {
+      menu.style.display = 'none';
+    }, 2000);
+  });
+}
 </script>
   </div>
 </header>
@@ -133,7 +155,48 @@ dropdown.addEventListener('mouseleave', () => {
 
   </section>
 
-  
+  <section class="card comparison-card">
+    <div class="comparison-text">
+      <h2>Before &amp; After Working with M&amp;T</h2>
+      <p>Customers often come to us with equipment that is unreliable, payments that feel unpredictable, and a financing experience that takes weeks.</p>
+      <p>After partnering with M&amp;T Equipment Funding LLC, they leave with:</p>
+      <ul>
+        <li>Reliable assets sourced from our nationwide inventory</li>
+        <li>A predictable payment structure that matches their cash flow</li>
+        <li>Guided support so the deal stays on track from start to finish</li>
+      </ul>
+      <p style="margin-top:12px;">Use the slider to see the difference a refreshed truck can make to a fleet.</p>
+    </div>
+
+    <div class="comparison-widget">
+      <div class="comparison-viewport" aria-live="polite">
+        <img src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1350&q=80" alt="Before truck" />
+        <div class="comparison-image-after" id="afterPane">
+          <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1350&q=80" alt="After truck" />
+        </div>
+      </div>
+      <input type="range" min="0" max="100" value="50" class="comparison-slider" id="comparisonSlider" aria-label="Comparison slider" />
+      <div class="comparison-labels">
+        <span>Before</span>
+        <span>After</span>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const comparisonSlider = document.getElementById('comparisonSlider');
+    const afterPane = document.getElementById('afterPane');
+    if (comparisonSlider && afterPane) {
+      const setWidth = (value) => {
+        afterPane.style.width = value + '%';
+      };
+      setWidth(comparisonSlider.value);
+      comparisonSlider.addEventListener('input', (event) => {
+        setWidth(event.target.value);
+      });
+    }
+  </script>
+
 
   <section class="card">
     <h2 class="section-title">Our Mission</h2>
