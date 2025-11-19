@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About – M&T Equipment Funding LLC</title>
+  <link rel="icon" href="https://i.imgur.com/kopRNDu.png" type="image/png" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Arial,Helvetica,sans-serif;background:#f5f7f6;color:#0b2520;line-height:1.5;}
+    a{text-decoration:none;color:inherit;}
+
+    header { background:#ffffff; box-shadow:0 2px 6px rgba(0,0,0,.08); position:sticky; top:0; z-index:10; }
+    .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:12px 20px; }
+    .logo{display:flex;align-items:center;gap:10px;}
+    .logo img { width:120px; height:auto; }
+    .logo-mark{width:120px;height:auto;border-radius:0;object-fit:contain;}
+    .logo-text{font-size:16px;font-weight:700;line-height:1.2;}
+    .logo-sub{font-size:11px;font-weight:400;color:#555;}
+    .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
+    .nav-links a{padding:6px 10px;border-radius:999px;}
+    .nav-links a:hover{background:rgba(0,94,74,.08);}
+    .nav-links .active{background:#005e4a;color:#fff;}
+    .btn-small {
+      border-radius:999px;
+      border:1px solid #005e4a;
+      padding:10px 22px;
+      font-size:14px;
+      font-weight:600;
+      color:#005e4a;
+      background:#fff;
+      cursor:pointer;
+    }
+    .btn-small:hover{background:#005e4a;color:#fff;}
+
+    main{max-width:1100px;margin:28px auto 50px;padding:0 20px;}
+    .hero{background:#ffffff;border-radius:14px;padding:26px 24px 24px;box-shadow:0 8px 24px rgba(0,0,0,.06);}
+    .hero-kicker{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#008060;margin-bottom:6px;}
+    .hero-title{font-size:26px;font-weight:800;margin-bottom:6px;color:#0b2520;}
+    .hero-sub{font-size:14px;color:#444;max-width:680px;}
+
+    section{margin-top:28px;}
+    .card{background:#ffffff;border-radius:14px;padding:22px 20px 20px;box-shadow:0 3px 10px rgba(0,0,0,.04);border:1px solid #e3ece9;}
+    .section-title{font-size:20px;font-weight:700;margin-bottom:8px;color:#0b2520;}
+    .section-text{font-size:14px;color:#444;margin-bottom:10px;}
+
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+
+    .value-card{background:#f7fbfa;border-radius:12px;padding:16px;border:1px solid #d3e8e1;}
+    .value-title{font-size:15px;font-weight:700;margin-bottom:4px;color:#005e4a;}
+    .value-text{font-size:13px;color:#444;}
+
+    .team-card{background:#003737;color:#fff;border-radius:14px;padding:20px;}
+    .team-title{font-size:18px;font-weight:700;margin-bottom:6px;}
+    .team-sub{font-size:13px;margin-bottom:10px;opacity:.9;}
+
+    footer{border-top:1px solid #dde6e2;padding:16px 20px 22px;font-size:11px;color:#777;text-align:center;margin-top:40px;}
+
+    @media(max-width:800px){.grid-2{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <div class="logo">
+      <img src="Media/Logo White - Copy.png" alt="Company Logo" />
+      <div>
+        <div class="logo-text">M&T Equipment Funding LLC</div>
+        <div class="logo-sub">Commercial truck & trailer financing</div>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="Applications.html">Applications</a>
+      <a href="Services.html">Services</a>
+      <div class="dropdown" style="position:relative;">
+        <a href="Inventory.html" class="dropbtn">Inventory</a>
+        <div class="dropdown-content" style="display:none; position:absolute; top:32px; left:0; background:#ffffff; border:1px solid #ddd; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,.1); min-width:160px;">
+          <a href="Units for Sale.html" style="display:block;padding:10px 14px;">All Units for Sale</a>
+        </div>
+      </div>
+      <a href="About.html" class="active" style="background:#005e4a;color:#fff;">About Us</a>
+    </nav>
+
+<script>
+let dropdown = document.querySelector('.dropdown');
+let menu = document.querySelector('.dropdown-content');
+let timeout;
+
+dropdown.addEventListener('mouseenter', () => {
+  clearTimeout(timeout);
+  menu.style.display = 'block';
+});
+
+dropdown.addEventListener('mouseleave', () => {
+  timeout = setTimeout(() => {
+    menu.style.display = 'none';
+  }, 2000); // 2 seconds delay
+});
+</script>
+  </div>
+</header>
+
+<main>
+  <section class="hero" style="display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start;">
+
+    <div>
+      <div class="hero-kicker">About Us</div>
+      <h1 class="hero-title">About M&T Equipment Funding LLC</h1>
+      <p class="hero-sub">Welcome to M&T Equipment Funding LLC. We specialize in commercial truck and trailer financing while also offering access to reliable equipment across the country.</p>
+
+      <p class="hero-sub" style="margin-top:12px;">We finance over 50 dealerships and maintain nationwide inventory. Visit our virtual showroom to explore detailed information, photos, and contact options for every unit.</p>
+
+      <p class="hero-sub" style="margin-top:12px;">For inquiries, you may contact our Truck Sales Manager <strong>Rogelio Cortez (Roy)</strong> at <strong>Rcortez@M&TFunding.com</strong>, or reach out to our Financing Representative <strong>Margo Dereshevskaia</strong> at <strong>MDereshevkaia@MNTfunding.com</strong> for guidance through the financing process.</p>
+
+      <p class="hero-sub" style="margin-top:12px;">We work directly with dealerships, first‑time buyers, individuals, and businesses looking to grow. Our services offer:</p>
+      <ul class="hero-sub" style="margin:10px 0 0 20px;">
+        <li>A wide inventory of reliable commercial equipment</li>
+        <li>Fast, flexible financing options tailored to your operation</li>
+        <li>Tools and support to help you close more deals</li>
+        <li>All credit scores are welcome</li>
+      </ul>
+
+      <p class="hero-sub" style="margin-top:14px;"><strong>Buy, Finance, Grow!</strong></p>
+      <p class="hero-sub" style="margin-top:4px;"><strong>Let's DRIVE your business forward!</strong></p>
+    </div>
+
+    <div style="width:100%; height:100%; text-align:center;">
+      <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1350&q=80" 
+           alt="Financing Image" 
+           style="width:100%; height:100%; border-radius:14px; object-fit:cover;">
+    </div>
+
+  </section>
+
+  
+
+  <section class="card">
+    <h2 class="section-title">Our Mission</h2>
+    <p class="section-text">To help hardworking drivers and business owners access reliable, fair, and fast financing—so they can keep their operations moving, expand their fleets, and grow their businesses without unnecessary delays or complications.</p>
+
+    <p class="section-text">We understand that commercial trucking is the backbone of the economy. Our team works every day to make sure financing doesn’t slow you down.</p>
+  </section>
+
+  <section class="card">
+    <h2 class="section-title">What Makes Us Different</h2>
+    <div class="grid-2">
+      <div class="value-card">
+        <div class="value-title">✔ We work with very low credit scores</div>
+        <div class="value-text">We regularly review applications from clients with challenged or limited credit history. We look at the whole story of the deal, not only the score.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-title">✔ Constant support during the process</div>
+        <div class="value-text">From the first conversation until funding, you have a direct point of contact who explains every step and keeps you updated.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-title">✔ Asset‑focused decisions</div>
+        <div class="value-text">We focus on the quality of the truck or trailer, your experience, and how the unit will work for your business.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-title">✔ Clear, realistic expectations</div>
+        <div class="value-text">If we can help, we tell you exactly what is needed. If we can’t, we are upfront so you don’t lose time looking for answers.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 class="section-title">Our Team</h2>
+    <p class="section-text">Meet the people who keep everything moving.</p>
+
+    <div class="grid-2" style="gap:20px;">
+
+      <div class="value-card" style="text-align:center;">
+        <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Gil" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
+        <div class="value-title">Gil Maman</div>
+        <div class="value-text">Chief Executive Officer</div>
+      </div>
+
+      <div class="value-card" style="text-align:center;">
+        <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Shai" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
+        <div class="value-title">Shai Attas</div>
+        <div class="value-text">Director</div>
+      </div>
+
+      <div class="value-card" style="text-align:center;">
+        <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Mai" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
+        <div class="value-title">Mai Kruvi</div>
+        <div class="value-text">Executive Assistant</div>
+      </div>
+
+      <div class="value-card" style="text-align:center;">
+        <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Margo" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
+        <div class="value-title">Margo Dereshevskaia</div>
+        <div class="value-text">Financing</div>
+      </div>
+
+      <div class="value-card" style="text-align:center;">
+        <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Rogelio" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
+        <div class="value-title">Rogelio Cortez</div>
+        <div class="value-text">Sales</div>
+      </div>
+
+      <div class="value-card" style="text-align:center;">
+        <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Kavita" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
+        <div class="value-title">Kavita Gorbadham</div>
+        <div class="value-text">Titles</div>
+      </div>
+
+      <div class="value-card" style="text-align:center;">
+        <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Hector" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
+        <div class="value-title">Hector Matos</div>
+        <div class="value-text">Customer Service</div>
+      </div>
+
+      <div class="value-card" style="text-align:center;">
+        <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Juan" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
+        <div class="value-title">Juan Perez</div>
+        <div class="value-text">Inventory</div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer>
+    M&amp;T Equipment Funding LLC &middot; Commercial truck and trailer financing &middot; This page is for information only and does not represent a commitment to lend.
+  </footer>
+  <!-- FOOTER BANNER -->
+  <div style="width:100%; background:#003737; color:#ffffff; padding:14px 0; margin-top:40px; overflow:hidden; white-space:nowrap;">
+    <div style="display:inline-block; padding-left:100%; animation:marquee 18s linear infinite; font-size:14px;">
+      📧 Email: info@mtequipmentfunding.com &nbsp; | &nbsp; 🔗 Instagram: @MTequipmentfunding &nbsp; | &nbsp; 🔗 Facebook: M&T Equipment Funding LLC &nbsp; | &nbsp; © 2025 M&T Equipment Funding LLC — All Rights Reserved &nbsp; | &nbsp; Commercial Truck & Trailer Financing
+    </div>
+  </div>
+
+  <style>
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-100%); }
+    }
+  </style>
+</body>
+</html>

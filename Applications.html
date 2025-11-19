@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>M&T Equipment Funding LLC – Applications</title>
+  <link rel="icon" href="https://i.imgur.com/kopRNDu.png" type="image/png" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Arial,Helvetica,sans-serif;background:#f5f7f6;color:#111;line-height:1.4;}
+    a{text-decoration:none;color:inherit;}
+    header { background:#ffffff; box-shadow:0 2px 6px rgba(0,0,0,.08); position:sticky; top:0; z-index:10; }
+    .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:12px 20px; }
+    .logo{display:flex;align-items:center;gap:10px;}
+    .logo img { width:120px; height:auto; }
+    .logo-mark{width:120px;height:auto;border-radius:0;object-fit:contain;}
+    .logo-text{font-size:16px;font-weight:700;line-height:1.2; white-space:nowrap;}
+    .logo-sub{font-size:11px;font-weight:400;color:#555;}
+    .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
+    .nav-links a{padding:6px 10px;border-radius:999px; white-space:nowrap;}
+    .nav-links a:hover{background:rgba(0,94,74,.08);}
+    .nav-links .active{background:#005e4a;color:#fff;}
+    .btn-small {
+      border-radius:999px;
+      border:1px solid #005e4a;
+      padding:10px 22px;
+      font-size:14px;
+      font-weight:600;
+      color:#005e4a;
+      background:#fff;
+      cursor:pointer;
+    }
+    .btn-small:hover { background:#005e4a; color:#fff; }
+    .dropdown{position:relative;}
+    .dropdown-content{display:none;position:absolute;background:#ffffff;min-width:180px;box-shadow:0 2px 6px rgba(0,0,0,.15);border-radius:8px;overflow:hidden;z-index:100;}
+    .dropdown-content a{display:block;padding:10px 14px;font-size:14px;color:#003330;}
+    .dropdown-content a:hover{background:#f0f5f3;}
+    /* Disabled default hover */
+    main{max-width:1100px;margin:20px auto 40px;padding:0 20px 40px;}
+
+    /* TOP CARD */
+    .hero-app { background:#ffffff; border-radius:14px; padding:26px 24px 24px; box-shadow:0 4px 12px rgba(0,0,0,.04); border:1px solid #e3ece9; margin-bottom:24px; }
+    .hero-kicker { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#008060; margin-bottom:6px; }
+    .hero-title { font-size:26px; font-weight:800; margin-bottom:4px; color:#0b2520; }
+    .hero-sub { font-size:14px; color:#444; max-width:640px; }
+
+    /* DOWNLOAD AREA */
+    .download-area { display:flex; flex-direction:column; gap:12px; margin-top:18px; }
+    .download-box {
+      background:#ffffff;
+      border-radius:10px;
+      padding:14px 16px;
+      border:2px solid #005e4a;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      transition:background 0.2s ease, color 0.2s ease;
+      min-height:72px;
+    }
+    .download-box:hover { background:#005e4a; color:#fff; }
+    .download-box:hover * { color:#fff !important; }
+    .download-label { font-size:14px; font-weight:600; color:#003330; }
+    .download-meta { font-size:11px; color:#777; margin-top:2px; }
+    .download-btn { background:#005e4a; color:#fff; border:none; border-radius:999px; padding:8px 18px; font-size:12px; font-weight:600; cursor:pointer; }
+    .download-btn:hover { background:#008060; }
+
+    .green-box {
+      margin-top:18px;
+      background:#ffffff;
+      color:#005e4a;
+      padding:14px 16px;
+      border-radius:10px;
+      font-size:15px;
+      font-weight:700;
+      border:2px solid #005e4a;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      transition:background 0.2s ease, color 0.2s ease;
+      min-height:72px;
+    }
+    .green-box:hover { background:#005e4a; color:#fff; }
+    .green-box:hover * { color:#fff !important; }
+    .green-box-sub { font-size:11px; font-weight:400; color:#003330; opacity:0.75; }
+
+    /* STEPS */
+    .section-block { background:#ffffff; border-radius:14px; padding:22px 20px 20px; box-shadow:0 3px 10px rgba(0,0,0,.03); border:1px solid #e3ece9; margin-top:24px; }
+    .section-title { font-size:18px; font-weight:700; color:#0b2520; }
+    .section-sub { font-size:12px; color:#555; }
+
+    .steps-grid { display:flex; flex-wrap:wrap; gap:14px; margin-top:14px; }
+    .step-card { flex:1 1 180px; background:#f7fbfa; border-radius:12px; padding:14px; border:1px solid #d3e8e1; display:flex; gap:10px; align-items:flex-start; }
+    .step-number { width:28px; height:28px; border-radius:50%; background:#005e4a; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; }
+    .step-body { font-size:13px; color:#333; }
+    .step-body b { display:block; margin-bottom:3px; }
+
+    /* REQUIREMENTS & UPLOAD */
+    .requirements-row { display:flex; gap:36px; align-items:flex-start; margin-top:16px; }
+    .checklist { list-style:none; padding:0; margin:0; font-size:13px; color:#333; }
+    .checklist li { display:flex; gap:8px; align-items:flex-start; margin-bottom:8px; }
+    .circle-check {
+      appearance:none;
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      border:2px solid #005e4a;
+      cursor:pointer;
+      position:relative;
+      margin-top:2px;
+      flex-shrink:0;
+    }
+    .circle-check:checked { background:#005e4a; }
+    .circle-check:checked::after { content:""; position:absolute; inset:4px; border-radius:50%; background:#fff; }
+
+    .upload-card { flex:1; max-width:360px; }
+    .upload-box { border-radius:12px; border:2px dashed rgba(0,94,74,.5); background:#f7fbfa; padding:16px 18px; display:flex; gap:12px; align-items:center; }
+    .upload-icon { width:34px; height:34px; border-radius:50%; background:#005e4a; color:#fff; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+    .upload-main { font-size:14px; font-weight:700; color:#0b2520; }
+    .upload-sub { font-size:12px; color:#555; }
+
+    /* CONTACT & FAQ */
+    .lower-grid { display:grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap:24px; margin-top:26px; }
+
+    .contact-card { border-radius:14px; background:#003737; color:#fff; padding:20px; display:flex; justify-content:space-between; gap:24px; align-items:center; }
+    .contact-kicker { font-size:11px; text-transform:uppercase; opacity:.8; margin-bottom:4px; }
+    .contact-name { font-size:24px; font-weight:700; margin-bottom:6px; }
+    .contact-role { font-size:16px; margin-bottom:10px; }
+    .contact-line { font-size:15px; margin-bottom:4px; }
+    .contact-label { font-weight:600; color:#8ae6c1; }
+    .contact-note { font-size:14px; opacity:.9; margin-top:12px; }
+
+    .faq { border-radius:14px; background:#ffffff; padding:18px; box-shadow:0 2px 8px rgba(0,0,0,.04); border:1px solid #e3ece9; }
+    .faq-item + .faq-item { margin-top:10px; padding-top:10px; border-top:1px solid rgba(0,0,0,.06); }
+    .faq-item h3 { font-size:13px; margin-bottom:3px; color:#0b2520; }
+    .faq-item p { font-size:12px; color:#555; }
+
+    /* FOOTER */
+    .footer-marquee {
+      width:100%;
+      background:#003737;
+      color:#ffffff;
+      padding:14px 0;
+      margin-top:40px;
+      overflow:hidden;
+      white-space:nowrap;
+    }
+    .footer-scroll {
+      display:inline-block;
+      padding-left:100%;
+      animation:marquee 18s linear infinite;
+      font-size:14px;
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    @media (max-width:900px) {
+      main { padding:0 14px 28px; }
+      .requirements-row { flex-direction:column; }
+      .upload-card { max-width:none; }
+      .lower-grid { grid-template-columns:1fr; }
+      .contact-card { flex-direction:column; align-items:flex-start; }
+    }
+  .inventory-link{display:inline-flex;align-items:center;gap:4px;}
+.inventory-link::after{content:"▾";font-size:10px;margin-top:1px;}
+</style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="logo">
+        <img src="Media/Logo White - Copy.png" alt="M&T Equipment Funding Logo" />
+        <div>
+          <div class="logo-text">M&T Equipment Funding LLC</div>
+          <div class="logo-sub">Commercial truck &amp; trailer financing</div>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="Applications.html" class="active">Applications</a>
+        <a href="Services.html">Services</a>
+        <div class="dropdown">
+          <a href="Inventory.html" class="inventory-link">Inventory</a>
+          <div class="dropdown-content">
+            <a href="Units for Sale.html">All units for sale</a>
+          </div>
+        </div>
+        <a href="About us.html">About Us</a>
+        
+        <button class="btn-small" type="button">Talk to Representative</button>
+      </nav>
+<script>
+let dropdown = document.querySelector('.dropdown');
+let menu = document.querySelector('.dropdown-content');
+let hideTimer;
+dropdown.addEventListener('mouseenter', ()=>{
+  clearTimeout(hideTimer);
+  menu.style.display='block';
+});
+dropdown.addEventListener('mouseleave', ()=>{
+  hideTimer=setTimeout(()=>{
+    menu.style.display='none';
+  },2000);
+});
+</script>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-app">
+      <div class="hero-kicker">Financing application</div>
+      <h1 class="hero-title">Apply for Financing</h1>
+      <p class="hero-sub">Download the forms below, complete them, and submit your package to your M&T representative. Make sure all fields are filled out clearly so we can review your request as quickly as possible.</p>
+
+      <div class="download-area">
+        <div class="download-box">
+          <div>
+            <div class="download-label">Credit Application (PDF)</div>
+            <div class="download-meta">Required for all applications</div>
+          </div>
+          <button class="download-btn" type="button">Download</button>
+        </div>
+        <div class="download-box">
+          <div>
+            <div class="download-label">Bank Statements Form</div>
+            <div class="download-meta">Attach last 3 months of statements</div>
+          </div>
+          <button class="download-btn" type="button">Download</button>
+        </div>
+        <div class="download-box">
+          <div>
+            <div class="download-label">Truck Purchase Agreement</div>
+            <div class="download-meta">Dealer purchase order or bill of sale</div>
+          </div>
+          <button class="download-btn" type="button">Download</button>
+        </div>
+      </div>
+
+      <div class="green-box">
+        <div style="display:flex; flex-direction:column;">
+          <span>Required Documentation</span>
+          <span class="green-box-sub">All documents required to process your application</span>
+        </div>
+        <button class="download-btn" type="button">Download</button>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <h2 class="section-title">How to Apply</h2>
+      <p class="section-sub">Follow these steps to submit a complete package and avoid delays in approval.</p>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-body">
+            <b>Download and complete the application</b>
+            Fill out the credit application with accurate business and personal information.
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-body">
+            <b>Gather your supporting documents</b>
+            Include bank statements, purchase order, proof of insurance, and identification.
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-body">
+            <b>Submit your package</b>
+            Email your full package to your M&T representative for review.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block" style="margin-top:22px;">
+      <h2 class="section-title">Requirements &amp; Upload</h2>
+      <p class="section-sub">All required items and your upload area in one place.</p>
+      <div class="requirements-row">
+        <ul class="checklist" style="flex:1;">
+          <li><input type="checkbox" class="circle-check" /> <div>Completed and signed credit application.</div></li>
+          <li><input type="checkbox" class="circle-check" /> <div>Last 3 months of business or personal bank statements.</div></li>
+          <li><input type="checkbox" class="circle-check" /> <div>Dealer purchase order or bill of sale for the truck/trailer.</div></li>
+          <li><input type="checkbox" class="circle-check" /> <div>Copy of driver&apos;s license (and CDL if applicable).</div></li>
+          <li><input type="checkbox" class="circle-check" /> <div>Proof of insurance or agent contact (if already available).</div></li>
+          <li><input type="checkbox" class="circle-check" /> <div>Proof of legal status (Green Card, Work Permit, or Citizenship).</div></li>
+        </ul>
+        <div class="upload-card">
+          <h3 class="section-title" style="font-size:16px; margin-bottom:8px;">Upload Your Documents</h3>
+          <div class="upload-box">
+            <div class="upload-icon">⬆</div>
+            <div>
+              <div class="upload-main">Upload package</div>
+              <div class="upload-sub">In production, this area would allow you to securely upload your signed application and documents.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="lower-grid">
+      <div class="contact-card">
+        <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+          <div class="contact-kicker">Your representative</div>
+          <div class="contact-name">Margo Dereshevskaia</div>
+          <div class="contact-role">Sales Representative – M&amp;T Equipment Funding LLC</div>
+          <div class="contact-line"><span class="contact-label">Phone:</span> (000) 000-0000</div>
+          <div class="contact-line"><span class="contact-label">Email:</span> margo@example.com</div>
+          <div class="contact-note">Send your completed application and documents directly to your representative for the fastest review.</div>
+        </div>
+        <img src="https://tse3.mm.bing.net/th/id/OIP.tHO0p0sTo0bgEiOtoVZLEwHaHa?cb=ucfimg2ucfimg=1&amp;rs=1&amp;pid=ImgDetMain&amp;o=7&amp;rm=3" alt="Margo Photo" style="width:260px; height:260px; border-radius:14px; object-fit:cover; flex-shrink:0;" />
+      </div>
+
+      <div class="faq">
+        <h2 class="section-title" style="font-size:16px;">Application FAQ</h2>
+        <div class="faq-item">
+          <h3>How long does approval take?</h3>
+          <p>Most completed applications are reviewed within 24–48 business hours once all documents are received.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Can I apply if I&apos;m a new business?</h3>
+          <p>Yes. Additional information may be requested for startups, such as personal income or co-applicants.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Do you finance used trucks?</h3>
+          <p>Yes — we finance <b>used commercial trucks</b>, and we also maintain our own <b>inventory of trucks for sale</b>. Your representative can show you available units or review any truck you want to finance.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="footer-marquee">
+    <div class="footer-scroll">
+      📞 Phone: (000) 000-0000 &nbsp; | &nbsp; 📧 Email: info@mtequipmentfunding.com &nbsp; | &nbsp; 🔗 Instagram: @MTequipmentfunding &nbsp; | &nbsp; 🔗 Facebook: M&T Equipment Funding LLC &nbsp; | &nbsp; © 2025 M&T Equipment Funding LLC — All Rights Reserved &nbsp; | &nbsp; Commercial Truck &amp; Trailer Financing
+    </div>
+  </div>
+</body>
+</html>
