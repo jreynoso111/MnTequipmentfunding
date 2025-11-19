@@ -201,6 +201,60 @@
       line-height: 1.6;
     }
 
+    /* Cross-page quick links */
+    .page-links {
+      background:#ffffff;
+      border-radius:12px;
+      padding:24px;
+      margin-bottom:24px;
+      box-shadow:0 4px 14px rgba(0,0,0,0.05);
+      border:1px solid #dfe9e5;
+    }
+    .page-links h2 {
+      margin:0 0 6px;
+      font-size:22px;
+      color:#004d4d;
+    }
+    .page-links p {
+      margin:0;
+      font-size:14px;
+      color:#335b52;
+    }
+    .page-links-grid {
+      margin-top:18px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+      gap:14px;
+    }
+    .page-link-card {
+      border:1px solid #cfe1db;
+      border-radius:12px;
+      padding:14px 16px;
+      background:#f7fbfa;
+      text-decoration:none;
+      color:#003c36;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      transition:transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+    .page-link-card strong {
+      font-size:15px;
+    }
+    .page-link-card span {
+      font-size:12px;
+      color:#4e6a63;
+    }
+    .page-link-card:hover {
+      transform:translateY(-3px);
+      background:#005e4a;
+      color:#ffffff;
+      border-color:#005e4a;
+    }
+    .page-link-card:hover span {
+      color:#dff6ef;
+    }
+
     .section-highlight {
       background: #ffffff;
       border-radius: 10px;
@@ -399,12 +453,11 @@
     <img src="Media/LogoTransparent.png" alt="M&T Logo" style="margin-left:150px;" />
     <nav>
       <ul class="main-nav" style="display:flex; list-style:none; gap:28px; margin:0; padding:0; font-size:16px; font-weight:bold;">
-        <li><a href="Pages/Home.html" class="nav-active" style="color:white; text-decoration:none;">Home</a></li>
-        <li><a href="Pages/Applications.html" style="color:white; text-decoration:none;">Applications</a></li>
-        <li><a href="Pages/services.html" style="color:white; text-decoration:none;">Services</a></li>
-        <li><a href="Pages/SecPages/Units for Sale.html" style="color:white; text-decoration:none;">Inventory</a></li>
-        <li><a href="Pages/About us.html" style="color:white; text-decoration:none;">About Us</a></li>
-        
+        <li><a href="index.html" class="nav-active" style="color:white; text-decoration:none;">Home</a></li>
+        <li><a href="Applications.html" style="color:white; text-decoration:none;">Applications</a></li>
+        <li><a href="Services.html" style="color:white; text-decoration:none;">Services</a></li>
+        <li><a href="Inventory.html" style="color:white; text-decoration:none;">Inventory</a></li>
+        <li><a href="About us.html" style="color:white; text-decoration:none;">About Us</a></li>
       </ul>
     </nav>
   </div>
@@ -438,7 +491,7 @@
     <div class="quick-flex">
       <div class="quick-text">
         <h2>Quick and Easy Financing</h2>
-        <p>M&T Equipment Funding LLC focuses on practical, fast decisions so you can get back on the road. On your first call you will understand where you stand and what’s possible.</p>
+        <p>M&amp;T Equipment Funding LLC focuses on practical, fast decisions so you can get back on the road. On your first call you will understand where you stand and what’s possible.</p>
         <ul>
           <li>Pre-qualification in as little as one business day.</li>
           <li>Clear payment estimates and terms before you commit.</li>
@@ -517,6 +570,35 @@
     </div>
   </section>
 
+
+  <section class="page-links" aria-label="Quick links to other pages">
+    <div>
+      <h2>Need something else?</h2>
+      <p>Jump directly to the sections that help you apply, compare services, or browse inventory.</p>
+    </div>
+    <div class="page-links-grid">
+      <a class="page-link-card" href="index.html">
+        <strong>Home</strong>
+        <span>Return to the main overview anytime.</span>
+      </a>
+      <a class="page-link-card" href="Applications.html">
+        <strong>Applications</strong>
+        <span>Download and submit the financing packet.</span>
+      </a>
+      <a class="page-link-card" href="Services.html">
+        <strong>Services</strong>
+        <span>See how we support you from quote to funding.</span>
+      </a>
+      <a class="page-link-card" href="Inventory.html">
+        <strong>Inventory</strong>
+        <span>Browse representative trucks and trailers.</span>
+      </a>
+      <a class="page-link-card" href="About us.html">
+        <strong>About Us</strong>
+        <span>Meet the team powering M&amp;T Equipment Funding.</span>
+      </a>
+    </div>
+  </section>
 
   <section id="contact" class="section" style="padding: 40px 24px; background:#e8f5f2; border:1px solid #c8e3dd;">
     <div class="contact-card" style="text-align:center;">
