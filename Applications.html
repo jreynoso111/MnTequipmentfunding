@@ -5,17 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>M&T Equipment Funding LLC – Applications</title>
   <link rel="icon" href="https://i.imgur.com/kopRNDu.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:Arial,Helvetica,sans-serif;background:#f5f7f6;color:#111;line-height:1.4;}
+    :root {
+      --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    html { font-family: var(--font-main); }
+    *, *::before, *::after { box-sizing:border-box; font-family: inherit; margin:0; padding:0; }
+    body{font-family:inherit;background:#f5f7f6;color:#0b2520;line-height:1.5;}
     a{text-decoration:none;color:inherit;}
+    img{max-width:100%;height:auto;display:block;}
     header { background:#ffffff; box-shadow:0 2px 6px rgba(0,0,0,.08); position:sticky; top:0; z-index:10; }
     .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:12px 20px; }
     .logo{display:flex;align-items:center;gap:10px;}
     .logo img { width:120px; height:auto; }
     .logo-mark{width:120px;height:auto;border-radius:0;object-fit:contain;}
-    .logo-text{font-size:16px;font-weight:700;line-height:1.2; white-space:nowrap;}
-    .logo-sub{font-size:11px;font-weight:400;color:#555;}
     .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
     .nav-links a{padding:6px 10px;border-radius:999px; white-space:nowrap;}
     .nav-links a:hover{background:rgba(0,94,74,.08);}
@@ -37,6 +45,12 @@
     .dropdown-content a:hover{background:#f0f5f3;}
     /* Disabled default hover */
     main{max-width:1100px;margin:20px auto 40px;padding:0 20px 40px;}
+
+    @media (max-width: 720px) {
+      .nav { flex-direction:column; align-items:flex-start; gap:10px; }
+      .nav-links { flex-wrap:wrap; width:100%; }
+      .btn-small { width:100%; text-align:center; }
+    }
 
     /* TOP CARD */
     .hero-app { background:#ffffff; border-radius:14px; padding:26px 24px 24px; box-shadow:0 4px 12px rgba(0,0,0,.04); border:1px solid #e3ece9; margin-bottom:24px; }
@@ -61,8 +75,10 @@
     .download-box:hover * { color:#fff !important; }
     .download-label { font-size:14px; font-weight:600; color:#003330; }
     .download-meta { font-size:11px; color:#777; margin-top:2px; }
-    .download-btn { background:#005e4a; color:#fff; border:none; border-radius:999px; padding:8px 18px; font-size:12px; font-weight:600; cursor:pointer; }
-    .download-btn:hover { background:#008060; }
+    .download-btn { background:#005e4a; color:#fff; border:none; border-radius:999px; padding:8px 18px; font-size:12px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
+    .download-btn:hover { background:#008060; color:#fff; }
+    .download-btn.secondary { background:#ffffff; color:#005e4a; border:2px solid #005e4a; }
+    .download-btn.secondary:hover { background:#005e4a; color:#fff; }
 
     .green-box {
       margin-top:18px;
@@ -117,6 +133,9 @@
     .upload-icon { width:34px; height:34px; border-radius:50%; background:#005e4a; color:#fff; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
     .upload-main { font-size:14px; font-weight:700; color:#0b2520; }
     .upload-sub { font-size:12px; color:#555; }
+    .upload-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+    .upload-note { font-size:12px; color:#333; margin-top:10px; }
+    .upload-note a { color:#005e4a; font-weight:700; }
 
     /* CONTACT & FAQ */
     .lower-grid { display:grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap:24px; margin-top:26px; }
@@ -172,10 +191,6 @@
     <div class="nav">
       <div class="logo">
         <img src="Media/Logo White - Copy.png" alt="M&T Equipment Funding Logo" />
-        <div>
-          <div class="logo-text">M&T Equipment Funding LLC</div>
-          <div class="logo-sub">Commercial truck &amp; trailer financing</div>
-        </div>
       </div>
       <nav class="nav-links">
         <a href="index.html">Home</a>
@@ -189,7 +204,7 @@
         </div>
         <a href="About us.html">About Us</a>
         
-        <button class="btn-small" type="button">Talk to Representative</button>
+        <button class="btn-small" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
       </nav>
 <script>
 let dropdown = document.querySelector('.dropdown');
@@ -220,31 +235,24 @@ dropdown.addEventListener('mouseleave', ()=>{
             <div class="download-label">Credit Application (PDF)</div>
             <div class="download-meta">Required for all applications</div>
           </div>
-          <button class="download-btn" type="button">Download</button>
+          <a class="download-btn" href="Media/Documents/credit_application_form.pdf" download>Download</a>
         </div>
         <div class="download-box">
           <div>
             <div class="download-label">Bank Statements Form</div>
             <div class="download-meta">Attach last 3 months of statements</div>
           </div>
-          <button class="download-btn" type="button">Download</button>
+          <a class="download-btn" href="Media/Documents/bank_statement_form.pdf" download>Download</a>
         </div>
         <div class="download-box">
           <div>
             <div class="download-label">Truck Purchase Agreement</div>
             <div class="download-meta">Dealer purchase order or bill of sale</div>
           </div>
-          <button class="download-btn" type="button">Download</button>
+          <a class="download-btn" href="Media/Documents/truck_purchase_agreement.pdf" download>Download</a>
         </div>
       </div>
 
-      <div class="green-box">
-        <div style="display:flex; flex-direction:column;">
-          <span>Required Documentation</span>
-          <span class="green-box-sub">All documents required to process your application</span>
-        </div>
-        <button class="download-btn" type="button">Download</button>
-      </div>
     </section>
 
     <section class="section-block">
@@ -280,9 +288,9 @@ dropdown.addEventListener('mouseleave', ()=>{
       <p class="section-sub">All required items and your upload area in one place.</p>
       <div class="requirements-row">
         <ul class="checklist" style="flex:1;">
-          <li><input type="checkbox" class="circle-check" /> <div>Completed and signed credit application.</div></li>
-          <li><input type="checkbox" class="circle-check" /> <div>Last 3 months of business or personal bank statements.</div></li>
-          <li><input type="checkbox" class="circle-check" /> <div>Dealer purchase order or bill of sale for the truck/trailer.</div></li>
+          <li><input type="checkbox" class="circle-check" /> <div>Credit Application (completed and signed).</div></li>
+          <li><input type="checkbox" class="circle-check" /> <div>Bank Statements Form (last 3 months of business or personal statements).</div></li>
+          <li><input type="checkbox" class="circle-check" /> <div>Truck Purchase Agreement (dealer purchase order or bill of sale for the truck/trailer).</div></li>
           <li><input type="checkbox" class="circle-check" /> <div>Copy of driver&apos;s license (and CDL if applicable).</div></li>
           <li><input type="checkbox" class="circle-check" /> <div>Proof of insurance or agent contact (if already available).</div></li>
           <li><input type="checkbox" class="circle-check" /> <div>Proof of legal status (Green Card, Work Permit, or Citizenship).</div></li>
@@ -293,9 +301,10 @@ dropdown.addEventListener('mouseleave', ()=>{
             <div class="upload-icon">⬆</div>
             <div>
               <div class="upload-main">Upload package</div>
-              <div class="upload-sub">In production, this area would allow you to securely upload your signed application and documents.</div>
+              <div class="upload-sub">Email your completed application files directly to your representative.</div>
             </div>
           </div>
+          <div class="upload-note" style="margin-top:10px;">Send your files to <a href="mailto:MDereshevkaia@mntfunding.com" style="color:#005e4a;font-weight:700;">MDereshevkaia@mntfunding.com</a> once everything in the list is ready.</div>
         </div>
       </div>
     </section>
@@ -306,8 +315,8 @@ dropdown.addEventListener('mouseleave', ()=>{
           <div class="contact-kicker">Your representative</div>
           <div class="contact-name">Margo Dereshevskaia</div>
           <div class="contact-role">Sales Representative – M&amp;T Equipment Funding LLC</div>
-          <div class="contact-line"><span class="contact-label">Phone:</span> (000) 000-0000</div>
-          <div class="contact-line"><span class="contact-label">Email:</span> margo@example.com</div>
+          <div class="contact-line"><span class="contact-label">Phone:</span> 201-201-3551</div>
+          <div class="contact-line"><span class="contact-label">Email:</span> <a href="mailto:MDereshevkaia@mntfunding.com" style="color:inherit;">MDereshevkaia@mntfunding.com</a></div>
           <div class="contact-note">Send your completed application and documents directly to your representative for the fastest review.</div>
         </div>
         <img src="https://tse3.mm.bing.net/th/id/OIP.tHO0p0sTo0bgEiOtoVZLEwHaHa?cb=ucfimg2ucfimg=1&amp;rs=1&amp;pid=ImgDetMain&amp;o=7&amp;rm=3" alt="Margo Photo" style="width:260px; height:260px; border-radius:14px; object-fit:cover; flex-shrink:0;" />
@@ -317,7 +326,7 @@ dropdown.addEventListener('mouseleave', ()=>{
         <h2 class="section-title" style="font-size:16px;">Application FAQ</h2>
         <div class="faq-item">
           <h3>How long does approval take?</h3>
-          <p>Most completed applications are reviewed within 24–48 business hours once all documents are received.</p>
+          <p>Most completed applications are reviewed within 24-48H once all documents are received.</p>
         </div>
         <div class="faq-item">
           <h3>Can I apply if I&apos;m a new business?</h3>
@@ -333,7 +342,7 @@ dropdown.addEventListener('mouseleave', ()=>{
 
   <div class="footer-marquee">
     <div class="footer-scroll">
-      📞 Phone: (000) 000-0000 &nbsp; | &nbsp; 📧 Email: info@mtequipmentfunding.com &nbsp; | &nbsp; 🔗 Instagram: @MTequipmentfunding &nbsp; | &nbsp; 🔗 Facebook: M&T Equipment Funding LLC &nbsp; | &nbsp; © 2025 M&T Equipment Funding LLC — All Rights Reserved &nbsp; | &nbsp; Commercial Truck &amp; Trailer Financing
+      📞 Phone: 201-201-3551 &nbsp; | &nbsp; 📧 Email: info@mntfunding.com &nbsp; | &nbsp; 🔗 Instagram: @MTequipmentfunding &nbsp; | &nbsp; 🔗 Facebook: M&T Equipment Funding LLC &nbsp; | &nbsp; © 2025 M&T Equipment Funding LLC — All Rights Reserved &nbsp; | &nbsp; Commercial Truck &amp; Trailer Financing
     </div>
   </div>
 </body>

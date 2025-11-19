@@ -5,10 +5,20 @@
   <title>M&T Equipment Funding LLC – Inventory</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="https://i.imgur.com/kopRNDu.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    * { box-sizing:border-box; margin:0; padding:0; }
-    body { font-family:Arial,Helvetica,sans-serif; background:#f5f7f6; color:#111; line-height:1.4; }
+    :root {
+      --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    html { font-family: var(--font-main); }
+    *, *::before, *::after { box-sizing:border-box; font-family: inherit; }
+    body { margin:0; font-family:inherit; background:#f5f7f6; color:#0b2520; line-height:1.5; }
     a { text-decoration:none; color:inherit; }
+    img { max-width:100%; height:auto; display:block; }
 
     /* HEADER */
     header { background:#ffffff; box-shadow:0 2px 6px rgba(0,0,0,.08); position:sticky; top:0; z-index:10; }
@@ -16,8 +26,6 @@
     .logo{display:flex;align-items:center;gap:10px;}
     .logo img { width:120px; height:auto; }
     .logo-mark{width:120px;height:auto;border-radius:0;object-fit:contain;}
-    .logo-text{font-size:16px;font-weight:700;line-height:1.2;}
-    .logo-sub{font-size:11px;font-weight:400;color:#555;}
     .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
     .nav-links a{padding:6px 10px;border-radius:999px;}
     .nav-links a:hover{background:rgba(0,94,74,.08);}
@@ -33,6 +41,12 @@
       cursor:pointer;
     }
     .btn-small:hover { background:#005e4a; color:#fff; }
+
+    @media (max-width: 720px) {
+      .nav { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .nav-links { flex-wrap: wrap; width: 100%; }
+      .btn-small { width: 100%; text-align: center; }
+    }
 
     main { max-width:1100px; margin:24px auto 60px; padding:0 20px 40px; }
 
@@ -121,7 +135,7 @@
       max-width:360px;
       text-align:right;
     }
-    .see-all-link {
+    .see-all-link, .tool-link {
       border-radius:999px;
       border:1px solid #cfe7e2;
       padding:6px 14px;
@@ -132,7 +146,7 @@
       cursor:pointer;
       white-space:nowrap;
     }
-    .see-all-link:hover {
+    .see-all-link:hover, .tool-link:hover {
       background:#005e4a;
       color:#fff;
       border-color:#005e4a;
@@ -349,6 +363,21 @@
     }
     .cta-btn:hover { background:#f0faf7; }
 
+    .settings-access {
+      margin:16px auto 6px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      align-items:center;
+      text-align:center;
+    }
+
+    .settings-note {
+      font-size:12px;
+      color:#444;
+      max-width:520px;
+    }
+
     footer {
       border-top:1px solid #dde6e2;
       padding:10px 20px 22px;
@@ -413,9 +442,114 @@
     .dropdown-menu a:hover{background:#f0faf7;}
     .dropdown:hover .dropdown-menu{display:block; opacity:1; pointer-events:auto;}
     .dropdown.delay-hide .dropdown-menu{display:block; opacity:1; pointer-events:auto;}
+
+    /* TOOL MODAL */
+    .modal-backdrop {
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.38);
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+      padding:12px;
+    }
+    .modal {
+      background:#ffffff;
+      border-radius:12px;
+      width:100%;
+      max-width:360px;
+      padding:18px 16px 16px;
+      box-shadow:0 10px 30px rgba(0,0,0,.18);
+      border:1px solid #e3ece9;
+      font-size:13px;
+    }
+    .modal h3 { font-size:16px; font-weight:800; color:#0b2520; margin-bottom:8px; }
+    .modal p { color:#444; font-size:12px; margin-bottom:10px; }
+    .modal label { display:block; font-weight:600; margin-bottom:4px; }
+    .modal input { width:100%; padding:8px 10px; border-radius:8px; border:1px solid #cfdad7; font-size:13px; margin-bottom:10px; }
+    .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:4px; }
+    .modal-actions button { border-radius:999px; padding:8px 14px; font-weight:700; border:1px solid #005e4a; cursor:pointer; }
+    .modal-actions .primary { background:#005e4a; color:#fff; }
+    .modal-actions .ghost { background:#ffffff; color:#005e4a; }
   </style>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      const DEFAULT_ACCOUNTS = [
+        { user: 'admin', pass: 'adminmnt', role: 'admin' },
+        { user: 'rcortez', pass: 'cortezmnt', role: 'manager' }
+      ];
+
+      function loadAccounts() {
+        const saved = localStorage.getItem('inventoryAccounts');
+        let accounts = [];
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) accounts = parsed;
+          } catch (e) {
+            console.warn('Could not parse saved accounts');
+          }
+        }
+        DEFAULT_ACCOUNTS.forEach(base => {
+          const idx = accounts.findIndex(a => a.user === base.user);
+          if (idx >= 0) {
+            accounts[idx] = { ...accounts[idx], ...base };
+          } else {
+            accounts.push({ ...base });
+          }
+        });
+        localStorage.setItem('inventoryAccounts', JSON.stringify(accounts));
+        return accounts;
+      }
+
+      let accounts = loadAccounts();
+
+      const modal = document.getElementById('toolModal');
+      const toolBtn = document.getElementById('toolButton');
+      const cancelBtn = document.getElementById('toolCancel');
+      const confirmBtn = document.getElementById('toolConfirm');
+      const userInput = document.getElementById('toolUser');
+      const passInput = document.getElementById('toolPass');
+
+      function openModal() {
+        if (modal) {
+          modal.style.display = 'flex';
+          userInput.focus();
+        }
+      }
+
+      function closeModal() {
+        if (modal) {
+          modal.style.display = 'none';
+          userInput.value = '';
+          passInput.value = '';
+        }
+      }
+
+      function handleLogin() {
+        const user = userInput.value.trim();
+        const pass = passInput.value.trim();
+        const account = accounts.find(a => a.user === user && a.pass === pass);
+        if (account) {
+          localStorage.setItem('inventoryAdminAuth', 'true');
+          localStorage.setItem('inventoryAuthUser', account.user);
+          localStorage.setItem('inventoryAuthRole', account.role);
+          window.location.href = 'control-panel.html';
+        } else {
+          alert('Invalid username or password.');
+        }
+      }
+
+      if (toolBtn) toolBtn.addEventListener('click', openModal);
+      if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+      if (confirmBtn) confirmBtn.addEventListener('click', handleLogin);
+      [userInput, passInput].forEach(input => input && input.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+          handleLogin();
+        }
+      }));
+
       // Dropdown delayed hide
       const dropdown = document.querySelector('.dropdown');
       let hideTimeout;
@@ -530,7 +664,7 @@
               'Thank you.'
             ];
             const body = encodeURIComponent(bodyLines.join('\n'));
-            const mailto = `mailto:RCortez@MntFunding.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+            const mailto = `mailto:RCortez@mntfunding.com?subject=${encodeURIComponent(subject)}&body=${body}`;
             btn.addEventListener('click', () => {
               window.location.href = mailto;
             });
@@ -557,10 +691,6 @@
     <div class="nav">
       <div class="logo">
         <img class="logo-mark" src="Media/Logo White - Copy.png" alt="M&T Equipment Funding Logo" />
-        <div>
-          <div class="logo-text">M&T Equipment Funding LLC</div>
-          <div class="logo-sub">Commercial truck &amp; trailer financing</div>
-        </div>
       </div>
       <nav class="nav-links">
         <a href="index.html">Home</a>
@@ -573,7 +703,7 @@
           </div>
         </div>
         <a href="About us.html">About Us</a>
-        <button class="btn-small" type="button" onclick="window.location.href='mailto:RCortez@MntFunding.com?subject=Inventory%20Inquiry'">Talk to Representative</button>
+        <button class="btn-small" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
       </nav>
     </div>
   </header>
@@ -644,8 +774,8 @@
           <div class="rep-label">YOUR REPRESENTATIVE</div>
           <h2 class="rep-name">Rogelio Cortez</h2>
           <div class="rep-role">Sales Representative — M&amp;T Equipment Funding LLC</div>
-          <p class="rep-line"><strong>Phone:</strong> (000) 000-0000</p>
-          <p class="rep-line"><strong>Email:</strong> RCortez@MntFunding.com</p>
+      <p class="rep-line"><strong>Phone:</strong> 201-201-3551</p>
+      <p class="rep-line"><strong>Email:</strong> RCortez@mntfunding.com</p>
           <p class="rep-note">Send any inventory questions, truck listings, or spec sheets directly to Rogelio for a quick review.</p>
         </div>
         <div class="rep-img-wrap">
@@ -677,9 +807,30 @@
           Share a link, spec sheet, or VIN and we&apos;ll let you know if it fits our programs before you spend money on an inspection or travel.
         </div>
       </div>
-      <button class="cta-btn" type="button" onclick="window.location.href='mailto:RCortez@MntFunding.com?subject=Inventory%20Inquiry'">Talk to Representative</button>
+      <button class="cta-btn" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
     </section>
+
+    <div class="settings-access">
+      <button class="tool-link" type="button" id="toolButton">Settings</button>
+      <div class="settings-note">Restricted access — sign in to manage or update the listings shown on this site.</div>
+    </div>
   </main>
+
+  <div class="modal-backdrop" id="toolModal">
+    <div class="modal">
+      <h3>Admin Access Required</h3>
+      <p>Sign in with <strong>admin/adminmnt</strong> (admin) or <strong>rcortez/cortezmnt</strong> (manager) to edit vehicle listings.</p>
+      <label for="toolUser">Username</label>
+      <input id="toolUser" name="toolUser" type="text" placeholder="Enter username" autocomplete="username" />
+      <label for="toolPass">Password</label>
+      <input id="toolPass" name="toolPass" type="password" placeholder="Enter password" autocomplete="current-password" />
+      <div class="modal-actions">
+        <button class="ghost" type="button" id="toolCancel">Cancel</button>
+        <button class="primary" type="button" id="toolConfirm">Continue</button>
+      </div>
+      <p style="margin-top:8px;color:#666;font-size:11px;">Tip: Save your selection to stay signed in while updating listings.</p>
+    </div>
+  </div>
 
   <footer>
     <div>&copy; 2025 M&amp;T Equipment Funding LLC &mdash; Commercial Truck &amp; Trailer Financing</div>
@@ -688,7 +839,7 @@
 
   <div class="footer-banner">
     <div class="footer-banner-inner">
-      📞 Phone: (000) 000&ndash;0000 &nbsp; | &nbsp; 📧 Email: info@mtequipmentfunding.com &nbsp; | &nbsp; 🔗 Instagram: @MTequipmentfunding &nbsp; | &nbsp; 🔗 Facebook: M&amp;T Equipment Funding LLC &nbsp; | &nbsp; &copy; 2025 M&amp;T Equipment Funding LLC &mdash; All Rights Reserved &nbsp; | &nbsp; Commercial Truck &amp; Trailer Financing
+      📞 Phone: 201-201-3551 &nbsp; | &nbsp; 📧 Email: info@mntfunding.com &nbsp; | &nbsp; 🔗 Instagram: @MTequipmentfunding &nbsp; | &nbsp; 🔗 Facebook: M&amp;T Equipment Funding LLC &nbsp; | &nbsp; &copy; 2025 M&amp;T Equipment Funding LLC &mdash; All Rights Reserved &nbsp; | &nbsp; Commercial Truck &amp; Trailer Financing
     </div>
   </div>
 </body>
