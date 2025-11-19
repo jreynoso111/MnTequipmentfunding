@@ -7,7 +7,7 @@
   <link rel="icon" href="https://i.imgur.com/kopRNDu.png" type="image/png" />
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:Arial,Helvetica,sans-serif;background:#f5f7f6;color:#111;line-height:1.4;}
+    body{font-family:Arial,Helvetica,sans-serif;background:#f5f7f6;color:#111;line-height:1.55;}
     a{text-decoration:none;color:inherit;}
     header { background:#ffffff; box-shadow:0 2px 6px rgba(0,0,0,.08); position:sticky; top:0; z-index:10; }
     .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:12px 20px; }
@@ -15,8 +15,8 @@
     .logo img { width:120px; height:auto; }
     .logo-mark{width:120px;height:auto;border-radius:0;object-fit:contain;}
     .logo-text{font-size:16px;font-weight:700;line-height:1.2; white-space:nowrap;}
-    .logo-sub{font-size:11px;font-weight:400;color:#555;}
-    .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
+    .logo-sub{font-size:12px;font-weight:400;color:#555;}
+    .nav-links{display:flex;align-items:center;gap:18px;font-size:15px;}
     .nav-links a{padding:6px 10px;border-radius:999px; white-space:nowrap;}
     .nav-links a:hover{background:rgba(0,94,74,.08);}
     .nav-links .active{background:#005e4a;color:#fff;}
@@ -41,8 +41,8 @@
     /* TOP CARD */
     .hero-app { background:#ffffff; border-radius:14px; padding:26px 24px 24px; box-shadow:0 4px 12px rgba(0,0,0,.04); border:1px solid #e3ece9; margin-bottom:24px; }
     .hero-kicker { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#008060; margin-bottom:6px; }
-    .hero-title { font-size:26px; font-weight:800; margin-bottom:4px; color:#0b2520; }
-    .hero-sub { font-size:14px; color:#444; max-width:640px; }
+    .hero-title { font-size:28px; font-weight:800; margin-bottom:6px; color:#0b2520; }
+    .hero-sub { font-size:15px; color:#3a3a3a; max-width:720px; }
 
     /* DOWNLOAD AREA */
     .download-area { display:flex; flex-direction:column; gap:12px; margin-top:18px; }
@@ -59,9 +59,9 @@
     }
     .download-box:hover { background:#005e4a; color:#fff; }
     .download-box:hover * { color:#fff !important; }
-    .download-label { font-size:14px; font-weight:600; color:#003330; }
-    .download-meta { font-size:11px; color:#777; margin-top:2px; }
-    .download-btn { background:#005e4a; color:#fff; border:none; border-radius:999px; padding:8px 18px; font-size:12px; font-weight:600; cursor:pointer; }
+    .download-label { font-size:15px; font-weight:700; color:#003330; }
+    .download-meta { font-size:12px; color:#555; margin-top:4px; }
+    .download-btn { background:#005e4a; color:#fff; border:none; border-radius:999px; padding:8px 18px; font-size:13px; font-weight:700; cursor:pointer; }
     .download-btn:hover { background:#008060; }
 
     .green-box {
@@ -85,18 +85,18 @@
 
     /* STEPS */
     .section-block { background:#ffffff; border-radius:14px; padding:22px 20px 20px; box-shadow:0 3px 10px rgba(0,0,0,.03); border:1px solid #e3ece9; margin-top:24px; }
-    .section-title { font-size:18px; font-weight:700; color:#0b2520; }
-    .section-sub { font-size:12px; color:#555; }
+    .section-title { font-size:19px; font-weight:750; color:#0b2520; }
+    .section-sub { font-size:13px; color:#4a4a4a; }
 
     .steps-grid { display:flex; flex-wrap:wrap; gap:14px; margin-top:14px; }
     .step-card { flex:1 1 180px; background:#f7fbfa; border-radius:12px; padding:14px; border:1px solid #d3e8e1; display:flex; gap:10px; align-items:flex-start; }
     .step-number { width:28px; height:28px; border-radius:50%; background:#005e4a; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; }
-    .step-body { font-size:13px; color:#333; }
+    .step-body { font-size:14px; color:#333; }
     .step-body b { display:block; margin-bottom:3px; }
 
     /* REQUIREMENTS & UPLOAD */
     .requirements-row { display:flex; gap:36px; align-items:flex-start; margin-top:16px; }
-    .checklist { list-style:none; padding:0; margin:0; font-size:13px; color:#333; }
+    .checklist { list-style:none; padding:0; margin:0; font-size:14px; color:#333; }
     .checklist li { display:flex; gap:8px; align-items:flex-start; margin-bottom:8px; }
     .circle-check {
       appearance:none;
@@ -113,6 +113,32 @@
     .circle-check:checked::after { content:""; position:absolute; inset:4px; border-radius:50%; background:#fff; }
 
     .upload-card { flex:1; max-width:360px; }
+    .preview-thumb { width:100%; border-radius:10px; border:1px solid #dce9e5; }
+    .pdf-preview { width:100%; height:260px; border-radius:10px; border:1px solid #dce9e5; }
+
+    /* MODAL */
+    .modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; padding:20px; z-index:200; }
+    .modal { background:#ffffff; border-radius:14px; max-width:820px; width:100%; box-shadow:0 10px 30px rgba(0,0,0,.2); overflow:hidden; }
+    .modal-head { padding:18px 20px 10px; border-bottom:1px solid #e5eeea; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .modal-title { font-size:18px; font-weight:750; color:#0b2520; }
+    .modal-close { background:none; border:none; font-size:20px; cursor:pointer; color:#222; padding:4px 6px; }
+    .modal-body { padding:18px 20px 22px; display:grid; grid-template-columns: minmax(0,1.1fr) minmax(0,0.9fr); gap:18px; }
+    .modal-body h4 { font-size:15px; margin-bottom:8px; }
+    .modal-body p { font-size:13px; color:#3c3c3c; margin-bottom:8px; }
+    .modal-download { display:inline-flex; align-items:center; gap:8px; background:#005e4a; color:#fff; border:none; border-radius:999px; padding:10px 18px; font-size:13px; font-weight:700; cursor:pointer; }
+    .modal-download:hover { background:#00765f; }
+    .modal-list { list-style:disc; padding-left:18px; font-size:13px; color:#333; }
+    .modal-upload { border:2px dashed #70b4a6; border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:8px; background:#f7fbfa; }
+    .modal-upload label { font-weight:700; font-size:13px; color:#0b2520; }
+    .modal-upload input { padding:10px; border-radius:8px; border:1px solid #c9d9d4; font-size:13px; }
+    .modal-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+    .link-btn { display:inline-flex; align-items:center; gap:6px; background:#fff; border:1px solid #005e4a; color:#005e4a; padding:9px 14px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; }
+    .link-btn:hover { background:#005e4a; color:#fff; }
+
+    @media (max-width:780px){
+      .modal-body { grid-template-columns:1fr; }
+      .modal { max-height:90vh; overflow-y:auto; }
+    }
     .upload-box { border-radius:12px; border:2px dashed rgba(0,94,74,.5); background:#f7fbfa; padding:16px 18px; display:flex; gap:12px; align-items:center; }
     .upload-icon { width:34px; height:34px; border-radius:50%; background:#005e4a; color:#fff; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
     .upload-main { font-size:14px; font-weight:700; color:#0b2520; }
@@ -220,31 +246,24 @@ dropdown.addEventListener('mouseleave', ()=>{
             <div class="download-label">Credit Application (PDF)</div>
             <div class="download-meta">Required for all applications</div>
           </div>
-          <button class="download-btn" type="button">Download</button>
+          <button class="download-btn" type="button" onclick="openModal('credit')">View</button>
         </div>
         <div class="download-box">
           <div>
             <div class="download-label">Bank Statements Form</div>
             <div class="download-meta">Attach last 3 months of statements</div>
           </div>
-          <button class="download-btn" type="button">Download</button>
+          <button class="download-btn" type="button" onclick="openModal('bank')">View</button>
         </div>
         <div class="download-box">
           <div>
             <div class="download-label">Truck Purchase Agreement</div>
             <div class="download-meta">Dealer purchase order or bill of sale</div>
           </div>
-          <button class="download-btn" type="button">Download</button>
+          <button class="download-btn" type="button" onclick="openModal('purchase')">View</button>
         </div>
       </div>
 
-      <div class="green-box">
-        <div style="display:flex; flex-direction:column;">
-          <span>Required Documentation</span>
-          <span class="green-box-sub">All documents required to process your application</span>
-        </div>
-        <button class="download-btn" type="button">Download</button>
-      </div>
     </section>
 
     <section class="section-block">
@@ -295,6 +314,7 @@ dropdown.addEventListener('mouseleave', ()=>{
               <div class="upload-main">Upload package</div>
               <div class="upload-sub">In production, this area would allow you to securely upload your signed application and documents.</div>
             </div>
+            <button class="download-btn" type="button" style="margin-left:auto;" onclick="openModal('upload')">Upload</button>
           </div>
         </div>
       </div>
@@ -336,5 +356,158 @@ dropdown.addEventListener('mouseleave', ()=>{
       📞 Phone: (000) 000-0000 &nbsp; | &nbsp; 📧 Email: info@mtequipmentfunding.com &nbsp; | &nbsp; 🔗 Instagram: @MTequipmentfunding &nbsp; | &nbsp; 🔗 Facebook: M&T Equipment Funding LLC &nbsp; | &nbsp; © 2025 M&T Equipment Funding LLC — All Rights Reserved &nbsp; | &nbsp; Commercial Truck &amp; Trailer Financing
     </div>
   </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true">
+    <div class="modal" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <div class="modal-title" id="modalTitle">Form Preview</div>
+        <button class="modal-close" type="button" onclick="closeModal()" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modalBody = document.getElementById('modalBody');
+    const modalTitle = document.getElementById('modalTitle');
+
+    const modalContent = {
+      credit: {
+        title: 'Credit Application',
+        body: `
+          <div>
+            <h4>Preview</h4>
+            <embed class="pdf-preview" src="Media/Documents/credit_application_form.pdf" type="application/pdf" />
+          </div>
+          <div>
+            <h4>What you’ll see</h4>
+            <p>All applicant fields, business info, and authorization language are included. Review the sample to ensure every section is filled and signed.</p>
+            <ul class="modal-list">
+              <li>Business and personal details</li>
+              <li>Consent and signature sections</li>
+              <li>Co-applicant area when needed</li>
+            </ul>
+            <div class="modal-actions">
+              <a class="modal-download" href="Media/Documents/credit_application_form.pdf" download>Download PDF</a>
+              <button class="link-btn" type="button" onclick="openModal('upload')">Upload completed form</button>
+            </div>
+          </div>
+        `
+      },
+      bank: {
+        title: 'Bank Statement Form',
+        body: `
+          <div>
+            <h4>Preview</h4>
+            <embed class="pdf-preview" src="Media/Documents/bank_statement_form.pdf" type="application/pdf" />
+          </div>
+          <div>
+            <h4>What to include</h4>
+            <p>Provide the last three months of statements. Use this example as a guide to confirm the pages are readable and complete.</p>
+            <ul class="modal-list">
+              <li>All pages per month, including summaries</li>
+              <li>Account holder name matching the application</li>
+              <li>No redacted balances or missing dates</li>
+            </ul>
+            <div class="modal-actions">
+              <a class="modal-download" href="Media/Documents/bank_statement_form.pdf" download>Download PDF</a>
+              <button class="link-btn" type="button" onclick="openModal('upload')">Upload bank statements</button>
+            </div>
+          </div>
+        `
+      },
+      purchase: {
+        title: 'Truck Purchase Agreement',
+        body: `
+          <div>
+            <h4>Preview</h4>
+            <embed class="pdf-preview" src="Media/Documents/truck_purchase_agreement.pdf" type="application/pdf" />
+          </div>
+          <div>
+            <h4>Details to verify</h4>
+            <p>Confirm VIN, sales price, mileage, and seller info match the vehicle you are financing. Use this sample to see how a complete agreement should read.</p>
+            <ul class="modal-list">
+              <li>Dealer or seller contact and signature</li>
+              <li>Vehicle specs (VIN, year, make, model, mileage)</li>
+              <li>Total price, taxes/fees, and down payment</li>
+            </ul>
+            <div class="modal-actions">
+              <a class="modal-download" href="Media/Documents/truck_purchase_agreement.pdf" download>Download PDF</a>
+              <button class="link-btn" type="button" onclick="openModal('upload')">Upload agreement</button>
+            </div>
+          </div>
+        `
+      },
+      required: {
+        title: 'Required Documentation Checklist',
+        body: `
+          <div>
+            <h4>Overview</h4>
+            <p>Submit these items together so underwriting can review without delays.</p>
+            <ul class="modal-list">
+              <li>Signed credit application (all pages)</li>
+              <li>Last 3 months of bank statements</li>
+              <li>Dealer purchase order or bill of sale</li>
+              <li>Copy of driver’s license and insurance (if available)</li>
+              <li>Proof of legal status (Green Card, Work Permit, or Citizenship)</li>
+            </ul>
+            <div class="modal-actions">
+              <button class="modal-download" type="button" onclick="openModal('upload')">Upload your package</button>
+            </div>
+          </div>
+          <div>
+            <h4>Send to your representative</h4>
+            <p>Attach the completed documents and email them directly, or upload them here for review.</p>
+            <div class="modal-upload">
+              <label for="requiredUpload">Attach documents</label>
+              <input type="file" id="requiredUpload" multiple />
+              <small style="font-size:12px; color:#555;">PDF, JPG, or PNG up to 10MB each.</small>
+            </div>
+          </div>
+        `
+      },
+      upload: {
+        title: 'Upload your package',
+        body: `
+          <div>
+            <h4>Attach files</h4>
+            <div class="modal-upload">
+              <label for="packageUpload">Upload documents</label>
+              <input type="file" id="packageUpload" multiple />
+              <small style="font-size:12px; color:#555;">Combine your credit app, bank statements, and agreement here.</small>
+            </div>
+          </div>
+          <div>
+            <h4>Send to your representative</h4>
+            <p>After attaching files, email them to your rep so we can review right away.</p>
+            <div class="modal-actions">
+              <a class="modal-download" href="mailto:margo@example.com">Email documents</a>
+              <a class="link-btn" href="tel:0000000000">Call (000) 000-0000</a>
+            </div>
+          </div>
+        `
+      }
+    };
+
+    function openModal(type){
+      const content = modalContent[type];
+      if(!content) return;
+      modalTitle.textContent = content.title;
+      modalBody.innerHTML = content.body;
+      modalBackdrop.style.display = 'flex';
+    }
+
+    function closeModal(){
+      modalBackdrop.style.display = 'none';
+      modalBody.innerHTML = '';
+    }
+
+    modalBackdrop.addEventListener('click', (e)=>{
+      if(e.target === modalBackdrop){
+        closeModal();
+      }
+    });
+  </script>
 </body>
 </html>
