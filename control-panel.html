@@ -48,7 +48,7 @@
     <div class="card">
       <h2>Sign in</h2>
       <p class="muted">Enter the same credentials used on the Inventory page to access the control panel.</p>
-      <p class="muted" style="margin-top:-4px;">Admin: admin / adminmnt &bull; Moderator: rcortez / cortezmnt</p>
+      <p class="muted" style="margin-top:-4px;">Admin: admin / adminmnt &bull; Manager: rcortez / cortezmnt</p>
       <label for="authUser">Username</label>
       <input id="authUser" type="text" autocomplete="username" />
       <label for="authPass" style="margin-top:10px;">Password</label>
@@ -150,17 +150,49 @@
         <tbody id="tableBody"></tbody>
       </table>
     </div>
+
+    <div class="panel" id="userManagementPanel" style="margin-top:14px; display:none;">
+      <div class="flex" style="justify-content:space-between; align-items:center;">
+        <h2 style="font-size:16px;">User management</h2>
+        <span class="muted" style="font-size:11px;">Admin only</span>
+      </div>
+      <p class="muted" style="margin-top:-6px;">Create additional admin or manager profiles for the inventory tool.</p>
+      <div class="row">
+        <div>
+          <label for="newUser">Username</label>
+          <input id="newUser" placeholder="newuser" />
+        </div>
+        <div>
+          <label for="newPass">Password</label>
+          <input id="newPass" type="password" placeholder="password" />
+        </div>
+        <div>
+          <label for="newRole">Role</label>
+          <select id="newRole">
+            <option value="admin">Admin</option>
+            <option value="manager">Manager</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex" style="justify-content:flex-end;">
+        <button class="btn primary" id="addAccount">Create profile</button>
+      </div>
+      <div class="muted" style="margin-top:10px; font-weight:700; color:#0b2520;">Saved profiles</div>
+      <ul id="accountList" style="list-style:none; padding-left:0; margin-top:6px; font-size:12px; color:#0b2520;"></ul>
+    </div>
   </div>
 
   <script>
-    const ACCOUNTS = [
+    const DEFAULT_ACCOUNTS = [
       { user: 'admin', pass: 'adminmnt', role: 'admin' },
-      { user: 'rcortez', pass: 'cortezmnt', role: 'moderator' }
+      { user: 'rcortez', pass: 'cortezmnt', role: 'manager' }
     ];
     const storageKey = 'inventoryData';
+    const accountsKey = 'inventoryAccounts';
 
     let units = [];
     let editingIndex = null;
+    let accounts = [];
 
     function loadUnits() {
       try {
@@ -177,6 +209,33 @@
 
     function saveUnits() {
       localStorage.setItem(storageKey, JSON.stringify(units));
+    }
+
+    function loadAccounts() {
+      const saved = localStorage.getItem(accountsKey);
+      let stored = [];
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) stored = parsed;
+        } catch (e) {
+          console.warn('Could not parse saved accounts');
+        }
+      }
+      DEFAULT_ACCOUNTS.forEach(base => {
+        const idx = stored.findIndex(a => a.user === base.user);
+        if (idx >= 0) {
+          stored[idx] = { ...stored[idx], ...base };
+        } else {
+          stored.push({ ...base });
+        }
+      });
+      localStorage.setItem(accountsKey, JSON.stringify(stored));
+      accounts = stored;
+    }
+
+    function saveAccountsList() {
+      localStorage.setItem(accountsKey, JSON.stringify(accounts));
     }
 
     function renderTable() {
@@ -277,6 +336,56 @@
       URL.revokeObjectURL(url);
     }
 
+    function renderAccountList() {
+      const list = document.getElementById('accountList');
+      if (!list) return;
+      list.innerHTML = '';
+      if (!accounts.length) {
+        list.innerHTML = '<li style="color:#555;">No profiles saved.</li>';
+        return;
+      }
+      accounts.forEach(acc => {
+        const li = document.createElement('li');
+        li.textContent = `${acc.user} (${formatRole(acc.role) || 'Role not set'})`;
+        list.appendChild(li);
+      });
+    }
+
+    function handleAddAccount() {
+      if (!isAdmin()) {
+        alert('Only admins can create new profiles.');
+        return;
+      }
+      const user = document.getElementById('newUser').value.trim();
+      const pass = document.getElementById('newPass').value.trim();
+      const role = document.getElementById('newRole').value;
+      if (!user || !pass) {
+        alert('Username and password are required.');
+        return;
+      }
+      if (accounts.some(acc => acc.user.toLowerCase() === user.toLowerCase())) {
+        alert('That username already exists.');
+        return;
+      }
+      accounts.push({ user, pass, role });
+      saveAccountsList();
+      renderAccountList();
+      document.getElementById('newUser').value = '';
+      document.getElementById('newPass').value = '';
+      document.getElementById('newRole').value = 'manager';
+    }
+
+    function toggleUserManagement() {
+      const panel = document.getElementById('userManagementPanel');
+      if (!panel) return;
+      if (isAdmin()) {
+        panel.style.display = 'block';
+        renderAccountList();
+      } else {
+        panel.style.display = 'none';
+      }
+    }
+
     function setSession(account) {
       localStorage.setItem('inventoryAdminAuth', 'true');
       localStorage.setItem('inventoryAuthUser', account.user);
@@ -290,19 +399,30 @@
       };
     }
 
+    function formatRole(role) {
+      if (!role) return '';
+      return role.charAt(0).toUpperCase() + role.slice(1);
+    }
+
+    function isAdmin() {
+      return (getSessionDetails().role || '').toLowerCase() === 'admin';
+    }
+
     function updateUserMeta() {
       const meta = document.getElementById('userMeta');
       if (!meta) return;
       const { user, role } = getSessionDetails();
-      meta.textContent = `Signed in as ${user} (${role})`;
+      meta.textContent = `Signed in as ${user} (${formatRole(role)})`;
     }
 
     function showPanel() {
       document.getElementById('authGate').style.display = 'none';
       document.getElementById('panel').style.display = 'block';
+      loadAccounts();
       units = loadUnits();
       renderTable();
       updateUserMeta();
+      toggleUserManagement();
     }
 
     function requireAuth() {
@@ -317,7 +437,7 @@
     function tryLogin() {
       const u = document.getElementById('authUser').value.trim();
       const p = document.getElementById('authPass').value.trim();
-      const account = ACCOUNTS.find(a => a.user === u && a.pass === p);
+      const account = accounts.find(a => a.user === u && a.pass === p);
       if (account) {
         setSession(account);
         showPanel();
@@ -326,9 +446,12 @@
       }
     }
 
+    loadAccounts();
+
     document.getElementById('saveUnit').addEventListener('click', saveUnit);
     document.getElementById('resetForm').addEventListener('click', resetForm);
     document.getElementById('exportData').addEventListener('click', exportData);
+    document.getElementById('addAccount').addEventListener('click', handleAddAccount);
     document.getElementById('authLogin').addEventListener('click', tryLogin);
     document.getElementById('authBack').addEventListener('click', () => window.location.href = 'Inventory.html');
     document.getElementById('authPass').addEventListener('keyup', (e) => { if (e.key === 'Enter') tryLogin(); });

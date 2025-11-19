@@ -363,6 +363,21 @@
     }
     .cta-btn:hover { background:#f0faf7; }
 
+    .settings-access {
+      margin:16px auto 6px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      align-items:center;
+      text-align:center;
+    }
+
+    .settings-note {
+      font-size:12px;
+      color:#444;
+      max-width:520px;
+    }
+
     footer {
       border-top:1px solid #dde6e2;
       padding:10px 20px 22px;
@@ -460,10 +475,35 @@
   </style>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const ACCOUNTS = [
+      const DEFAULT_ACCOUNTS = [
         { user: 'admin', pass: 'adminmnt', role: 'admin' },
-        { user: 'rcortez', pass: 'cortezmnt', role: 'moderator' }
+        { user: 'rcortez', pass: 'cortezmnt', role: 'manager' }
       ];
+
+      function loadAccounts() {
+        const saved = localStorage.getItem('inventoryAccounts');
+        let accounts = [];
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) accounts = parsed;
+          } catch (e) {
+            console.warn('Could not parse saved accounts');
+          }
+        }
+        DEFAULT_ACCOUNTS.forEach(base => {
+          const idx = accounts.findIndex(a => a.user === base.user);
+          if (idx >= 0) {
+            accounts[idx] = { ...accounts[idx], ...base };
+          } else {
+            accounts.push({ ...base });
+          }
+        });
+        localStorage.setItem('inventoryAccounts', JSON.stringify(accounts));
+        return accounts;
+      }
+
+      let accounts = loadAccounts();
 
       const modal = document.getElementById('toolModal');
       const toolBtn = document.getElementById('toolButton');
@@ -490,7 +530,7 @@
       function handleLogin() {
         const user = userInput.value.trim();
         const pass = passInput.value.trim();
-        const account = ACCOUNTS.find(a => a.user === user && a.pass === pass);
+        const account = accounts.find(a => a.user === user && a.pass === pass);
         if (account) {
           localStorage.setItem('inventoryAdminAuth', 'true');
           localStorage.setItem('inventoryAuthUser', account.user);
@@ -705,7 +745,6 @@
       </div>
       <div class="inv-section-actions">
         <button class="see-all-link" type="button" onclick="window.location.href='Units for Sale.html'">See all inventory</button>
-        <button class="tool-link" type="button" id="toolButton">Tool</button>
       </div>
     </div>
 
@@ -770,12 +809,17 @@
       </div>
       <button class="cta-btn" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
     </section>
+
+    <div class="settings-access">
+      <button class="tool-link" type="button" id="toolButton">Settings</button>
+      <div class="settings-note">Restricted access — sign in to manage or update the listings shown on this site.</div>
+    </div>
   </main>
 
   <div class="modal-backdrop" id="toolModal">
     <div class="modal">
       <h3>Admin Access Required</h3>
-      <p>Sign in with <strong>admin/adminmnt</strong> (admin) or <strong>rcortez/cortezmnt</strong> (moderator) to edit vehicle listings.</p>
+      <p>Sign in with <strong>admin/adminmnt</strong> (admin) or <strong>rcortez/cortezmnt</strong> (manager) to edit vehicle listings.</p>
       <label for="toolUser">Username</label>
       <input id="toolUser" name="toolUser" type="text" placeholder="Enter username" autocomplete="username" />
       <label for="toolPass">Password</label>
