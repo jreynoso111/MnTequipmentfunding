@@ -181,12 +181,6 @@
         </div>
         <div id="imageList" class="thumb-grid"></div>
       </div>
-      <div class="row" style="margin-top:4px;">
-        <div>
-          <label for="image">Image URL</label>
-          <input id="image" placeholder="https://example.com/unit.jpg" />
-        </div>
-      </div>
       <div class="flex" style="justify-content:flex-end;">
         <button class="btn ghost" id="resetForm">Reset</button>
         <button class="btn primary" id="saveUnit">Save Listing</button>
@@ -246,7 +240,8 @@
           </select>
         </div>
       </div>
-      <div class="flex" style="justify-content:flex-end;">
+      <div class="flex" style="justify-content:flex-end; gap:8px;">
+        <button class="btn ghost" id="cancelAccountEdit" type="button" style="display:none;">Cancel</button>
         <button class="btn primary" id="addAccount">Create profile</button>
       </div>
       <div class="muted" style="margin-top:10px; font-weight:700; color:#0b2520;">Saved profiles</div>
@@ -272,6 +267,7 @@
     let editingIndex = null;
     let accounts = [];
     let imagesState = [];
+    let editingAccount = null;
 
     function hashPassword(pass) {
       return 'hash:' + btoa(pass || '');
@@ -420,7 +416,7 @@
     function resetForm() {
       editingIndex = null;
       imagesState = [];
-      ['title','vin','brand','color','state','image','year','engine','transmission','location','phone','description','features'].forEach(id => {
+      ['title','vin','brand','color','state','year','engine','transmission','location','phone','description','features'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = '';
       });
@@ -480,6 +476,7 @@
 
     function saveUnit() {
       const featureLines = (document.getElementById('features').value || '').split(/\n|,/).map(f => f.trim()).filter(Boolean);
+      const hero = imagesState[0] || '';
       const unit = normalizeUnit({
         title: document.getElementById('title').value.trim(),
         vin: document.getElementById('vin').value.trim(),
@@ -490,7 +487,7 @@
         mileage: Number(document.getElementById('mileage').value || 0),
         state: document.getElementById('state').value.trim() || 'Unknown',
         color: document.getElementById('color').value.trim() || 'Unknown',
-        image: document.getElementById('image').value.trim(),
+        image: hero,
         year: document.getElementById('year').value,
         engine: document.getElementById('engine').value.trim(),
         transmission: document.getElementById('transmission').value.trim(),
@@ -577,12 +574,21 @@
         const li = document.createElement('li');
         const isDefault = DEFAULT_ACCOUNTS.some(base => base.user === acc.user);
         li.innerHTML = `${acc.user} — ${acc.role}${isDefault ? ' (default)' : ''}`;
+
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        editBtn.className = 'btn ghost';
+        editBtn.style.padding = '4px 10px';
+        editBtn.style.marginLeft = '8px';
+        editBtn.onclick = () => startEditAccount(acc);
+        li.appendChild(editBtn);
+
         if (!isDefault) {
           const removeBtn = document.createElement('button');
           removeBtn.textContent = 'Remove';
           removeBtn.className = 'btn ghost';
           removeBtn.style.padding = '4px 10px';
-          removeBtn.style.marginLeft = '8px';
+          removeBtn.style.marginLeft = '6px';
           removeBtn.onclick = () => {
             accounts = accounts.filter(a => a.user !== acc.user);
             saveAccountsList();
@@ -594,28 +600,64 @@
       });
     }
 
-    function handleAddAccount() {
-      if (!isAdmin()) {
-        alert('Only admins can create new profiles.');
-        return;
-      }
-      const user = document.getElementById('newUser').value.trim();
-      const pass = document.getElementById('newPass').value.trim();
-      const role = document.getElementById('newRole').value;
-      if (!user || !pass) {
-        alert('Username and password are required.');
-        return;
-      }
-      if (accounts.some(acc => acc.user.toLowerCase() === user.toLowerCase())) {
-        alert('That username already exists.');
-        return;
-      }
-      accounts.push(normalizeAccount({ user, pass, role }));
-      saveAccountsList();
-      renderAccountList();
+    function startEditAccount(acc) {
+      editingAccount = acc.user;
+      document.getElementById('newUser').value = acc.user;
+      document.getElementById('newPass').value = '';
+      document.getElementById('newRole').value = acc.role || 'manager';
+      const addBtn = document.getElementById('addAccount');
+      const cancelBtn = document.getElementById('cancelAccountEdit');
+      if (addBtn) addBtn.textContent = 'Save profile';
+      if (cancelBtn) cancelBtn.style.display = 'inline-flex';
+    }
+
+    function cancelAccountEdit() {
+      editingAccount = null;
       document.getElementById('newUser').value = '';
       document.getElementById('newPass').value = '';
       document.getElementById('newRole').value = 'manager';
+      const addBtn = document.getElementById('addAccount');
+      const cancelBtn = document.getElementById('cancelAccountEdit');
+      if (addBtn) addBtn.textContent = 'Create profile';
+      if (cancelBtn) cancelBtn.style.display = 'none';
+    }
+
+    function handleAddAccount() {
+      if (!isAdmin()) {
+        alert('Only admins can create or edit profiles.');
+        return;
+      }
+      const userInput = document.getElementById('newUser');
+      const passInput = document.getElementById('newPass');
+      const roleInput = document.getElementById('newRole');
+      const user = (userInput?.value || '').trim();
+      const pass = (passInput?.value || '').trim();
+      const role = roleInput?.value || 'manager';
+
+      if (!editingAccount && (!user || !pass)) {
+        alert('Username and password are required.');
+        return;
+      }
+
+      if (!editingAccount && accounts.some(acc => acc.user.toLowerCase() === user.toLowerCase())) {
+        alert('That username already exists.');
+        return;
+      }
+
+      if (editingAccount) {
+        const idx = accounts.findIndex(a => a.user === editingAccount);
+        if (idx >= 0) {
+          const existing = accounts[idx];
+          const safePass = pass ? pass : existing.pass;
+          accounts[idx] = normalizeAccount({ user: existing.user, pass: safePass, role });
+        }
+      } else {
+        accounts.push(normalizeAccount({ user, pass, role }));
+      }
+
+      saveAccountsList();
+      renderAccountList();
+      cancelAccountEdit();
     }
 
     function toggleUserManagement() {
@@ -718,6 +760,7 @@
       updateUserMeta();
       toggleUserManagement();
       renderImages();
+      cancelAccountEdit();
     }
 
     function requireAuth() {
@@ -754,6 +797,7 @@
     document.getElementById('resetForm').addEventListener('click', resetForm);
     document.getElementById('exportData').addEventListener('click', exportData);
     document.getElementById('addAccount').addEventListener('click', handleAddAccount);
+    document.getElementById('cancelAccountEdit').addEventListener('click', cancelAccountEdit);
     document.getElementById('authLogin').addEventListener('click', tryLogin);
     document.getElementById('authBack').addEventListener('click', () => window.location.href = 'Inventory.html');
     document.getElementById('authPass').addEventListener('keyup', (e) => { if (e.key === 'Enter') tryLogin(); });

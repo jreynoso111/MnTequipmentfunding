@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="inventory-seed.js"></script>
   <style>
     :root {
       --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
@@ -152,11 +153,12 @@
       border-color:#005e4a;
     }
 
-    .inventory-grid {
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-      gap:14px;
-    }
+    .inventory-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
+    .carousel-wrap { position:relative; overflow:hidden; border-radius:14px; background:#f9fbfa; border:1px solid #e3ece9; padding:6px 4px; }
+    .carousel-track { display:flex; gap:14px; transition:transform 0.5s ease; will-change:transform; }
+    .carousel-controls { display:flex; justify-content:flex-end; gap:8px; margin:14px 0 6px; }
+    .carousel-btn { border:1px solid #cfe7e2; background:#ffffff; color:#005e4a; padding:6px 12px; border-radius:999px; font-weight:700; cursor:pointer; font-size:11px; }
+    .carousel-btn:hover { background:#005e4a; color:#fff; }
     .unit-card {
       background:#ffffff;
       border-radius:12px;
@@ -621,70 +623,75 @@
         });
       }
 
-      // Rotating "Representative units" cards
       const featuredContainer = document.getElementById('featured-units');
+      const prevBtn = document.getElementById('prevSlide');
+      const nextBtn = document.getElementById('nextSlide');
       if (!featuredContainer) return;
 
-      // This list should mirror the units in "Units for Sale.html"
-      const allUnits = [
-        {
-          tag: 'Truck',
-          title: '2020 Freightliner Cascadia PT126SLP',
-          img: 'https://images.pexels.com/photos/2199293/pexels-photo-2199293.jpeg',
-          mileage: '729,771',
-          location: 'CTTS',
-          state: 'CA',
-          vin: '1FUJHHDR1LLKS7083',
-          price: '$38,386*'
-        },
-        {
-          tag: 'Truck',
-          title: '2019 Freightliner Cascadia PT126SLP',
-          img: 'https://images.pexels.com/photos/2199294/pexels-photo-2199294.jpeg',
-          mileage: '732,806',
-          location: 'CTTS',
-          state: 'CA',
-          vin: '1FUJHHDR2KLKM3646',
-          price: '$25,864*'
-        },
-        {
-          tag: 'Truck',
-          title: '2020 Freightliner Cascadia PT126SLP',
-          img: 'https://images.pexels.com/photos/2199295/pexels-photo-2199295.jpeg',
-          mileage: '777,777',
-          location: 'Copart',
-          state: '',
-          vin: '1FUJHHDR2LLKS3768',
-          price: '$37,080*'
-        },
-        {
-          tag: 'Truck',
-          title: '2019 Freightliner Cascadia PT126SLP',
-          img: 'https://images.pexels.com/photos/2199296/pexels-photo-2199296.jpeg',
-          mileage: '644,939',
-          location: 'Copart',
-          state: '',
-          vin: '1FUJHHDR4KLKC2700',
-          price: '$35,830*'
-        }
-        // Add more units here to rotate through a larger list
-      ];
+      const storageKey = 'inventoryData';
+      const MAX_IMAGES = 10;
+      const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg';
 
-      const visibleCount = 4;
-      let startIndex = 0;
+      function normalizeImages(unit) {
+        const fromArray = Array.isArray(unit.images) ? unit.images.filter(Boolean) : [];
+        const merged = [...new Set([unit.image, ...fromArray].filter(Boolean))];
+        return merged.slice(0, MAX_IMAGES);
+      }
+
+      function normalizeUnit(unit) {
+        const images = normalizeImages(unit || {});
+        return {
+          title: unit?.title || 'Unit',
+          type: unit?.type || 'Truck',
+          vin: unit?.vin || '',
+          mileage: unit?.mileage ? Number(unit.mileage).toLocaleString('en-US') : '0',
+          location: unit?.location || 'Available nationwide',
+          state: unit?.state || 'Unknown',
+          price: unit?.price ? `USD$ ${Number(unit.price).toLocaleString('en-US')}` : 'Call for price',
+          image: images[0] || DEFAULT_IMAGE
+        };
+      }
+
+      function loadUnits() {
+        try {
+          const saved = localStorage.getItem(storageKey);
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length) return parsed.map(normalizeUnit);
+          }
+        } catch (e) {}
+        const seeded = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED.map(normalizeUnit) : [];
+        localStorage.setItem(storageKey, JSON.stringify(seeded));
+        return seeded;
+      }
+
+      const allUnits = loadUnits();
+      if (!allUnits.length) return;
+      let visibleCount = 1;
+      let index = 0;
+
+      function computeVisible() {
+        if (allUnits.length === 1) return 1;
+        if (window.innerWidth < 640) return 1;
+        if (window.innerWidth < 980) return Math.min(2, allUnits.length);
+        return Math.min(3, allUnits.length);
+      }
 
       function renderFeatured() {
         featuredContainer.innerHTML = '';
+        visibleCount = computeVisible();
+        const slides = [];
         for (let i = 0; i < visibleCount; i++) {
-          const unit = allUnits[(startIndex + i) % allUnits.length];
+          const unit = allUnits[(index + i) % allUnits.length];
           const card = document.createElement('article');
           card.className = 'unit-card';
+          card.style.minWidth = `${100 / visibleCount}%`;
           card.innerHTML = `
             <div class="unit-img-wrap">
-              <img src="${unit.img}" alt="${unit.title}" />
+              <img src="${unit.image}" alt="${unit.title}" />
             </div>
             <div class="unit-body">
-              <div class="unit-tag">${unit.tag}</div>
+              <div class="unit-tag">${unit.type}</div>
               <h2 class="unit-title">${unit.title}</h2>
               <div class="unit-specs">
                 <span>Mileage: ${unit.mileage}</span>
@@ -722,19 +729,28 @@
             });
           }
 
-          featuredContainer.appendChild(card);
+          slides.push(card);
         }
+
+        slides.forEach(slide => featuredContainer.appendChild(slide));
+        featuredContainer.style.transform = `translateX(0)`;
       }
 
+      function nextSlide() {
+        index = (index + 1) % allUnits.length;
+        renderFeatured();
+      }
+
+      function prevSlide() {
+        index = (index - 1 + allUnits.length) % allUnits.length;
+        renderFeatured();
+      }
+
+      nextBtn?.addEventListener('click', nextSlide);
+      prevBtn?.addEventListener('click', prevSlide);
       renderFeatured();
-
-      // Rotate the starting index every 6 seconds
-      if (allUnits.length > visibleCount) {
-        setInterval(() => {
-          startIndex = (startIndex + 1) % allUnits.length;
-          renderFeatured();
-        }, 6000);
-      }
+      window.addEventListener('resize', () => renderFeatured());
+      if (allUnits.length > visibleCount) setInterval(nextSlide, 6000);
     });
   </script>
 </head>
@@ -800,8 +816,14 @@
       </div>
     </div>
 
-    <section class="inventory-grid" id="featured-units">
-      <!-- Featured units will be injected here by JavaScript -->
+    <div class="carousel-controls">
+      <button class="carousel-btn" type="button" id="prevSlide">◀ Prev</button>
+      <button class="carousel-btn" type="button" id="nextSlide">Next ▶</button>
+    </div>
+    <section class="carousel-wrap">
+      <div class="carousel-track" id="featured-units">
+        <!-- Featured units will be injected here by JavaScript -->
+      </div>
     </section>
 
     <section class="inv-info">
@@ -809,10 +831,6 @@
       <p>
         We are not a public truck lot. In most cases, you will be buying from a dealer, fleet, or private seller of your choice.
         Our role is to evaluate the truck or trailer, confirm the value, and structure the financing.
-      </p>
-      <p>
-        If you already have a specific VIN or stock number, include it with your application so we can review mileage,
-        condition, and route to make sure the numbers make sense for you.
       </p>
       <p>
         <strong>*All payment examples shown are estimates only.</strong> Actual terms, down payment, and monthly payments will
@@ -864,7 +882,6 @@
 
     <div class="settings-access">
       <button class="tool-link" type="button" id="toolButton">Settings</button>
-      <div class="settings-note">Restricted access — sign in to manage or update the listings shown on this site.</div>
     </div>
   </main>
 
