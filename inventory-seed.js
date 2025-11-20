@@ -1,4 +1,4 @@
-const INVENTORY_SEED = [
+const BASE_INVENTORY = [
   {
     "title": "2023 Freightliner Cascadia 126 Sleeper",
     "type": "Truck",
@@ -455,3 +455,113 @@ const INVENTORY_SEED = [
     "vin": "DLUCIODV070035"
   }
 ];
+
+const ENGINE_OPTIONS = [
+  'Detroit DD15 / 505 HP',
+  'Cummins X15 / 500 HP',
+  'Volvo D13 / 455 HP',
+  'PACCAR MX-13 / 455 HP',
+  'Cummins ISX15 / 450 HP',
+  'Detroit DD13 / 470 HP',
+  'Volvo D11 / 405 HP',
+  'PACCAR MX-11 / 430 HP',
+  'Cummins X12 / 455 HP',
+  'International A26 / 475 HP'
+];
+
+const TRANSMISSION_OPTIONS = [
+  '12-speed automatic',
+  '10-speed manual',
+  '13-speed manual',
+  '18-speed manual',
+  'Endurant 12-speed auto',
+  'Allison 6-speed automatic'
+];
+
+const LOCATION_BANK = [
+  { city: 'Los Angeles', state: 'CA' },
+  { city: 'Dallas', state: 'TX' },
+  { city: 'Atlanta', state: 'GA' },
+  { city: 'Chicago', state: 'IL' },
+  { city: 'Phoenix', state: 'AZ' },
+  { city: 'Philadelphia', state: 'PA' },
+  { city: 'Orlando', state: 'FL' },
+  { city: 'Salt Lake City', state: 'UT' },
+  { city: 'Nashville', state: 'TN' },
+  { city: 'Kansas City', state: 'MO' }
+];
+
+const PHONE_BANK = [
+  '+1 (310) 555-0147',
+  '+1 (972) 555-0188',
+  '+1 (470) 555-0114',
+  '+1 (773) 555-0106',
+  '+1 (602) 555-0199',
+  '+1 (215) 555-0132',
+  '+1 (407) 555-0121',
+  '+1 (385) 555-0155',
+  '+1 (629) 555-0178',
+  '+1 (816) 555-0166'
+];
+
+const FEATURE_LIBRARY = [
+  ['Sleeper cab', 'APU', 'Aluminum wheels', 'Full aero kit'],
+  ['Collision mitigation', 'Lane assist', 'Disc brakes all around'],
+  ['Fresh PM service', 'Clean title', 'No active faults'],
+  ['New drive tires', 'DOT ready', 'Maintenance records'],
+  ['Thermo King APU', 'Bunk heater', 'Fridge & inverter'],
+  ['Alloy wheels', 'Air ride suspension', 'Fresh detail'],
+  ['Sliding tandems', 'Air ride', 'Steel frame'],
+  ['Logistics posts', 'Aluminum roof', 'Translucent roof'],
+  ['Scale certified', 'E-logs ready', 'Bluetooth audio'],
+  ['Fresh brakes', 'LED lighting', 'Recent alignment']
+];
+
+const FALLBACK_IMAGES = [
+  'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg',
+  'https://images.pexels.com/photos/2199293/pexels-photo-2199293.jpeg',
+  'https://images.pexels.com/photos/2199294/pexels-photo-2199294.jpeg',
+  'https://images.pexels.com/photos/2199295/pexels-photo-2199295.jpeg',
+  'https://images.pexels.com/photos/2199296/pexels-photo-2199296.jpeg',
+  'https://images.pexels.com/photos/2199297/pexels-photo-2199297.jpeg',
+  'https://images.pexels.com/photos/21694/pexels-photo.jpg'
+];
+
+const COLOR_PALETTE = ['White','Red','Blue','Black','Silver','Gray','Green','Maroon','Navy','Charcoal'];
+
+function deriveModel(title = '', brand = '') {
+  const cleaned = title.replace(/\b(19|20)\d{2}\b/, '').replace(new RegExp(brand, 'i'), '').replace(/\s+/g, ' ').trim();
+  return cleaned || 'Model';
+}
+
+const INVENTORY_SEED = BASE_INVENTORY.map((unit, idx) => {
+  const location = LOCATION_BANK[idx % LOCATION_BANK.length];
+  const state = unit.state && unit.state !== 'Unknown' && unit.state !== 'Other' ? unit.state : location.state;
+  const color = unit.color && unit.color !== 'Unknown' && unit.color !== 'Other' ? unit.color : COLOR_PALETTE[idx % COLOR_PALETTE.length];
+  const primaryImage = unit.image || FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length];
+  const baseGallery = Array.isArray(unit.images) ? unit.images.filter(Boolean) : [];
+  const gallery = [primaryImage, ...baseGallery, FALLBACK_IMAGES[(idx + 3) % FALLBACK_IMAGES.length]]
+    .filter(Boolean)
+    .slice(0, 5);
+  const description = unit.description || `${unit.year || 'Late-model'} ${unit.brand || ''} ${deriveModel(unit.title, unit.brand)} ready for work with clean title and recent service.`.trim();
+  const features = Array.isArray(unit.features) && unit.features.length ? unit.features : FEATURE_LIBRARY[idx % FEATURE_LIBRARY.length];
+
+  return {
+    ...unit,
+    state,
+    color,
+    model: unit.model || deriveModel(unit.title, unit.brand),
+    engine: unit.engine || ENGINE_OPTIONS[idx % ENGINE_OPTIONS.length],
+    transmission: unit.transmission || TRANSMISSION_OPTIONS[idx % TRANSMISSION_OPTIONS.length],
+    condition: unit.condition || (idx % 6 === 0 ? 'New' : 'Used'),
+    location: unit.location || `${location.city}, ${location.state}`,
+    phone: unit.phone || PHONE_BANK[idx % PHONE_BANK.length],
+    description,
+    features,
+    images: [...new Set(gallery)],
+    image: gallery[0],
+    price: unit.price ?? 0,
+    mileage: unit.mileage ?? 0,
+    status: unit.status || 'Available'
+  };
+});

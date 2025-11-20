@@ -33,6 +33,9 @@
     table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px;}
     th,td{padding:10px;border-bottom:1px solid #e6eeeb;text-align:left;}
     th{background:#f5faf8;color:#0b2520;font-size:12px;text-transform:uppercase;letter-spacing:.04em;}
+    th.sortable{cursor:pointer;user-select:none;}
+    th.sortable .sort-label{display:inline-flex;align-items:center;gap:6px;}
+    th.sortable .sort-indicator{font-size:10px;opacity:0.65;}
     .status-pill{padding:4px 8px;border-radius:999px;font-weight:700;font-size:11px;display:inline-block;}
     .status-pill.available{background:#dff6f0;color:#005e4a;}
     .status-pill.sold{background:#ffe5e5;color:#b30000;}
@@ -196,21 +199,21 @@
       <table>
         <thead>
           <tr>
-            <th>Title</th>
-            <th>VIN</th>
-            <th>Year</th>
-            <th>Type</th>
-            <th>Brand</th>
-            <th>Color</th>
-            <th>State</th>
-            <th>Location</th>
-            <th>Price</th>
-            <th>Mileage</th>
-            <th>Engine</th>
-            <th>Trans.</th>
-            <th>Cond.</th>
-            <th>Phone</th>
-            <th>Status</th>
+            <th class="sortable" data-sort="title"><span class="sort-label">Title <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="vin"><span class="sort-label">VIN <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="year"><span class="sort-label">Year <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="type"><span class="sort-label">Type <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="brand"><span class="sort-label">Brand <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="color"><span class="sort-label">Color <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="state"><span class="sort-label">State <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="location"><span class="sort-label">Location <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="price"><span class="sort-label">Price <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="mileage"><span class="sort-label">Mileage <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="engine"><span class="sort-label">Engine <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="transmission"><span class="sort-label">Trans. <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="condition"><span class="sort-label">Cond. <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="phone"><span class="sort-label">Phone <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="status"><span class="sort-label">Status <span class="sort-indicator">⇅</span></span></th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -271,6 +274,7 @@
     let imagesState = [];
     let editingAccount = null;
     let auditLog = [];
+    let sortState = { field: 'title', direction: 'asc' };
 
     function hashPassword(pass) {
       return 'hash:' + btoa(pass || '');
@@ -437,16 +441,32 @@
       return Number(n || 0).toLocaleString('en-US');
     }
 
+    function getSortableValue(unit, field) {
+      const numeric = ['price','mileage','year'];
+      const value = unit?.[field];
+      if (numeric.includes(field)) return Number(value) || 0;
+      return (value ?? '').toString().toLowerCase();
+    }
+
     function renderTable() {
       const body = document.getElementById('tableBody');
       body.innerHTML = '';
       if (!units.length) {
         body.innerHTML = '<tr><td colspan="16" style="text-align:center;color:#555;">No listings yet. Add one above.</td></tr>';
+        updateSortIndicators();
         return;
       }
       const rows = units.map((unit, idx) => ({ unit, idx }));
       rows
-        .sort((a, b) => (b.unit.status === 'Available') - (a.unit.status === 'Available'))
+        .sort((a, b) => {
+          const field = sortState.field;
+          const dir = sortState.direction === 'asc' ? 1 : -1;
+          const aVal = getSortableValue(a.unit, field);
+          const bVal = getSortableValue(b.unit, field);
+          if (aVal < bVal) return -1 * dir;
+          if (aVal > bVal) return 1 * dir;
+          return 0;
+        })
         .forEach(({ unit, idx }) => {
           const tr = document.createElement('tr');
           tr.innerHTML = `
@@ -473,6 +493,36 @@
           `;
           body.appendChild(tr);
         });
+      updateSortIndicators();
+    }
+
+    function updateSortIndicators() {
+      document.querySelectorAll('th.sortable').forEach(th => {
+        const indicator = th.querySelector('.sort-indicator');
+        if (!indicator) return;
+        const field = th.dataset.sort;
+        if (sortState.field === field) {
+          indicator.textContent = sortState.direction === 'asc' ? '▲' : '▼';
+        } else {
+          indicator.textContent = '⇅';
+        }
+      });
+    }
+
+    function bindSorters() {
+      document.querySelectorAll('th.sortable').forEach(th => {
+        th.addEventListener('click', () => {
+          const field = th.dataset.sort;
+          if (!field) return;
+          if (sortState.field === field) {
+            sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
+          } else {
+            sortState.field = field;
+            sortState.direction = 'asc';
+          }
+          renderTable();
+        });
+      });
     }
 
     function resetForm() {
@@ -871,6 +921,7 @@
     document.getElementById('logoutProfile')?.addEventListener('click', logout);
     document.getElementById('addImageUrl').addEventListener('click', () => addImage(document.getElementById('imageUrl').value));
     document.getElementById('imageFile').addEventListener('change', handleFileInput);
+    bindSorters();
 
     window.editUnit = editUnit;
     window.deleteUnit = deleteUnit;
