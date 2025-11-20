@@ -56,7 +56,7 @@
 
     .results-wrapper{flex:1;}
 
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:0;}
+    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-top:0;}
 
     .unit-card{background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.05);border:1px solid #e0ece8;display:flex;flex-direction:column;min-height:270px;position:relative;}
     .unit-card img{width:100%;height:200px;object-fit:cover;display:block;}
@@ -97,8 +97,17 @@
     .status-tag.sold{background:#e00000;}
 
     /* Keep sidebar pinned left on all breakpoints while allowing grid to shrink gracefully */
+    @media(max-width:1100px){
+      .grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+    }
+    @media(max-width:900px){
+      .grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    }
     @media(max-width:720px){
-      .layout{grid-template-columns:minmax(200px,240px) minmax(0,1fr);}
+      .layout{grid-template-columns:minmax(200px,240px) minmax(0,1fr);}      
+    }
+    @media(max-width:540px){
+      .grid{grid-template-columns:1fr;}
     }
   </style>
 </head>
@@ -274,6 +283,7 @@
 
 <script>
 const ITEMS_PER_PAGE = 20;
+const MIN_LISTINGS = 35;
 const storageKey = 'inventoryData';
 const accountsKey = 'inventoryAccounts';
 const sessionKey = 'inventorySession';
@@ -286,6 +296,21 @@ let units = [];
 let filteredUnits = [];
   const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
   const BASE_NORMALIZED = BASE_UNITS.map(normalizeUnit);
+
+function ensureMinimumUnits(list) {
+  const result = Array.isArray(list) ? list.slice() : [];
+  const source = BASE_NORMALIZED.length ? BASE_NORMALIZED : result;
+  let idx = 0;
+
+  while (result.length < MIN_LISTINGS && source.length) {
+    const template = source[idx % source.length] || {};
+    const vinSuffix = result.length + 1;
+    result.push({ ...template, vin: `${template.vin || 'VIN'}-SIM${vinSuffix}` });
+    idx++;
+  }
+
+  return result;
+}
 
 function hashPassword(pass) {
   return 'hash:' + btoa(pass || '');
@@ -404,7 +429,7 @@ function normalizeUnit(unit) {
 }
 
 function defaultUnits() {
-  return BASE_UNITS.map(normalizeUnit);
+  return ensureMinimumUnits(BASE_UNITS.map(normalizeUnit));
 }
 
 function loadUnits() {
@@ -413,18 +438,15 @@ function loadUnits() {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length) {
-        const normalizedSaved = parsed.map(normalizeUnit);
-        // Ensure we always have the full 35-unit demo inventory available
-        if (normalizedSaved.length >= BASE_NORMALIZED.length) {
-          localStorage.setItem(storageKey, JSON.stringify(normalizedSaved));
-          return normalizedSaved;
-        }
+        const normalizedSaved = ensureMinimumUnits(parsed.map(normalizeUnit));
+        localStorage.setItem(storageKey, JSON.stringify(normalizedSaved));
+        return normalizedSaved;
       }
     }
   } catch (e) {
     console.warn('Unable to load saved inventory, using defaults');
   }
-  const seeded = BASE_NORMALIZED;
+  const seeded = ensureMinimumUnits(BASE_NORMALIZED);
   localStorage.setItem(storageKey, JSON.stringify(seeded));
   return seeded;
 }
