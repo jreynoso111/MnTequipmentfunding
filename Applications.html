@@ -111,7 +111,7 @@
     .step-body b { display:block; margin-bottom:3px; }
 
     /* REQUIREMENTS & UPLOAD */
-    .requirements-row { display:flex; gap:36px; align-items:center; margin-top:16px; flex-wrap:wrap; }
+    .requirements-row { display:flex; gap:36px; align-items:stretch; margin-top:16px; flex-wrap:wrap; }
     .checklist { list-style:none; padding:0; margin:0; font-size:13px; color:#333; }
     .checklist li { display:flex; gap:8px; align-items:flex-start; margin-bottom:8px; }
     .circle-check {
@@ -128,8 +128,8 @@
     .circle-check:checked { background:#005e4a; }
     .circle-check:checked::after { content:""; position:absolute; inset:4px; border-radius:50%; background:#fff; }
 
-    .upload-card { flex:1; max-width:360px; display:flex; flex-direction:column; justify-content:center; gap:10px; }
-    .upload-box { border-radius:12px; border:2px dashed rgba(0,94,74,.5); background:#f7fbfa; padding:16px 18px; display:flex; gap:12px; align-items:center; }
+    .upload-card { flex:1; max-width:360px; display:flex; flex-direction:column; height:100%; }
+    .upload-box { border-radius:12px; border:2px dashed rgba(0,94,74,.5); background:#f7fbfa; padding:16px 18px; display:flex; gap:12px; align-items:center; height:100%; }
     .upload-icon { width:34px; height:34px; border-radius:50%; background:#005e4a; color:#fff; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
     .upload-main { font-size:14px; font-weight:700; color:#0b2520; }
     .upload-sub { font-size:12px; color:#555; }
@@ -296,12 +296,11 @@ dropdown.addEventListener('mouseleave', ()=>{
           <li><input type="checkbox" class="circle-check" /> <div>Proof of legal status (Green Card, Work Permit, or Citizenship).</div></li>
         </ul>
         <div class="upload-card">
-          <h3 class="section-title" style="font-size:16px; margin-bottom:8px;">Upload Your Documents</h3>
           <div class="upload-box">
             <div class="upload-icon">⬆</div>
             <div>
-              <div class="upload-main">Upload package</div>
-              <div class="upload-sub">Email your completed application files directly to your representative.</div>
+              <div class="upload-main">Upload documents</div>
+              <div class="upload-sub">Email your completed application documents directly to your representative.</div>
             </div>
           </div>
         </div>
