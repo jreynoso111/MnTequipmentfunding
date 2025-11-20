@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inventory Change Log</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root { --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; font-family:var(--font-main); }
+    body { background:#f5f7f6; color:#0b2520; padding:24px; line-height:1.5; }
+    h1 { font-size:26px; font-weight:800; margin-bottom:6px; }
+    p.lead { font-size:13px; color:#3d4a47; margin-bottom:16px; }
+    .panel { background:#fff; border:1px solid #d8e5e0; border-radius:12px; padding:16px; box-shadow:0 4px 12px rgba(0,0,0,.06); }
+    table { width:100%; border-collapse:collapse; font-size:12px; margin-top:8px; }
+    th, td { padding:10px; border-bottom:1px solid #e6eeeb; text-align:left; vertical-align:top; }
+    th { background:#f5faf8; color:#0b2520; font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+    .btn { border:none; border-radius:999px; padding:10px 16px; font-weight:700; font-size:13px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+    .btn.primary { background:#005e4a; color:#fff; }
+    .btn.ghost { background:#fff; color:#005e4a; border:1px solid #005e4a; }
+    .muted { color:#4d5b57; font-size:12px; }
+    .badge { display:inline-flex; align-items:center; padding:4px 8px; background:#eef6f3; border:1px solid #cfe2de; border-radius:999px; font-size:11px; font-weight:700; color:#0b2520; }
+    .flex { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .login-wrap { max-width:420px; margin:30px auto; }
+    textarea { width:100%; border-radius:10px; border:1px solid #d8e5e0; padding:12px; min-height:100px; background:#f8fbfa; }
+  </style>
+</head>
+<body>
+  <div id="authGate" class="login-wrap" style="display:none;">
+    <div class="panel">
+      <h1>Admin sign in</h1>
+      <p class="muted" style="margin-top:-4px;">Use your inventory credentials (admin role required).</p>
+      <label for="authUser" style="font-size:12px; font-weight:700; display:block; margin:10px 0 6px;">Username</label>
+      <input id="authUser" style="width:100%; padding:10px; border-radius:10px; border:1px solid #cfdad7;" autocomplete="username" />
+      <label for="authPass" style="font-size:12px; font-weight:700; display:block; margin:10px 0 6px;">Password</label>
+      <input id="authPass" type="password" style="width:100%; padding:10px; border-radius:10px; border:1px solid #cfdad7;" autocomplete="current-password" />
+      <div class="flex" style="justify-content:flex-end; margin-top:12px;">
+        <a class="btn ghost" href="Inventory.html">Back to Inventory</a>
+        <button class="btn primary" id="authLogin" type="button">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="notAdmin" class="login-wrap" style="display:none;">
+    <div class="panel">
+      <h1>Admin only</h1>
+      <p class="muted" style="margin:6px 0 12px;">This change log is restricted to administrators. Sign in with an admin profile to continue.</p>
+      <div class="flex" style="justify-content:flex-end;">
+        <a class="btn ghost" href="control-panel.html">Switch account</a>
+        <a class="btn primary" href="Inventory.html">Return to site</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel" style="display:none;">
+    <h1>Inventory change log</h1>
+    <p id="userMeta" class="lead"></p>
+    <div class="flex" style="margin:10px 0 14px;">
+      <a class="btn ghost" href="control-panel.html">Back to control panel</a>
+      <a class="btn primary" href="Units for Sale.html">View listings</a>
+      <button class="btn ghost" id="clearLog" type="button">Clear log</button>
+    </div>
+
+    <div class="panel">
+      <div class="flex" style="justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h2 style="font-size:16px;">Recent activity</h2>
+        <span class="badge" id="entryCount">0 entries</span>
+      </div>
+      <p class="muted" style="margin-top:-6px;">Tracks created, updated, and deleted listings along with who made the change.</p>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th style="min-width:120px;">Timestamp</th>
+              <th style="min-width:90px;">User</th>
+              <th style="min-width:90px;">Action</th>
+              <th style="min-width:120px;">VIN</th>
+              <th style="min-width:160px;">Title</th>
+              <th style="min-width:220px;">Details</th>
+            </tr>
+          </thead>
+          <tbody id="logBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_ACCOUNTS = [
+      { user: 'admin', pass: 'adminmnt', role: 'admin' },
+      { user: 'rcortez', pass: 'cortezmnt', role: 'manager' }
+    ];
+    const accountsKey = 'inventoryAccounts';
+    const sessionKey = 'inventorySession';
+    const lockKey = 'inventoryLoginLock';
+    const auditKey = 'inventoryAuditLog';
+    const SESSION_TTL_MINUTES = 90;
+
+    let accounts = [];
+    let auditLog = [];
+
+    function hashPassword(pass) {
+      return 'hash:' + btoa(pass || '');
+    }
+
+    function normalizeAccount(acc) {
+      if (!acc || !acc.user) return null;
+      const hashed = (acc.pass || '').startsWith('hash:') ? acc.pass : hashPassword(acc.pass || '');
+      return { user: acc.user, pass: hashed, role: acc.role || 'manager' };
+    }
+
+    function loadAccounts() {
+      let stored = [];
+      const saved = localStorage.getItem(accountsKey);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) stored = parsed.map(normalizeAccount).filter(Boolean);
+        } catch (e) {}
+      }
+      DEFAULT_ACCOUNTS.forEach(base => {
+        const normalized = normalizeAccount(base);
+        const idx = stored.findIndex(a => a.user === normalized.user);
+        if (idx >= 0) {
+          stored[idx] = { ...normalized, ...stored[idx] };
+        } else {
+          stored.push(normalized);
+        }
+      });
+      localStorage.setItem(accountsKey, JSON.stringify(stored));
+      accounts = stored;
+      return stored;
+    }
+
+    function passwordsMatch(account, input) {
+      return account.pass === hashPassword(input);
+    }
+
+    function getSessionDetails() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(sessionKey));
+        if (parsed && parsed.expires && Date.now() < parsed.expires) return parsed;
+      } catch (e) {}
+      clearSession();
+      return null;
+    }
+
+    function setSession(account) {
+      const expires = Date.now() + SESSION_TTL_MINUTES * 60 * 1000;
+      localStorage.setItem(sessionKey, JSON.stringify({ user: account.user, role: account.role, expires }));
+    }
+
+    function clearSession() {
+      localStorage.removeItem(sessionKey);
+    }
+
+    function getLock() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(lockKey));
+        if (parsed) return parsed;
+      } catch (e) {}
+      return { attempts: 0, lockedUntil: 0 };
+    }
+
+    function saveLock(data) { localStorage.setItem(lockKey, JSON.stringify(data)); }
+    function resetLock() { saveLock({ attempts: 0, lockedUntil: 0 }); }
+    function recordFailedAttempt() {
+      const lock = getLock();
+      lock.attempts += 1;
+      if (lock.attempts >= 5) {
+        lock.lockedUntil = Date.now() + (15 * 60 * 1000);
+        lock.attempts = 0;
+      }
+      saveLock(lock);
+    }
+    function canAttempt() {
+      const lock = getLock();
+      if (lock.lockedUntil && Date.now() < lock.lockedUntil) return false;
+      return true;
+    }
+
+    function isAdmin(session) {
+      return session && (session.role || '').toLowerCase() === 'admin';
+    }
+
+    function formatTime(ts) {
+      try {
+        const d = new Date(ts);
+        return d.toLocaleString();
+      } catch (e) {
+        return ts;
+      }
+    }
+
+    function loadAuditLog() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(auditKey) || '[]');
+        if (Array.isArray(saved)) {
+          auditLog = saved;
+          return saved;
+        }
+      } catch (e) {}
+      auditLog = [];
+      return auditLog;
+    }
+
+    function saveAuditLog(entries) {
+      auditLog = entries.slice();
+      localStorage.setItem(auditKey, JSON.stringify(auditLog));
+    }
+
+    function renderLog() {
+      const body = document.getElementById('logBody');
+      const countBadge = document.getElementById('entryCount');
+      body.innerHTML = '';
+      if (!auditLog.length) {
+        body.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#4d5b57;">No activity yet.</td></tr>';
+        countBadge.textContent = '0 entries';
+        return;
+      }
+      countBadge.textContent = `${auditLog.length} entr${auditLog.length === 1 ? 'y' : 'ies'}`;
+      auditLog
+        .slice()
+        .sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp))
+        .forEach(entry => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${formatTime(entry.timestamp)}</td>
+            <td>${entry.user || ''}</td>
+            <td style="font-weight:700; text-transform:capitalize;">${entry.action || ''}</td>
+            <td>${entry.vin || ''}</td>
+            <td>${entry.title || ''}</td>
+            <td>${(entry.details || []).length ? '<ul style="padding-left:18px; margin:0;">' + entry.details.map(d => `<li>${d}</li>`).join('') + '</ul>' : '—'}</td>
+          `;
+          body.appendChild(tr);
+        });
+    }
+
+    function requireAdmin() {
+      const session = getSessionDetails();
+      if (session && isAdmin(session)) {
+        document.getElementById('authGate').style.display = 'none';
+        document.getElementById('notAdmin').style.display = 'none';
+        document.getElementById('panel').style.display = 'block';
+        const meta = document.getElementById('userMeta');
+        const minutesLeft = Math.max(1, Math.ceil((session.expires - Date.now()) / (60 * 1000)));
+        meta.textContent = `Signed in as ${session.user} (${session.role}) — session valid for ~${minutesLeft} min`;
+        loadAuditLog();
+        renderLog();
+        return;
+      }
+      if (session && !isAdmin(session)) {
+        document.getElementById('authGate').style.display = 'none';
+        document.getElementById('notAdmin').style.display = 'block';
+        return;
+      }
+      document.getElementById('authGate').style.display = 'block';
+    }
+
+    function tryLogin() {
+      if (!canAttempt()) {
+        alert('Too many attempts. Please wait before trying again.');
+        return;
+      }
+      const u = document.getElementById('authUser').value.trim();
+      const p = document.getElementById('authPass').value.trim();
+      const account = accounts.find(a => a.user === u && passwordsMatch(a, p));
+      if (account && isAdmin(account)) {
+        resetLock();
+        setSession(account);
+        requireAdmin();
+      } else if (account && !isAdmin(account)) {
+        alert('Only admin users may view the change log.');
+      } else {
+        recordFailedAttempt();
+        alert('Invalid credentials');
+      }
+    }
+
+    function clearLog() {
+      if (!confirm('Clear the stored activity log?')) return;
+      saveAuditLog([]);
+      renderLog();
+    }
+
+    accounts = loadAccounts();
+    auditLog = loadAuditLog();
+    requireAdmin();
+
+    document.getElementById('authLogin').addEventListener('click', tryLogin);
+    document.getElementById('authPass').addEventListener('keyup', (e) => { if (e.key === 'Enter') tryLogin(); });
+    document.getElementById('clearLog').addEventListener('click', clearLog);
+  </script>
+</body>
+</html>
