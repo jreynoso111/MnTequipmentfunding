@@ -5,10 +5,21 @@
   <title>M&T Equipment Funding LLC – Inventory</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="https://i.imgur.com/kopRNDu.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="inventory-seed.js"></script>
   <style>
-    * { box-sizing:border-box; margin:0; padding:0; }
-    body { font-family:Arial,Helvetica,sans-serif; background:#f5f7f6; color:#111; line-height:1.4; }
+    :root {
+      --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    html { font-family: var(--font-main); }
+    *, *::before, *::after { box-sizing:border-box; font-family: inherit; }
+    body { margin:0; font-family:inherit; background:#f5f7f6; color:#0b2520; line-height:1.5; }
     a { text-decoration:none; color:inherit; }
+    img { max-width:100%; height:auto; display:block; }
 
     /* HEADER */
     header { background:#ffffff; box-shadow:0 2px 6px rgba(0,0,0,.08); position:sticky; top:0; z-index:10; }
@@ -16,8 +27,6 @@
     .logo{display:flex;align-items:center;gap:10px;}
     .logo img { width:120px; height:auto; }
     .logo-mark{width:120px;height:auto;border-radius:0;object-fit:contain;}
-    .logo-text{font-size:16px;font-weight:700;line-height:1.2;}
-    .logo-sub{font-size:11px;font-weight:400;color:#555;}
     .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
     .nav-links a{padding:6px 10px;border-radius:999px;}
     .nav-links a:hover{background:rgba(0,94,74,.08);}
@@ -33,6 +42,12 @@
       cursor:pointer;
     }
     .btn-small:hover { background:#005e4a; color:#fff; }
+
+    @media (max-width: 720px) {
+      .nav { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .nav-links { flex-wrap: wrap; width: 100%; }
+      .btn-small { width: 100%; text-align: center; }
+    }
 
     main { max-width:1100px; margin:24px auto 60px; padding:0 20px 40px; }
 
@@ -121,7 +136,7 @@
       max-width:360px;
       text-align:right;
     }
-    .see-all-link {
+    .see-all-link, .tool-link {
       border-radius:999px;
       border:1px solid #cfe7e2;
       padding:6px 14px;
@@ -132,17 +147,18 @@
       cursor:pointer;
       white-space:nowrap;
     }
-    .see-all-link:hover {
+    .see-all-link:hover, .tool-link:hover {
       background:#005e4a;
       color:#fff;
       border-color:#005e4a;
     }
 
-    .inventory-grid {
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-      gap:14px;
-    }
+    .inventory-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
+    .carousel-wrap { position:relative; overflow:hidden; border-radius:14px; background:#f9fbfa; border:1px solid #e3ece9; padding:6px 4px; }
+    .carousel-track { display:flex; gap:14px; transition:transform 0.5s ease; will-change:transform; }
+    .carousel-controls { display:flex; justify-content:flex-end; gap:8px; margin:14px 0 6px; }
+    .carousel-btn { border:1px solid #cfe7e2; background:#ffffff; color:#005e4a; padding:6px 12px; border-radius:999px; font-weight:700; cursor:pointer; font-size:11px; }
+    .carousel-btn:hover { background:#005e4a; color:#fff; }
     .unit-card {
       background:#ffffff;
       border-radius:12px;
@@ -349,6 +365,21 @@
     }
     .cta-btn:hover { background:#f0faf7; }
 
+    .settings-access {
+      margin:16px auto 6px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      align-items:center;
+      text-align:center;
+    }
+
+    .settings-note {
+      font-size:12px;
+      color:#444;
+      max-width:520px;
+    }
+
     footer {
       border-top:1px solid #dde6e2;
       padding:10px 20px 22px;
@@ -413,9 +444,166 @@
     .dropdown-menu a:hover{background:#f0faf7;}
     .dropdown:hover .dropdown-menu{display:block; opacity:1; pointer-events:auto;}
     .dropdown.delay-hide .dropdown-menu{display:block; opacity:1; pointer-events:auto;}
+
+    /* TOOL MODAL */
+    .modal-backdrop {
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.38);
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+      padding:12px;
+    }
+    .modal {
+      background:#ffffff;
+      border-radius:12px;
+      width:100%;
+      max-width:360px;
+      padding:18px 16px 16px;
+      box-shadow:0 10px 30px rgba(0,0,0,.18);
+      border:1px solid #e3ece9;
+      font-size:13px;
+    }
+    .modal h3 { font-size:16px; font-weight:800; color:#0b2520; margin-bottom:8px; }
+    .modal p { color:#444; font-size:12px; margin-bottom:10px; }
+    .modal label { display:block; font-weight:600; margin-bottom:4px; }
+    .modal input { width:100%; padding:8px 10px; border-radius:8px; border:1px solid #cfdad7; font-size:13px; margin-bottom:10px; }
+    .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:4px; }
+    .modal-actions button { border-radius:999px; padding:8px 14px; font-weight:700; border:1px solid #005e4a; cursor:pointer; }
+    .modal-actions .primary { background:#005e4a; color:#fff; }
+    .modal-actions .ghost { background:#ffffff; color:#005e4a; }
   </style>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      const DEFAULT_ACCOUNTS = [
+        { user: 'admin', pass: 'hash:YWRtaW5tbnQ=', role: 'admin' },
+        { user: 'rcortez', pass: 'hash:Y29ydGV6bW50', role: 'manager' }
+      ];
+      const lockKey = 'inventoryLoginLock';
+      const sessionKey = 'inventorySession';
+      const SESSION_TTL_MINUTES = 90;
+
+      function hashPassword(pass) {
+        return 'hash:' + btoa(pass || '');
+      }
+
+      function normalizeAccount(acc) {
+        if (!acc || !acc.user) return null;
+        const hashed = (acc.pass || '').startsWith('hash:') ? acc.pass : hashPassword(acc.pass || '');
+        return { user: acc.user, pass: hashed, role: acc.role || 'manager' };
+      }
+
+      function passwordsMatch(account, input) {
+        return account.pass === hashPassword(input);
+      }
+
+      function loadAccounts() {
+        const saved = localStorage.getItem('inventoryAccounts');
+        let accounts = [];
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) accounts = parsed.map(normalizeAccount).filter(Boolean);
+          } catch (e) {
+            console.warn('Could not parse saved accounts');
+          }
+        }
+        DEFAULT_ACCOUNTS.forEach(base => {
+          const normalized = normalizeAccount(base);
+          const idx = accounts.findIndex(a => a.user === normalized.user);
+          if (idx >= 0) {
+            accounts[idx] = { ...normalized, ...accounts[idx] };
+          } else {
+            accounts.push(normalized);
+          }
+        });
+        localStorage.setItem('inventoryAccounts', JSON.stringify(accounts));
+        return accounts;
+      }
+
+      function getLock() {
+        try {
+          return JSON.parse(localStorage.getItem(lockKey)) || { attempts: 0, lockedUntil: 0 };
+        } catch (e) {
+          return { attempts: 0, lockedUntil: 0 };
+        }
+      }
+
+      function saveLock(data) { localStorage.setItem(lockKey, JSON.stringify(data)); }
+      function resetLock() { saveLock({ attempts: 0, lockedUntil: 0 }); }
+      function recordFailedAttempt() {
+        const lock = getLock();
+        lock.attempts += 1;
+        if (lock.attempts >= 5) {
+          lock.lockedUntil = Date.now() + (15 * 60 * 1000);
+          lock.attempts = 0;
+        }
+        saveLock(lock);
+      }
+      function canAttempt() {
+        const lock = getLock();
+        if (lock.lockedUntil && Date.now() < lock.lockedUntil) return false;
+        return true;
+      }
+
+      function setSession(account) {
+        const expires = Date.now() + SESSION_TTL_MINUTES * 60 * 1000;
+        localStorage.setItem(sessionKey, JSON.stringify({ user: account.user, role: account.role, expires }));
+      }
+
+      let accounts = loadAccounts();
+
+      const modal = document.getElementById('toolModal');
+      const toolBtn = document.getElementById('toolButton');
+      const cancelBtn = document.getElementById('toolCancel');
+      const confirmBtn = document.getElementById('toolConfirm');
+      const userInput = document.getElementById('toolUser');
+      const passInput = document.getElementById('toolPass');
+
+      function openModal() {
+        if (modal) {
+          modal.style.display = 'flex';
+          userInput.focus();
+        }
+      }
+
+      function closeModal() {
+        if (modal) {
+          modal.style.display = 'none';
+          userInput.value = '';
+          passInput.value = '';
+        }
+      }
+
+      function handleLogin() {
+        if (!canAttempt()) {
+          alert('Too many attempts. Please wait a few minutes before trying again.');
+          return;
+        }
+        const user = userInput.value.trim();
+        const pass = passInput.value.trim();
+        const account = accounts.find(a => a.user === user && passwordsMatch(a, pass));
+        if (account) {
+          resetLock();
+          setSession(account);
+          window.location.href = 'control-panel.html';
+        } else {
+          recordFailedAttempt();
+          alert('Invalid username or password.');
+        }
+      }
+
+      if (toolBtn) toolBtn.addEventListener('click', openModal);
+      if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+      if (confirmBtn) confirmBtn.addEventListener('click', handleLogin);
+      [userInput, passInput].forEach(input => input && input.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+          handleLogin();
+        }
+      }));
+
       // Dropdown delayed hide
       const dropdown = document.querySelector('.dropdown');
       let hideTimeout;
@@ -435,70 +623,75 @@
         });
       }
 
-      // Rotating "Representative units" cards
       const featuredContainer = document.getElementById('featured-units');
+      const prevBtn = document.getElementById('prevSlide');
+      const nextBtn = document.getElementById('nextSlide');
       if (!featuredContainer) return;
 
-      // This list should mirror the units in "Units for Sale.html"
-      const allUnits = [
-        {
-          tag: 'Truck',
-          title: '2020 Freightliner Cascadia PT126SLP',
-          img: 'https://images.pexels.com/photos/2199293/pexels-photo-2199293.jpeg',
-          mileage: '729,771',
-          location: 'CTTS',
-          state: 'CA',
-          vin: '1FUJHHDR1LLKS7083',
-          price: '$38,386*'
-        },
-        {
-          tag: 'Truck',
-          title: '2019 Freightliner Cascadia PT126SLP',
-          img: 'https://images.pexels.com/photos/2199294/pexels-photo-2199294.jpeg',
-          mileage: '732,806',
-          location: 'CTTS',
-          state: 'CA',
-          vin: '1FUJHHDR2KLKM3646',
-          price: '$25,864*'
-        },
-        {
-          tag: 'Truck',
-          title: '2020 Freightliner Cascadia PT126SLP',
-          img: 'https://images.pexels.com/photos/2199295/pexels-photo-2199295.jpeg',
-          mileage: '777,777',
-          location: 'Copart',
-          state: '',
-          vin: '1FUJHHDR2LLKS3768',
-          price: '$37,080*'
-        },
-        {
-          tag: 'Truck',
-          title: '2019 Freightliner Cascadia PT126SLP',
-          img: 'https://images.pexels.com/photos/2199296/pexels-photo-2199296.jpeg',
-          mileage: '644,939',
-          location: 'Copart',
-          state: '',
-          vin: '1FUJHHDR4KLKC2700',
-          price: '$35,830*'
-        }
-        // Add more units here to rotate through a larger list
-      ];
+      const storageKey = 'inventoryData';
+      const MAX_IMAGES = 10;
+      const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg';
 
-      const visibleCount = 4;
-      let startIndex = 0;
+      function normalizeImages(unit) {
+        const fromArray = Array.isArray(unit.images) ? unit.images.filter(Boolean) : [];
+        const merged = [...new Set([unit.image, ...fromArray].filter(Boolean))];
+        return merged.slice(0, MAX_IMAGES);
+      }
+
+      function normalizeUnit(unit) {
+        const images = normalizeImages(unit || {});
+        return {
+          title: unit?.title || 'Unit',
+          type: unit?.type || 'Truck',
+          vin: unit?.vin || '',
+          mileage: unit?.mileage ? Number(unit.mileage).toLocaleString('en-US') : '0',
+          location: unit?.location || 'Available nationwide',
+          state: unit?.state || 'Unknown',
+          price: unit?.price ? `USD$ ${Number(unit.price).toLocaleString('en-US')}` : 'Call for price',
+          image: images[0] || DEFAULT_IMAGE
+        };
+      }
+
+      function loadUnits() {
+        try {
+          const saved = localStorage.getItem(storageKey);
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length) return parsed.map(normalizeUnit);
+          }
+        } catch (e) {}
+        const seeded = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED.map(normalizeUnit) : [];
+        localStorage.setItem(storageKey, JSON.stringify(seeded));
+        return seeded;
+      }
+
+      const allUnits = loadUnits();
+      if (!allUnits.length) return;
+      let visibleCount = 1;
+      let index = 0;
+
+      function computeVisible() {
+        if (allUnits.length === 1) return 1;
+        if (window.innerWidth < 640) return 1;
+        if (window.innerWidth < 980) return Math.min(2, allUnits.length);
+        return Math.min(3, allUnits.length);
+      }
 
       function renderFeatured() {
         featuredContainer.innerHTML = '';
+        visibleCount = computeVisible();
+        const slides = [];
         for (let i = 0; i < visibleCount; i++) {
-          const unit = allUnits[(startIndex + i) % allUnits.length];
+          const unit = allUnits[(index + i) % allUnits.length];
           const card = document.createElement('article');
           card.className = 'unit-card';
+          card.style.minWidth = `${100 / visibleCount}%`;
           card.innerHTML = `
             <div class="unit-img-wrap">
-              <img src="${unit.img}" alt="${unit.title}" />
+              <img src="${unit.image}" alt="${unit.title}" />
             </div>
             <div class="unit-body">
-              <div class="unit-tag">${unit.tag}</div>
+              <div class="unit-tag">${unit.type}</div>
               <h2 class="unit-title">${unit.title}</h2>
               <div class="unit-specs">
                 <span>Mileage: ${unit.mileage}</span>
@@ -530,25 +723,34 @@
               'Thank you.'
             ];
             const body = encodeURIComponent(bodyLines.join('\n'));
-            const mailto = `mailto:RCortez@MntFunding.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+            const mailto = `mailto:RCortez@mntfunding.com?subject=${encodeURIComponent(subject)}&body=${body}`;
             btn.addEventListener('click', () => {
               window.location.href = mailto;
             });
           }
 
-          featuredContainer.appendChild(card);
+          slides.push(card);
         }
+
+        slides.forEach(slide => featuredContainer.appendChild(slide));
+        featuredContainer.style.transform = `translateX(0)`;
       }
 
+      function nextSlide() {
+        index = (index + 1) % allUnits.length;
+        renderFeatured();
+      }
+
+      function prevSlide() {
+        index = (index - 1 + allUnits.length) % allUnits.length;
+        renderFeatured();
+      }
+
+      nextBtn?.addEventListener('click', nextSlide);
+      prevBtn?.addEventListener('click', prevSlide);
       renderFeatured();
-
-      // Rotate the starting index every 6 seconds
-      if (allUnits.length > visibleCount) {
-        setInterval(() => {
-          startIndex = (startIndex + 1) % allUnits.length;
-          renderFeatured();
-        }, 6000);
-      }
+      window.addEventListener('resize', () => renderFeatured());
+      if (allUnits.length > visibleCount) setInterval(nextSlide, 6000);
     });
   </script>
 </head>
@@ -557,10 +759,6 @@
     <div class="nav">
       <div class="logo">
         <img class="logo-mark" src="Media/Logo White - Copy.png" alt="M&T Equipment Funding Logo" />
-        <div>
-          <div class="logo-text">M&T Equipment Funding LLC</div>
-          <div class="logo-sub">Commercial truck &amp; trailer financing</div>
-        </div>
       </div>
       <nav class="nav-links">
         <a href="index.html">Home</a>
@@ -573,7 +771,7 @@
           </div>
         </div>
         <a href="About us.html">About Us</a>
-        <button class="btn-small" type="button" onclick="window.location.href='mailto:RCortez@MntFunding.com?subject=Inventory%20Inquiry'">Talk to Representative</button>
+        <button class="btn-small" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
       </nav>
     </div>
   </header>
@@ -618,8 +816,14 @@
       </div>
     </div>
 
-    <section class="inventory-grid" id="featured-units">
-      <!-- Featured units will be injected here by JavaScript -->
+    <div class="carousel-controls">
+      <button class="carousel-btn" type="button" id="prevSlide">◀ Prev</button>
+      <button class="carousel-btn" type="button" id="nextSlide">Next ▶</button>
+    </div>
+    <section class="carousel-wrap">
+      <div class="carousel-track" id="featured-units">
+        <!-- Featured units will be injected here by JavaScript -->
+      </div>
     </section>
 
     <section class="inv-info">
@@ -627,10 +831,6 @@
       <p>
         We are not a public truck lot. In most cases, you will be buying from a dealer, fleet, or private seller of your choice.
         Our role is to evaluate the truck or trailer, confirm the value, and structure the financing.
-      </p>
-      <p>
-        If you already have a specific VIN or stock number, include it with your application so we can review mileage,
-        condition, and route to make sure the numbers make sense for you.
       </p>
       <p>
         <strong>*All payment examples shown are estimates only.</strong> Actual terms, down payment, and monthly payments will
@@ -644,8 +844,8 @@
           <div class="rep-label">YOUR REPRESENTATIVE</div>
           <h2 class="rep-name">Rogelio Cortez</h2>
           <div class="rep-role">Sales Representative — M&amp;T Equipment Funding LLC</div>
-          <p class="rep-line"><strong>Phone:</strong> (000) 000-0000</p>
-          <p class="rep-line"><strong>Email:</strong> RCortez@MntFunding.com</p>
+      <p class="rep-line"><strong>Phone:</strong> 201-201-3551</p>
+      <p class="rep-line"><strong>Email:</strong> RCortez@mntfunding.com</p>
           <p class="rep-note">Send any inventory questions, truck listings, or spec sheets directly to Rogelio for a quick review.</p>
         </div>
         <div class="rep-img-wrap">
@@ -677,9 +877,29 @@
           Share a link, spec sheet, or VIN and we&apos;ll let you know if it fits our programs before you spend money on an inspection or travel.
         </div>
       </div>
-      <button class="cta-btn" type="button" onclick="window.location.href='mailto:RCortez@MntFunding.com?subject=Inventory%20Inquiry'">Talk to Representative</button>
+      <button class="cta-btn" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
     </section>
+
+    <div class="settings-access">
+      <button class="tool-link" type="button" id="toolButton">Settings</button>
+    </div>
   </main>
+
+  <div class="modal-backdrop" id="toolModal">
+    <div class="modal">
+      <h3>Admin Access Required</h3>
+      <p>Sign in with your admin or manager credentials to edit vehicle listings.</p>
+      <label for="toolUser">Username</label>
+      <input id="toolUser" name="toolUser" type="text" placeholder="Enter username" autocomplete="username" />
+      <label for="toolPass">Password</label>
+      <input id="toolPass" name="toolPass" type="password" placeholder="Enter password" autocomplete="current-password" />
+      <div class="modal-actions">
+        <button class="ghost" type="button" id="toolCancel">Cancel</button>
+        <button class="primary" type="button" id="toolConfirm">Continue</button>
+      </div>
+      <p style="margin-top:8px;color:#666;font-size:11px;">Tip: Save your selection to stay signed in while updating listings.</p>
+    </div>
+  </div>
 
   <footer>
     <div>&copy; 2025 M&amp;T Equipment Funding LLC &mdash; Commercial Truck &amp; Trailer Financing</div>
@@ -688,7 +908,7 @@
 
   <div class="footer-banner">
     <div class="footer-banner-inner">
-      📞 Phone: (000) 000&ndash;0000 &nbsp; | &nbsp; 📧 Email: info@mtequipmentfunding.com &nbsp; | &nbsp; 🔗 Instagram: @MTequipmentfunding &nbsp; | &nbsp; 🔗 Facebook: M&amp;T Equipment Funding LLC &nbsp; | &nbsp; &copy; 2025 M&amp;T Equipment Funding LLC &mdash; All Rights Reserved &nbsp; | &nbsp; Commercial Truck &amp; Trailer Financing
+      📞 Phone: 201-201-3551 &nbsp; | &nbsp; 📧 Email: info@mntfunding.com &nbsp; | &nbsp; 🔗 Instagram: @MTequipmentfunding &nbsp; | &nbsp; 🔗 Facebook: M&amp;T Equipment Funding LLC &nbsp; | &nbsp; &copy; 2025 M&amp;T Equipment Funding LLC &mdash; All Rights Reserved &nbsp; | &nbsp; Commercial Truck &amp; Trailer Financing
     </div>
   </div>
 </body>

@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inventory Control Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="inventory-seed.js"></script>
+  <style>
+    :root {
+      --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    html { font-family: var(--font-main); }
+    *, *::before, *::after { box-sizing:border-box; font-family: inherit; margin:0; padding:0; }
+    body{font-family:inherit;background:#f5f7f6;color:#0b2520;line-height:1.5;padding:24px;}
+    img{max-width:100%;height:auto;display:block;}
+    h1{font-size:26px;font-weight:800;color:#0b2520;margin-bottom:6px;}
+    p.lead{font-size:13px;color:#444;margin-bottom:16px;}
+    .panel{background:#fff;border:1px solid #d8e5e0;border-radius:12px;padding:16px;box-shadow:0 4px 12px rgba(0,0,0,.06);}
+    .flex{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start;margin-bottom:14px;}
+    label{font-weight:700;font-size:12px;display:block;margin-bottom:6px;color:#0b2520;}
+    input, select, textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #cfdad7;font-size:13px;}
+    textarea{min-height:110px;}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;}
+    .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:10px;}
+    .btn{border:none;border-radius:999px;padding:10px 16px;font-weight:700;font-size:13px;cursor:pointer;}
+    .btn.primary{background:#005e4a;color:#fff;}
+    .btn.ghost{background:#fff;color:#005e4a;border:1px solid #005e4a;}
+    table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px;}
+    th,td{padding:10px;border-bottom:1px solid #e6eeeb;text-align:left;}
+    th{background:#f5faf8;color:#0b2520;font-size:12px;text-transform:uppercase;letter-spacing:.04em;}
+    .status-pill{padding:4px 8px;border-radius:999px;font-weight:700;font-size:11px;display:inline-block;}
+    .status-pill.available{background:#dff6f0;color:#005e4a;}
+    .status-pill.sold{background:#ffe5e5;color:#b30000;}
+    .actions{display:flex;gap:6px;}
+    .notice{background:#fff7e6;border:1px solid #ffe0a8;color:#6a3a00;padding:10px 12px;border-radius:10px;font-size:12px;margin-bottom:14px;}
+    .login-wrap{max-width:420px;margin:30px auto;}
+    .card{background:#fff;border:1px solid #d8e5e0;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.08);padding:18px;}
+    .card h2{font-size:18px;margin-bottom:8px;}
+    .muted{font-size:12px;color:#555;margin-bottom:10px;}
+    .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid #cfe2de;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:700;color:#0b2520;background:#f4faf8;}
+    .thumb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:8px;}
+    .thumb{position:relative;border:1px solid #d8e5e0;border-radius:8px;overflow:hidden;background:#f2f6f5;}
+    .thumb img{width:100%;height:90px;object-fit:cover;}
+    .thumb button{position:absolute;top:6px;right:6px;border:none;background:rgba(0,0,0,0.55);color:#fff;border-radius:6px;padding:4px 6px;font-size:11px;cursor:pointer;}
+  </style>
+</head>
+<body>
+  <div id="authGate" class="login-wrap" style="display:none;">
+    <div class="card">
+      <h2>Sign in</h2>
+      <p class="muted">Enter the same credentials used on the Inventory page to access the control panel.</p>
+      <p class="muted" style="margin-top:-4px;">Admin and manager credentials are stored securely.</p>
+      <label for="authUser">Username</label>
+      <input id="authUser" type="text" autocomplete="username" />
+      <label for="authPass" style="margin-top:10px;">Password</label>
+      <input id="authPass" type="password" autocomplete="current-password" />
+      <div class="flex" style="justify-content:flex-end;margin-top:10px;">
+        <button class="btn ghost" id="authBack">Back to Inventory</button>
+        <button class="btn primary" id="authLogin">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel" style="display:none;">
+    <h1>Inventory Control Panel</h1>
+    <p id="userMeta" class="muted" style="margin-top:-6px;"></p>
+    <div class="flex" style="gap:10px; margin:6px 0 14px; flex-wrap:wrap;">
+      <button class="btn ghost" id="logoutProfile">Close profile</button>
+      <a class="btn primary" href="Units for Sale.html">View listings page</a>
+    </div>
+    <p class="lead">Add, edit, or remove vehicle listings. Changes are saved in your browser and will appear on the Units for Sale page.</p>
+
+    <div class="notice">Security reminder: This panel uses a simple browser check. For production use, place behind a server-side login.</div>
+
+    <div class="panel">
+      <h2 style="font-size:16px;margin-bottom:10px;">Add or edit listing</h2>
+      <div class="row">
+        <div>
+          <label for="title">Title</label>
+          <input id="title" placeholder="2020 Freightliner Cascadia PT126SLP" />
+        </div>
+        <div>
+          <label for="vin">VIN</label>
+          <input id="vin" placeholder="1FUJHHDR1LLXXXXXX" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="type">Type</label>
+          <select id="type">
+            <option>Truck</option>
+            <option>Trailer</option>
+          </select>
+        </div>
+        <div>
+          <label for="brand">Brand</label>
+          <input id="brand" placeholder="Freightliner" />
+        </div>
+        <div>
+          <label for="status">Status</label>
+          <select id="status">
+            <option>Available</option>
+            <option>Sold</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="price">Price (USD)</label>
+          <input id="price" type="number" min="0" step="1" placeholder="38386" />
+        </div>
+        <div>
+          <label for="mileage">Mileage</label>
+          <input id="mileage" type="number" min="0" step="1" placeholder="729771" />
+        </div>
+        <div>
+          <label for="state">State</label>
+          <input id="state" placeholder="CA" />
+        </div>
+        <div>
+          <label for="color">Color</label>
+          <input id="color" placeholder="White" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="year">Model year</label>
+          <input id="year" type="number" min="1980" max="2099" placeholder="2020" />
+        </div>
+        <div>
+          <label for="engine">Engine / HP</label>
+          <input id="engine" placeholder="DD15 / 455 HP" />
+        </div>
+        <div>
+          <label for="transmission">Transmission</label>
+          <input id="transmission" placeholder="12-speed automatic" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="condition">Condition</label>
+          <select id="condition">
+            <option value="Used">Used</option>
+            <option value="New">New</option>
+          </select>
+        </div>
+        <div>
+          <label for="location">Location</label>
+          <input id="location" placeholder="Los Angeles, CA" />
+        </div>
+        <div>
+          <label for="phone">Contact phone</label>
+          <input id="phone" placeholder="000-000-0000" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="description">Description</label>
+          <textarea id="description" placeholder="Dealer-maintained, clean title, ready for work." style="min-height:120px;"></textarea>
+        </div>
+        <div>
+          <label for="features">Key features (one per line)</label>
+          <textarea id="features" placeholder="Sleeper cab\nAPU\nAluminum wheels" style="min-height:120px;"></textarea>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:10px; background:#f8fbfa; border:1px dashed #cfe2de;">
+        <h3 style="font-size:14px; margin-bottom:8px;">Listing photos</h3>
+        <p class="muted" style="margin-top:-2px;">Upload or link up to 10 photos. The first image becomes the thumbnail.</p>
+        <div class="flex" style="align-items:center; gap:8px; margin:6px 0;">
+          <input id="imageUrl" placeholder="https://example.com/unit.jpg" />
+          <button class="btn primary" type="button" id="addImageUrl" style="white-space:nowrap;">Add image URL</button>
+        </div>
+        <div class="flex" style="align-items:center; gap:8px; margin:6px 0 10px;">
+          <input id="imageFile" type="file" accept="image/*" />
+          <span class="pill">10 images max</span>
+        </div>
+        <div id="imageList" class="thumb-grid"></div>
+      </div>
+      <div class="flex" style="justify-content:flex-end;">
+        <button class="btn ghost" id="resetForm">Reset</button>
+        <button class="btn primary" id="saveUnit">Save Listing</button>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:14px;">
+      <div class="flex" style="justify-content:space-between; align-items:center;">
+        <h2 style="font-size:16px;">Current listings</h2>
+        <button class="btn ghost" id="exportData">Export JSON</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>VIN</th>
+            <th>Year</th>
+            <th>Type</th>
+            <th>Brand</th>
+            <th>Color</th>
+            <th>State</th>
+            <th>Location</th>
+            <th>Price</th>
+            <th>Mileage</th>
+            <th>Engine</th>
+            <th>Trans.</th>
+            <th>Cond.</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="panel" id="userManagementPanel" style="margin-top:14px; display:none;">
+      <div class="flex" style="justify-content:space-between; align-items:center;">
+        <h2 style="font-size:16px;">User management</h2>
+        <span class="muted" style="font-size:11px;">Admin only</span>
+      </div>
+      <p class="muted" style="margin-top:-6px;">Create additional admin or manager profiles for the inventory tool.</p>
+      <div class="row">
+        <div>
+          <label for="newUser">Username</label>
+          <input id="newUser" placeholder="newuser" />
+        </div>
+        <div>
+          <label for="newPass">Password</label>
+          <input id="newPass" type="password" placeholder="password" />
+        </div>
+        <div>
+          <label for="newRole">Role</label>
+          <select id="newRole">
+            <option value="admin">Admin</option>
+            <option value="manager">Manager</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex" style="justify-content:flex-end; gap:8px;">
+        <button class="btn ghost" id="cancelAccountEdit" type="button" style="display:none;">Cancel</button>
+        <button class="btn primary" id="addAccount">Create profile</button>
+      </div>
+      <div class="muted" style="margin-top:10px; font-weight:700; color:#0b2520;">Saved profiles</div>
+      <ul id="accountList" style="list-style:none; padding-left:0; margin-top:6px; font-size:12px; color:#0b2520;"></ul>
+    </div>
+  </div>
+
+  
+  <script>
+      const DEFAULT_ACCOUNTS = [
+        { user: 'admin', pass: 'hash:YWRtaW5tbnQ=', role: 'admin' },
+        { user: 'rcortez', pass: 'hash:Y29ydGV6bW50', role: 'manager' }
+      ];
+    const storageKey = 'inventoryData';
+    const accountsKey = 'inventoryAccounts';
+    const lockKey = 'inventoryLoginLock';
+    const sessionKey = 'inventorySession';
+    const SESSION_TTL_MINUTES = 90;
+    const MAX_IMAGES = 10;
+    const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg';
+
+    let units = [];
+    let editingIndex = null;
+    let accounts = [];
+    let imagesState = [];
+    let editingAccount = null;
+
+    function hashPassword(pass) {
+      return 'hash:' + btoa(pass || '');
+    }
+
+    function normalizeAccount(acc) {
+      if (!acc || !acc.user) return null;
+      const hashed = (acc.pass || '').startsWith('hash:') ? acc.pass : hashPassword(acc.pass || '');
+      return { user: acc.user, pass: hashed, role: acc.role || 'manager' };
+    }
+
+    function passwordsMatch(account, input) {
+      return account.pass === hashPassword(input);
+    }
+
+    function loadAccounts() {
+      let stored = [];
+      const saved = localStorage.getItem(accountsKey);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) stored = parsed.map(normalizeAccount).filter(Boolean);
+        } catch (e) {
+          console.warn('Could not parse saved accounts');
+        }
+      }
+      DEFAULT_ACCOUNTS.forEach(base => {
+        const normalized = normalizeAccount(base);
+        const idx = stored.findIndex(a => a.user === normalized.user);
+        if (idx >= 0) {
+          stored[idx] = { ...normalized, ...stored[idx] };
+        } else {
+          stored.push(normalized);
+        }
+      });
+      localStorage.setItem(accountsKey, JSON.stringify(stored));
+      accounts = stored;
+      return stored;
+    }
+
+    function saveAccountsList() {
+      localStorage.setItem(accountsKey, JSON.stringify(accounts));
+    }
+
+    function normalizeImages(unit) {
+      const fromArray = Array.isArray(unit.images) ? unit.images.filter(Boolean) : [];
+      const merged = [...new Set([unit.image, ...fromArray].filter(Boolean))];
+      return merged.slice(0, MAX_IMAGES);
+    }
+
+    function normalizeUnit(unit) {
+      const images = normalizeImages(unit);
+      const title = unit.title || 'Unit';
+      const titleYear = (title.match(/(19|20)\d{2}/) || [])[0];
+      const year = Number(unit.year) || Number(titleYear) || '';
+      const desc = unit.description || `${title} — well maintained, clean title, and ready for your next haul.`;
+      const defaultFeatures = ['Clean title', 'DOT ready', 'Fresh PM service', 'Warranty options available', 'Maintenance records on file', 'Financing available'];
+      const features = Array.isArray(unit.features) && unit.features.length ? unit.features : defaultFeatures;
+
+      return {
+        title,
+        vin: unit.vin || '',
+        type: unit.type || 'Truck',
+        brand: unit.brand || 'Unknown',
+        status: unit.status || 'Available',
+        price: Number(unit.price) || 0,
+        mileage: Number(unit.mileage) || 0,
+        state: unit.state || 'Unknown',
+        color: unit.color || 'Unknown',
+        year,
+        engine: unit.engine || 'Not specified',
+        transmission: unit.transmission || 'Not specified',
+        condition: unit.condition || 'Used',
+        location: unit.location || (unit.state ? `${unit.state} yard` : 'Available nationwide'),
+        phone: unit.phone || '000-000-0000',
+        description: desc,
+        features,
+        images: images.length ? images : [DEFAULT_IMAGE],
+        image: images[0] || DEFAULT_IMAGE
+      };
+    }
+
+    function loadUnits() {
+      let parsed = [];
+      try {
+        const saved = localStorage.getItem(storageKey);
+        if (saved) {
+          const raw = JSON.parse(saved);
+          if (Array.isArray(raw)) parsed = raw;
+        }
+      } catch (e) {
+        console.warn('Could not parse saved inventory');
+      }
+      if (!parsed.length && Array.isArray(window.INVENTORY_SEED)) parsed = window.INVENTORY_SEED.slice();
+      const normalized = parsed.map(normalizeUnit);
+      localStorage.setItem(storageKey, JSON.stringify(normalized));
+      return normalized;
+    }
+
+    function saveUnits() {
+      localStorage.setItem(storageKey, JSON.stringify(units));
+    }
+
+    function formatNumber(n) {
+      return Number(n || 0).toLocaleString('en-US');
+    }
+
+    function renderTable() {
+      const body = document.getElementById('tableBody');
+      body.innerHTML = '';
+      if (!units.length) {
+        body.innerHTML = '<tr><td colspan="16" style="text-align:center;color:#555;">No listings yet. Add one above.</td></tr>';
+        return;
+      }
+      const rows = units.map((unit, idx) => ({ unit, idx }));
+      rows
+        .sort((a, b) => (b.unit.status === 'Available') - (a.unit.status === 'Available'))
+        .forEach(({ unit, idx }) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${unit.title || ''}</td>
+            <td>${unit.vin || ''}</td>
+            <td>${unit.year || ''}</td>
+            <td>${unit.type || ''}</td>
+            <td>${unit.brand || ''}</td>
+            <td>${unit.color || ''}</td>
+            <td>${unit.state || ''}</td>
+            <td>${unit.location || ''}</td>
+            <td>$${formatNumber(unit.price)}</td>
+            <td>${formatNumber(unit.mileage)}</td>
+            <td>${unit.engine || ''}</td>
+            <td>${unit.transmission || ''}</td>
+            <td>${unit.condition || ''}</td>
+            <td>${unit.phone || '000-000-0000'}</td>
+            <td><span class="status-pill ${(unit.status || '').toLowerCase()==='sold' ? 'sold' : 'available'}">${unit.status || 'Available'}</span></td>
+            <td class="actions" style="flex-wrap:wrap;">
+              <button class="btn ghost" style="padding:6px 10px;font-size:11px;" onclick="editUnit(${idx})">Edit</button>
+              <button class="btn primary" style="padding:6px 10px;font-size:11px;" onclick="deleteUnit(${idx})">Delete</button>
+              <button class="btn ghost" style="padding:6px 10px;font-size:11px;" onclick="downloadDetailPage(${idx})">Download page</button>
+            </td>
+          `;
+          body.appendChild(tr);
+        });
+    }
+
+    function resetForm() {
+      editingIndex = null;
+      imagesState = [];
+      ['title','vin','brand','color','state','year','engine','transmission','location','phone','description','features'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('type').value = 'Truck';
+      document.getElementById('status').value = 'Available';
+      document.getElementById('condition').value = 'Used';
+      document.getElementById('price').value = '';
+      document.getElementById('mileage').value = '';
+      const phoneInput = document.getElementById('phone');
+      if (phoneInput) phoneInput.value = '000-000-0000';
+      renderImages();
+    }
+
+    function renderImages() {
+      const list = document.getElementById('imageList');
+      if (!list) return;
+      list.innerHTML = '';
+      if (!imagesState.length) {
+        list.innerHTML = '<div class="muted">No images yet. Add up to 10.</div>';
+        return;
+      }
+      imagesState.forEach((src, idx) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'thumb';
+        wrap.innerHTML = `<img src="${src}" alt="Listing image ${idx+1}" /><button type="button" onclick="removeImage(${idx})">Remove</button>`;
+        list.appendChild(wrap);
+      });
+    }
+
+    function addImage(url) {
+      if (!url || !url.trim()) return;
+      if (imagesState.length >= MAX_IMAGES) {
+        alert('Limit of 10 images reached. Remove one to add another.');
+        return;
+      }
+      imagesState.push(url.trim());
+      renderImages();
+      const urlInput = document.getElementById('imageUrl');
+      if (urlInput) urlInput.value = '';
+    }
+
+    function removeImage(index) {
+      imagesState.splice(index, 1);
+      renderImages();
+    }
+
+    function handleFileInput(evt) {
+      const file = evt.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        addImage(e.target.result);
+      };
+      reader.readAsDataURL(file);
+      evt.target.value = '';
+    }
+
+    function saveUnit() {
+      const featureLines = (document.getElementById('features').value || '').split(/\n|,/).map(f => f.trim()).filter(Boolean);
+      const hero = imagesState[0] || '';
+      const unit = normalizeUnit({
+        title: document.getElementById('title').value.trim(),
+        vin: document.getElementById('vin').value.trim(),
+        type: document.getElementById('type').value,
+        brand: document.getElementById('brand').value.trim(),
+        status: document.getElementById('status').value,
+        price: Number(document.getElementById('price').value || 0),
+        mileage: Number(document.getElementById('mileage').value || 0),
+        state: document.getElementById('state').value.trim() || 'Unknown',
+        color: document.getElementById('color').value.trim() || 'Unknown',
+        image: hero,
+        year: document.getElementById('year').value,
+        engine: document.getElementById('engine').value.trim(),
+        transmission: document.getElementById('transmission').value.trim(),
+        condition: document.getElementById('condition').value,
+        location: document.getElementById('location').value.trim(),
+        phone: document.getElementById('phone').value.trim() || '000-000-0000',
+        description: document.getElementById('description').value.trim(),
+        features: featureLines,
+        images: imagesState.slice(0, MAX_IMAGES)
+      });
+
+      if (!unit.title || !unit.vin) {
+        alert('Title and VIN are required.');
+        return;
+      }
+
+      if (editingIndex === null) {
+        units.push(unit);
+      } else {
+        units[editingIndex] = unit;
+      }
+
+      saveUnits();
+      renderTable();
+      resetForm();
+    }
+
+    function editUnit(index) {
+      const unit = units[index];
+      if (!unit) return;
+      editingIndex = index;
+      ['title','vin','brand','state','color','image','year','engine','transmission','location','phone','description'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = unit[id] || '';
+      });
+      document.getElementById('type').value = unit.type || 'Truck';
+      document.getElementById('status').value = unit.status || 'Available';
+      document.getElementById('condition').value = unit.condition || 'Used';
+      document.getElementById('price').value = unit.price || '';
+      document.getElementById('mileage').value = unit.mileage || '';
+      document.getElementById('features').value = (unit.features || []).join('\\n');
+      imagesState = normalizeImages(unit);
+      renderImages();
+    }
+
+    function deleteUnit(index) {
+      if (!confirm('Are you sure you want to delete this listing?')) return;
+      units.splice(index, 1);
+      saveUnits();
+      renderTable();
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify(units, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'inventory-data.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function generateDetailRedirect(unit) {
+      const vin = unit.vin || 'unit-detail';
+      return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0; url=unit-detail.html?vin=${encodeURIComponent(vin)}"><title>${vin} detail</title></head><body><p>Redirecting to detail for ${vin}...</p></body></html>`;
+    }
+
+    function downloadDetailPage(index) {
+      const unit = units[index];
+      if (!unit) return;
+      const blob = new Blob([generateDetailRedirect(unit)], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${unit.vin || 'unit'}.html`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function renderAccountList() {
+      const list = document.getElementById('accountList');
+      list.innerHTML = '';
+      accounts.forEach(acc => {
+        const li = document.createElement('li');
+        const isDefault = DEFAULT_ACCOUNTS.some(base => base.user === acc.user);
+        li.innerHTML = `${acc.user} — ${acc.role}${isDefault ? ' (default)' : ''}`;
+
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        editBtn.className = 'btn ghost';
+        editBtn.style.padding = '4px 10px';
+        editBtn.style.marginLeft = '8px';
+        editBtn.onclick = () => startEditAccount(acc);
+        li.appendChild(editBtn);
+
+        if (!isDefault) {
+          const removeBtn = document.createElement('button');
+          removeBtn.textContent = 'Remove';
+          removeBtn.className = 'btn ghost';
+          removeBtn.style.padding = '4px 10px';
+          removeBtn.style.marginLeft = '6px';
+          removeBtn.onclick = () => {
+            accounts = accounts.filter(a => a.user !== acc.user);
+            saveAccountsList();
+            renderAccountList();
+          };
+          li.appendChild(removeBtn);
+        }
+        list.appendChild(li);
+      });
+    }
+
+    function startEditAccount(acc) {
+      editingAccount = acc.user;
+      document.getElementById('newUser').value = acc.user;
+      document.getElementById('newPass').value = '';
+      document.getElementById('newRole').value = acc.role || 'manager';
+      const addBtn = document.getElementById('addAccount');
+      const cancelBtn = document.getElementById('cancelAccountEdit');
+      if (addBtn) addBtn.textContent = 'Save profile';
+      if (cancelBtn) cancelBtn.style.display = 'inline-flex';
+    }
+
+    function cancelAccountEdit() {
+      editingAccount = null;
+      document.getElementById('newUser').value = '';
+      document.getElementById('newPass').value = '';
+      document.getElementById('newRole').value = 'manager';
+      const addBtn = document.getElementById('addAccount');
+      const cancelBtn = document.getElementById('cancelAccountEdit');
+      if (addBtn) addBtn.textContent = 'Create profile';
+      if (cancelBtn) cancelBtn.style.display = 'none';
+    }
+
+    function handleAddAccount() {
+      if (!isAdmin()) {
+        alert('Only admins can create or edit profiles.');
+        return;
+      }
+      const userInput = document.getElementById('newUser');
+      const passInput = document.getElementById('newPass');
+      const roleInput = document.getElementById('newRole');
+      const user = (userInput?.value || '').trim();
+      const pass = (passInput?.value || '').trim();
+      const role = roleInput?.value || 'manager';
+
+      if (!editingAccount && (!user || !pass)) {
+        alert('Username and password are required.');
+        return;
+      }
+
+      if (!editingAccount && accounts.some(acc => acc.user.toLowerCase() === user.toLowerCase())) {
+        alert('That username already exists.');
+        return;
+      }
+
+      if (editingAccount) {
+        const idx = accounts.findIndex(a => a.user === editingAccount);
+        if (idx >= 0) {
+          const existing = accounts[idx];
+          const safePass = pass ? pass : existing.pass;
+          accounts[idx] = normalizeAccount({ user: existing.user, pass: safePass, role });
+        }
+      } else {
+        accounts.push(normalizeAccount({ user, pass, role }));
+      }
+
+      saveAccountsList();
+      renderAccountList();
+      cancelAccountEdit();
+    }
+
+    function toggleUserManagement() {
+      const panel = document.getElementById('userManagementPanel');
+      if (!panel) return;
+      if (isAdmin()) {
+        panel.style.display = 'block';
+        renderAccountList();
+      } else {
+        panel.style.display = 'none';
+      }
+    }
+
+    function getLock() {
+      try {
+        return JSON.parse(localStorage.getItem(lockKey)) || { attempts: 0, lockedUntil: 0 };
+      } catch (e) {
+        return { attempts: 0, lockedUntil: 0 };
+      }
+    }
+
+    function saveLock(data) {
+      localStorage.setItem(lockKey, JSON.stringify(data));
+    }
+
+    function resetLock() {
+      saveLock({ attempts: 0, lockedUntil: 0 });
+    }
+
+    function recordFailedAttempt() {
+      const lock = getLock();
+      lock.attempts += 1;
+      if (lock.attempts >= 5) {
+        lock.lockedUntil = Date.now() + (15 * 60 * 1000);
+        lock.attempts = 0;
+      }
+      saveLock(lock);
+    }
+
+    function canAttempt() {
+      const lock = getLock();
+      if (lock.lockedUntil && Date.now() < lock.lockedUntil) return false;
+      return true;
+    }
+
+    function setSession(account) {
+      const expires = Date.now() + SESSION_TTL_MINUTES * 60 * 1000;
+      localStorage.setItem(sessionKey, JSON.stringify({ user: account.user, role: account.role, expires }));
+    }
+
+    function clearSession() {
+      localStorage.removeItem(sessionKey);
+    }
+
+    function getSessionDetails() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(sessionKey));
+        if (parsed && parsed.expires && Date.now() < parsed.expires) return parsed;
+      } catch (e) {}
+      clearSession();
+      return null;
+    }
+
+    function formatRole(role) {
+      if (!role) return '';
+      return role.charAt(0).toUpperCase() + role.slice(1);
+    }
+
+    function isAdmin() {
+      const session = getSessionDetails();
+      return session && (session.role || '').toLowerCase() === 'admin';
+    }
+
+    function updateUserMeta() {
+      const meta = document.getElementById('userMeta');
+      if (!meta) return;
+      const session = getSessionDetails();
+      if (!session) {
+        meta.textContent = '';
+        return;
+      }
+      const timeRemaining = Math.max(0, session.expires - Date.now());
+      const minutesLeft = Math.ceil(timeRemaining / (60 * 1000));
+      meta.textContent = `Signed in as ${session.user} (${formatRole(session.role)}) — session valid for ~${minutesLeft} min`;
+    }
+
+    function logout() {
+      clearSession();
+      document.getElementById('panel').style.display = 'none';
+      document.getElementById('authGate').style.display = 'block';
+      window.location.href = 'Inventory.html';
+    }
+
+    function showPanel() {
+      document.getElementById('authGate').style.display = 'none';
+      document.getElementById('panel').style.display = 'block';
+      accounts = loadAccounts();
+      units = loadUnits();
+      renderTable();
+      updateUserMeta();
+      toggleUserManagement();
+      renderImages();
+      cancelAccountEdit();
+    }
+
+    function requireAuth() {
+      const session = getSessionDetails();
+      if (session) {
+        showPanel();
+        return;
+      }
+      document.getElementById('authGate').style.display = 'block';
+    }
+
+    function tryLogin() {
+      if (!canAttempt()) {
+        alert('Too many attempts. Please wait a few minutes before trying again.');
+        return;
+      }
+      const u = document.getElementById('authUser').value.trim();
+      const p = document.getElementById('authPass').value.trim();
+      const account = accounts.find(a => a.user === u && passwordsMatch(a, p));
+      if (account) {
+        resetLock();
+        setSession(account);
+        showPanel();
+      } else {
+        recordFailedAttempt();
+        alert('Invalid credentials');
+      }
+    }
+
+    accounts = loadAccounts();
+    units = loadUnits();
+
+    document.getElementById('saveUnit').addEventListener('click', saveUnit);
+    document.getElementById('resetForm').addEventListener('click', resetForm);
+    document.getElementById('exportData').addEventListener('click', exportData);
+    document.getElementById('addAccount').addEventListener('click', handleAddAccount);
+    document.getElementById('cancelAccountEdit').addEventListener('click', cancelAccountEdit);
+    document.getElementById('authLogin').addEventListener('click', tryLogin);
+    document.getElementById('authBack').addEventListener('click', () => window.location.href = 'Inventory.html');
+    document.getElementById('authPass').addEventListener('keyup', (e) => { if (e.key === 'Enter') tryLogin(); });
+    document.getElementById('logoutProfile')?.addEventListener('click', logout);
+    document.getElementById('addImageUrl').addEventListener('click', () => addImage(document.getElementById('imageUrl').value));
+    document.getElementById('imageFile').addEventListener('change', handleFileInput);
+
+    window.editUnit = editUnit;
+    window.deleteUnit = deleteUnit;
+    window.removeImage = removeImage;
+    window.downloadDetailPage = downloadDetailPage;
+
+    requireAuth();
+    updateUserMeta();
+  </script>
+
+</body>
+</html>
