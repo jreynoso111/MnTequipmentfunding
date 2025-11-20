@@ -15,21 +15,36 @@
     body { margin:0; background:#f5f7f6; color:#0b2520; line-height:1.6; }
     a { color:inherit; text-decoration:none; }
     img { max-width:100%; display:block; }
-    header { background:#fff; box-shadow:0 2px 6px rgba(0,0,0,.08); padding:12px 16px; position:sticky; top:0; z-index:10; }
+    header { background:#fff; box-shadow:0 2px 6px rgba(0,0,0,.08); position:sticky; top:0; z-index:10; }
+    .nav{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;}
+    .logo img{height:60px;width:auto;object-fit:contain;display:block;}
+    .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
+    .nav-links a{padding:6px 10px;border-radius:999px;}
+    .nav-links a:hover{background:rgba(0,94,74,.08);}
+    .nav-links .active{background:#005e4a;color:#fff;}
+    .dropdown{position:relative;}
+    .dropdown-content{display:none;position:absolute;top:110%;left:0;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.15);min-width:180px;padding:10px 0;z-index:20;}
+    .dropdown-content a{display:block;padding:10px 20px;white-space:nowrap;}
+    .dropdown:hover .dropdown-content{display:block;}
     .container { max-width:1100px; margin:20px auto 60px; padding:0 18px; }
+    .back-row{margin:12px 0 6px;}
+    .back-link{font-size:14px;color:#008060;font-weight:700;display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;border:1px solid #b8e3d2;background:#f2fbf7;}
+    .back-link:hover{text-decoration:none;background:#e2f6ec;}
     .crumbs { font-size:12px; color:#4c5f5a; margin-bottom:10px; }
     .detail-card { background:#fff; border:1px solid #d8e5e0; border-radius:14px; box-shadow:0 6px 18px rgba(0,0,0,.05); overflow:hidden; }
     .detail-header { padding:18px 18px 6px; display:flex; flex-wrap:wrap; gap:10px; align-items:flex-start; justify-content:space-between; }
     .title { font-size:22px; font-weight:800; margin:0; color:#0b2520; }
     .vin { font-size:13px; color:#2d4a43; font-weight:600; }
-    .status { padding:6px 12px; border-radius:999px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
+    .status { padding:8px 14px; border-radius:999px; font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; }
     .status.available { background:#e7f8f1; color:#0b5e48; border:1px solid #b8e3d2; }
     .status.sold { background:#fde8e8; color:#9b1c1c; border:1px solid #f7c5c5; }
     .detail-body { display:grid; grid-template-columns:1.2fr 0.8fr; gap:18px; padding:0 18px 18px; }
-    .hero-img { border-radius:12px; overflow:hidden; background:#e3ece9; }
-    .thumb-strip { display:grid; grid-template-columns:repeat(auto-fit,minmax(90px,1fr)); gap:8px; margin-top:8px; }
-    .thumb-strip button { border:1px solid #d8e5e0; border-radius:8px; padding:0; background:#fff; cursor:pointer; overflow:hidden; }
-    .thumb-strip img { width:100%; height:70px; object-fit:cover; display:block; }
+    .hero-img { border-radius:12px; overflow:hidden; background:#e3ece9; height:420px; }
+    .hero-img img { width:100%; height:100%; object-fit:cover; }
+    .thumb-strip { display:grid; grid-template-columns:repeat(auto-fit,minmax(90px,1fr)); gap:8px; margin-top:12px; }
+    .thumb-strip button { border:1px solid #d8e5e0; border-radius:10px; padding:0; background:#fff; cursor:pointer; overflow:hidden; transition:box-shadow .15s ease,transform .15s ease; }
+    .thumb-strip button:hover { box-shadow:0 4px 12px rgba(0,0,0,.08); transform:translateY(-1px); }
+    .thumb-strip img { width:100%; height:80px; object-fit:cover; display:block; }
     .specs { background:#f8fbfa; border:1px solid #dbe7e3; border-radius:12px; padding:14px; }
     .specs h3 { margin-top:0; margin-bottom:10px; font-size:15px; font-weight:800; }
     .spec-list { list-style:none; padding:0; margin:0; display:grid; grid-template-columns:1fr 1fr; gap:8px 12px; font-size:13px; }
@@ -43,24 +58,42 @@
     .panel { background:#ffffff; border:1px solid #d8e5e0; border-radius:12px; padding:14px; box-shadow:0 3px 12px rgba(0,0,0,.04); }
     .panel h3 { margin:0 0 8px; font-size:15px; font-weight:800; }
     .muted { color:#4f615c; font-size:13px; }
+    .title-sub { font-size:14px; font-weight:700; color:#0b2520; margin-top:-4px; }
     footer { margin-top:24px; font-size:12px; color:#556560; text-align:center; }
     @media (max-width: 768px) { .detail-body { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
   <header>
-    <div style="display:flex; align-items:center; gap:12px;">
-      <a href="Inventory.html"><img src="Media/Logo White - Copy.png" alt="Logo" style="width:110px; height:auto;" /></a>
-      <div style="font-size:13px; color:#2b3d38; font-weight:700;">Unit details</div>
+    <div class="nav">
+    <div class="logo">
+      <a href="index.html"><img src="Media/LogoTransparent.png" alt="Logo" /></a>
     </div>
-  </header>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="Applications.html">Applications</a>
+      <a href="Services.html">Services</a>
+      <div class="dropdown">
+        <a href="Inventory.html" class="active">Inventory ▾</a>
+        <div class="dropdown-content">
+          <a href="Inventory.html">Inventory overview</a>
+          <a href="Units for Sale.html">All units for sale</a>
+        </div>
+      </div>
+      <a href="About us.html">About Us</a>
+      <button class="btn-small" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
+    </nav>
+  </div>
+</header>
 
   <main class="container">
+    <div class="back-row"><a class="back-link" href="Units for Sale.html" onclick="event.preventDefault(); if (history.length > 1) { history.back(); } else { window.location.href='Units for Sale.html'; }">&larr; Return to last page</a></div>
     <div class="crumbs"><a href="Inventory.html">Inventory</a> &gt; <a href="Units for Sale.html">All units</a> &gt; <span id="crumbVin">Details</span></div>
     <div class="detail-card" id="detailCard" style="display:none;">
       <div class="detail-header">
         <div>
           <h1 class="title" id="detailTitle"></h1>
+          <div class="title-sub" id="detailSummary"></div>
           <div class="vin" id="detailVin"></div>
         </div>
         <div class="status" id="detailStatus"></div>
@@ -75,12 +108,12 @@
         <div class="specs">
           <h3>Key specifications</h3>
           <ul class="spec-list">
-            <li><strong>Type:</strong> <span id="specType"></span></li>
-            <li><strong>Brand:</strong> <span id="specBrand"></span></li>
+            <li><strong>Year:</strong> <span id="specYear"></span></li>
+            <li><strong>Make:</strong> <span id="specMake"></span></li>
+            <li><strong>Model:</strong> <span id="specModel"></span></li>
             <li><strong>Price:</strong> <span id="specPrice"></span></li>
             <li><strong>Mileage:</strong> <span id="specMileage"></span></li>
-            <li><strong>Color:</strong> <span id="specColor"></span></li>
-            <li><strong>State:</strong> <span id="specState"></span></li>
+            <li><strong>Location:</strong> <span id="specLocation"></span></li>
           </ul>
           <div class="cta-row">
             <button class="btn primary" id="ctaCall" type="button">Call 000-000-0000</button>
@@ -95,9 +128,9 @@
           <div class="specs" style="background:#fff;">
             <h3 style="margin-top:0;">Condition & logistics</h3>
             <ul class="spec-list">
-              <li><strong>Year:</strong> <span id="specYear"></span></li>
+              <li><strong>Status:</strong> <span id="specStatus"></span></li>
               <li><strong>Condition:</strong> <span id="specCondition"></span></li>
-              <li><strong>Location:</strong> <span id="specLocation"></span></li>
+              <li><strong>State:</strong> <span id="specState"></span></li>
               <li><strong>Contact:</strong> <span id="specPhone"></span></li>
             </ul>
           </div>
@@ -107,7 +140,7 @@
               <li><strong>Engine:</strong> <span id="specEngine"></span></li>
               <li><strong>Transmission:</strong> <span id="specTransmission"></span></li>
               <li><strong>Type:</strong> <span id="specTypeDetail"></span></li>
-              <li><strong>Status:</strong> <span id="specStatus"></span></li>
+              <li><strong>VIN:</strong> <span id="specVin"></span></li>
             </ul>
           </div>
         </div>
@@ -134,6 +167,8 @@
     const storageKey = 'inventoryData';
     const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg';
     const MAX_IMAGES = 10;
+    const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
+    const BASE_NORMALIZED = BASE_UNITS.map(normalizeUnit);
 
     function normalizeImages(unit) {
       const fromArray = Array.isArray(unit.images) ? unit.images.filter(Boolean) : [];
@@ -141,11 +176,28 @@
       return merged.slice(0, MAX_IMAGES);
     }
 
+    function deriveMake(title = '') {
+      const parts = title.split(' ').filter(Boolean);
+      if (parts.length < 2) return '';
+      const maybeYear = parts[0];
+      const startIdx = /(19|20)\d{2}/.test(maybeYear) ? 1 : 0;
+      return parts[startIdx] || '';
+    }
+
+    function deriveModel(title = '', make = '') {
+      const cleaned = title.replace(make, '').trim();
+      const pieces = cleaned.split(' ').filter(Boolean);
+      const noYear = pieces.filter(p => !/(19|20)\d{2}/.test(p));
+      return noYear.slice(1).join(' ') || noYear.join(' ') || '';
+    }
+
     function normalizeUnit(unit) {
       const images = normalizeImages(unit || {});
       const title = unit?.title || 'Unit';
       const titleYear = (title.match(/(19|20)\d{2}/) || [])[0];
       const year = Number(unit?.year) || Number(titleYear) || '';
+      const make = unit?.brand || unit?.make || deriveMake(title) || 'Unknown';
+      const model = unit?.model || deriveModel(title, make) || 'Not specified';
       const desc = unit?.description || `${title} — well maintained, clean title, and ready for your next haul.`;
       const defaultFeatures = ['Clean title', 'DOT ready', 'Fresh PM service', 'Warranty options available', 'Maintenance records on file', 'Financing available'];
       const features = Array.isArray(unit?.features) && unit.features.length ? unit.features : defaultFeatures;
@@ -154,7 +206,9 @@
         title,
         vin: unit?.vin || '',
         type: unit?.type || 'Truck',
-        brand: unit?.brand || 'Unknown',
+        brand: unit?.brand || make || 'Unknown',
+        make,
+        model,
         status: unit?.status || 'Available',
         price: Number(unit?.price) || 0,
         mileage: Number(unit?.mileage) || 0,
@@ -178,12 +232,15 @@
         const saved = localStorage.getItem(storageKey);
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length) return parsed.map(normalizeUnit);
+          if (Array.isArray(parsed) && parsed.length) {
+            const normalizedSaved = parsed.map(normalizeUnit);
+            if (normalizedSaved.length >= BASE_NORMALIZED.length) return normalizedSaved;
+          }
         }
       } catch (e) {
         console.warn('Unable to read saved inventory, using defaults');
       }
-      return Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED.map(normalizeUnit) : [];
+      return BASE_NORMALIZED;
     }
 
     function lookupUnit() {
@@ -204,7 +261,13 @@
       const strip = document.getElementById('thumbStrip');
       if (!strip) return;
       strip.innerHTML = '';
-      images.forEach((src, idx) => {
+      const thumbnails = images.slice(1, MAX_IMAGES);
+      if (!thumbnails.length) {
+        strip.style.display = 'none';
+        return;
+      }
+      strip.style.display = 'grid';
+      thumbnails.forEach((src, idx) => {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.setAttribute('aria-label', `View photo ${idx + 1}`);
@@ -231,25 +294,27 @@
       crumbVin.textContent = unit.vin;
 
       document.getElementById('detailTitle').textContent = unit.title || 'Unit';
+      document.getElementById('detailSummary').textContent = `${unit.year || 'Year'} • ${unit.make || unit.brand || 'Unknown'} • ${unit.model || 'Not specified'}`;
       document.getElementById('detailVin').textContent = `VIN: ${unit.vin || 'N/A'}`;
       const statusEl = document.getElementById('detailStatus');
       statusEl.textContent = unit.status || 'Available';
       statusEl.className = `status ${(unit.status || '').toLowerCase()==='sold' ? 'sold' : 'available'}`;
-      document.getElementById('detailImage').src = unit.image || DEFAULT_IMAGE;
+      const heroImage = (unit.images && unit.images.length ? unit.images[0] : (unit.image || DEFAULT_IMAGE));
+      document.getElementById('detailImage').src = heroImage;
       document.getElementById('detailImage').alt = unit.title || 'Unit image';
-      document.getElementById('specType').textContent = unit.type || 'N/A';
-      document.getElementById('specBrand').textContent = unit.brand || 'N/A';
+      document.getElementById('specYear').textContent = unit.year || 'Unknown';
+      document.getElementById('specMake').textContent = unit.make || unit.brand || 'Unknown';
+      document.getElementById('specModel').textContent = unit.model || 'Not specified';
       document.getElementById('specPrice').textContent = `USD$ ${formatNumber(unit.price)}`;
       document.getElementById('specMileage').textContent = `${formatNumber(unit.mileage)} mi`;
-      document.getElementById('specColor').textContent = unit.color || 'Unknown';
+      document.getElementById('specLocation').textContent = unit.location || unit.state || 'Available nationwide';
       document.getElementById('specState').textContent = unit.state || 'Unknown';
-      document.getElementById('specYear').textContent = unit.year || 'Unknown';
       document.getElementById('specCondition').textContent = unit.condition || 'Used';
-      document.getElementById('specLocation').textContent = unit.location || 'Available nationwide';
       document.getElementById('specPhone').textContent = unit.phone || '000-000-0000';
       document.getElementById('specEngine').textContent = unit.engine || 'Not specified';
       document.getElementById('specTransmission').textContent = unit.transmission || 'Not specified';
       document.getElementById('specTypeDetail').textContent = unit.type || 'N/A';
+      document.getElementById('specVin').textContent = unit.vin || 'N/A';
       document.getElementById('specStatus').textContent = unit.status || 'Available';
       document.getElementById('detailDescription').textContent = unit.description || '';
 
@@ -280,6 +345,21 @@ Thank you.`;
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      const dropdown = document.querySelector('.dropdown');
+      const menu = dropdown?.querySelector('.dropdown-content');
+      let hideTimer;
+      if (dropdown && menu) {
+        dropdown.addEventListener('mouseenter', () => {
+          clearTimeout(hideTimer);
+          menu.style.display = 'block';
+        });
+        dropdown.addEventListener('mouseleave', () => {
+          hideTimer = setTimeout(() => {
+            menu.style.display = 'none';
+          }, 1000);
+        });
+      }
+
       const unit = lookupUnit();
       render(unit);
     });
