@@ -1010,3 +1010,9 @@ const INVENTORY_SEED = BASE_INVENTORY.map((unit, idx) => {
     status: unit.status || 'Available'
   };
 });
+
+// Expose the seed globally so inline scripts on static pages can access it.
+if (typeof globalThis !== 'undefined') {
+  globalThis.BASE_INVENTORY = BASE_INVENTORY;
+  globalThis.INVENTORY_SEED = INVENTORY_SEED;
+}
