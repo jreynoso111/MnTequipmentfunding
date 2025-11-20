@@ -10,11 +10,6 @@ This repository contains the static HTML, CSS, and JavaScript used to present th
 ## Local development
 Open any of the HTML files directly in a browser. All data for inventory and user accounts is stored in `localStorage` and pre-seeded through `inventory-seed.js`. To reset to defaults, clear browser storage for the site.
 
-## Credentials
-Two default profiles exist for unlocking the inventory tools:
-- Admin: `admin` / `adminmnt`
-- Manager: `rcortez` / `cortezmnt`
-
 Administrators can create additional admin or manager profiles within the control panel.
 
 ## Notes
