@@ -48,8 +48,8 @@
     .container{max-width:1500px;margin:24px auto;padding:0 24px;}
     .details-card{background:#fff;border-radius:14px;padding:22px 22px 26px;box-shadow:0 14px 28px rgba(15,23,42,.08);overflow:hidden;}
     .details-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:12px;flex-wrap:wrap;}
-    .back-link{font-size:14px;color:#008060;font-weight:600;}
-    .back-link:hover{text-decoration:underline;}
+    .back-link{font-size:14px;color:#008060;font-weight:700;display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;border:1px solid #b8e3d2;background:#f2fbf7;}
+    .back-link:hover{text-decoration:none;background:#e2f6ec;}
     .stock-tag{font-size:13px;background:#e5f3ec;color:#05543c;padding:6px 10px;border-radius:999px;font-weight:600;}
     .details-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,0.6fr);gap:32px;align-items:flex-start;}
 
@@ -86,7 +86,7 @@
 <header>
   <div class="nav">
     <div class="logo">
-      <img src="Media/Logo White - Copy.png" alt="M&T Equipment Funding Logo" />
+      <a href="index.html"><img src="Media/Logo White - Copy.png" alt="M&T Equipment Funding Logo" /></a>
     </div>
     <nav class="nav-links">
       <a href="index.html">Home</a>
@@ -103,14 +103,31 @@
   </div>
 </header>
 
+<script>
+  const dropdown = document.querySelector('.dropdown');
+  const menu = dropdown?.querySelector('.dropdown-content');
+  let hideTimer;
+  if (dropdown && menu) {
+    dropdown.addEventListener('mouseenter', () => {
+      clearTimeout(hideTimer);
+      menu.style.display = 'block';
+    });
+    dropdown.addEventListener('mouseleave', () => {
+      hideTimer = setTimeout(() => {
+        menu.style.display = 'none';
+      }, 1000);
+    });
+  }
+</script>
+
 <!-- ===================================== -->
 <!-- MAIN CONTENT AREA                     -->
 <!-- ===================================== -->
 <div class="container">
   <div class="details-card">
     <div class="details-header">
-      <a href="Units for Sale.html" class="back-link">&larr; Back to all units for sale</a>
-      
+      <a href="Units for Sale.html" class="back-link" onclick="event.preventDefault(); if (history.length > 1) { history.back(); } else { window.location.href='Units for Sale.html'; }">&larr; Return to last page</a>
+
     </div>
 
     <div class="details-grid">
