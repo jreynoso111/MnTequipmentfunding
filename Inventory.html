@@ -23,10 +23,10 @@
 
     /* HEADER */
     header { background:#ffffff; box-shadow:0 2px 6px rgba(0,0,0,.08); position:sticky; top:0; z-index:10; }
-    .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:12px 20px; }
+    .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:10px 20px; }
     .logo{display:flex;align-items:center;gap:10px;}
-    .logo img { width:120px; height:auto; }
-    .logo-mark{width:120px;height:auto;border-radius:0;object-fit:contain;}
+    .logo img { height:60px; width:auto; object-fit:contain; }
+    .logo-mark{height:60px;width:auto;border-radius:0;object-fit:contain;}
     .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
     .nav-links a{padding:6px 10px;border-radius:999px;}
     .nav-links a:hover{background:rgba(0,94,74,.08);}
@@ -211,6 +211,7 @@
       color:#777;
       margin-top:4px;
     }
+    .unit-highlight { font-size:12px; color:#0b2520; font-weight:700; }
     .unit-foot {
       padding:10px 14px 12px;
       display:flex;
@@ -611,7 +612,7 @@
         dropdown.addEventListener('mouseleave', () => {
           hideTimeout = setTimeout(() => {
             dropdown.classList.remove('delay-hide');
-          }, 2000);
+          }, 1000);
           dropdown.classList.add('delay-hide');
         });
 
@@ -629,8 +630,10 @@
       if (!featuredContainer) return;
 
       const storageKey = 'inventoryData';
+      const MIN_LISTINGS = 35;
       const MAX_IMAGES = 10;
       const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg';
+      const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
 
       function normalizeImages(unit) {
         const fromArray = Array.isArray(unit.images) ? unit.images.filter(Boolean) : [];
@@ -638,17 +641,50 @@
         return merged.slice(0, MAX_IMAGES);
       }
 
+      function hasDiverseInventory(list) {
+        const arr = Array.isArray(list) ? list : [];
+        const uniqueVin = new Set(arr.map(u => (u.vin || '').toUpperCase())).size;
+        const uniqueTitle = new Set(arr.map(u => (u.title || '').toUpperCase())).size;
+        const uniqueTypes = new Set(arr.map(u => (u.type || '').toLowerCase())).size;
+        return arr.length >= MIN_LISTINGS && uniqueVin >= MIN_LISTINGS && uniqueTitle >= MIN_LISTINGS && uniqueTypes.size > 1;
+      }
+
+      function deriveMake(title = '') {
+        const parts = title.split(' ').filter(Boolean);
+        if (parts.length < 2) return '';
+        const maybeYear = parts[0];
+        const startIdx = /(19|20)\d{2}/.test(maybeYear) ? 1 : 0;
+        return parts[startIdx] || '';
+      }
+
+      function deriveModel(title = '', make = '') {
+        const cleaned = title.replace(make, '').trim();
+        const pieces = cleaned.split(' ').filter(Boolean);
+        const noYear = pieces.filter(p => !/(19|20)\d{2}/.test(p));
+        return noYear.slice(1).join(' ') || noYear.join(' ') || '';
+      }
+
       function normalizeUnit(unit) {
         const images = normalizeImages(unit || {});
+        const title = unit?.title || 'Unit';
+        const titleYear = (title.match(/(19|20)\d{2}/) || [])[0];
+        const year = Number(unit?.year) || Number(titleYear) || '';
+        const make = unit?.brand || unit?.make || deriveMake(title) || 'Unknown';
+        const model = unit?.model || deriveModel(title, make) || 'Not specified';
+
         return {
-          title: unit?.title || 'Unit',
+          title,
           type: unit?.type || 'Truck',
           vin: unit?.vin || '',
           mileage: unit?.mileage ? Number(unit.mileage).toLocaleString('en-US') : '0',
           location: unit?.location || 'Available nationwide',
           state: unit?.state || 'Unknown',
           price: unit?.price ? `USD$ ${Number(unit.price).toLocaleString('en-US')}` : 'Call for price',
-          image: images[0] || DEFAULT_IMAGE
+          image: images[0] || DEFAULT_IMAGE,
+          make,
+          brand: unit?.brand || make || 'Unknown',
+          model,
+          year
         };
       }
 
@@ -657,10 +693,16 @@
           const saved = localStorage.getItem(storageKey);
           if (saved) {
             const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length) return parsed.map(normalizeUnit);
+            if (Array.isArray(parsed) && parsed.length) {
+              const normalized = parsed.map(normalizeUnit);
+              if (hasDiverseInventory(normalized)) {
+                localStorage.setItem(storageKey, JSON.stringify(normalized));
+                return normalized;
+              }
+            }
           }
         } catch (e) {}
-        const seeded = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED.map(normalizeUnit) : [];
+        const seeded = BASE_UNITS.map(normalizeUnit);
         localStorage.setItem(storageKey, JSON.stringify(seeded));
         return seeded;
       }
@@ -669,6 +711,7 @@
       if (!allUnits.length) return;
       let visibleCount = 1;
       let index = 0;
+      let autoTimer;
 
       function computeVisible() {
         if (allUnits.length === 1) return 1;
@@ -677,80 +720,119 @@
         return Math.min(3, allUnits.length);
       }
 
-      function renderFeatured() {
-        featuredContainer.innerHTML = '';
-        visibleCount = computeVisible();
-        const slides = [];
-        for (let i = 0; i < visibleCount; i++) {
-          const unit = allUnits[(index + i) % allUnits.length];
-          const card = document.createElement('article');
-          card.className = 'unit-card';
-          card.style.minWidth = `${100 / visibleCount}%`;
-          card.innerHTML = `
-            <div class="unit-img-wrap">
-              <img src="${unit.image}" alt="${unit.title}" />
+      function buildCard(unit, width) {
+        const card = document.createElement('article');
+        card.className = 'unit-card';
+        card.style.minWidth = `${width}%`;
+        card.innerHTML = `
+          <div class="unit-img-wrap">
+            <img src="${unit.image}" alt="${unit.title}" />
+          </div>
+          <div class="unit-body">
+            <div class="unit-tag">${unit.type}</div>
+            <h2 class="unit-title">${unit.title}</h2>
+            <div class="unit-highlight">${unit.year || 'Year'} • ${unit.make || 'Unknown'} • ${unit.model || 'Not specified'}</div>
+            <div class="unit-specs">
+              <span>Mileage: ${unit.mileage}</span>
+              <span>Location: ${unit.location}</span>
+              ${unit.state ? `<span>State: ${unit.state}</span>` : ''}
             </div>
-            <div class="unit-body">
-              <div class="unit-tag">${unit.type}</div>
-              <h2 class="unit-title">${unit.title}</h2>
-              <div class="unit-specs">
-                <span>Mileage: ${unit.mileage}</span>
-                <span>Location: ${unit.location}</span>
-                ${unit.state ? `<span>State: ${unit.state}</span>` : ''}
-              </div>
-              <div class="unit-meta">VIN: ${unit.vin}</div>
-            </div>
-            <div class="unit-foot">
-              <span class="unit-price">${unit.price}</span>
-              <button class="unit-cta" type="button">Ask about this unit</button>
-            </div>
-          `;
+            <div class="unit-meta">VIN: ${unit.vin}</div>
+          </div>
+          <div class="unit-foot">
+            <span class="unit-price">${unit.price}</span>
+            <button class="unit-cta" type="button">Ask about this unit</button>
+          </div>
+        `;
 
-          const btn = card.querySelector('.unit-cta');
-          if (btn) {
-            const subject = `Inventory Inquiry – ${unit.title} (${unit.vin})`;
-            const bodyLines = [
-              'Hello Roy,',
-              '',
-              'I\'m interested in this unit:',
-              `- Title: ${unit.title}`,
-              `- VIN: ${unit.vin}`,
-              `- Mileage: ${unit.mileage}`,
-              `- Location: ${unit.location}${unit.state ? ' ' + unit.state : ''}`,
-              '',
-              'Please let me know availability and next steps.',
-              '',
-              'Thank you.'
-            ];
-            const body = encodeURIComponent(bodyLines.join('\n'));
-            const mailto = `mailto:RCortez@mntfunding.com?subject=${encodeURIComponent(subject)}&body=${body}`;
-            btn.addEventListener('click', () => {
-              window.location.href = mailto;
-            });
-          }
-
-          slides.push(card);
+        const btn = card.querySelector('.unit-cta');
+        if (btn) {
+          const subject = `Inventory Inquiry – ${unit.title} (${unit.vin})`;
+          const bodyLines = [
+            'Hello Roy,',
+            '',
+            'I\'m interested in this unit:',
+            `- Title: ${unit.title}`,
+            `- VIN: ${unit.vin}`,
+            `- Mileage: ${unit.mileage}`,
+            `- Location: ${unit.location}${unit.state ? ' ' + unit.state : ''}`,
+            '',
+            'Please let me know availability and next steps.',
+            '',
+            'Thank you.'
+          ];
+          const body = encodeURIComponent(bodyLines.join('\n'));
+          const mailto = `mailto:RCortez@mntfunding.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+          btn.addEventListener('click', () => {
+            window.location.href = mailto;
+          });
         }
 
-        slides.forEach(slide => featuredContainer.appendChild(slide));
-        featuredContainer.style.transform = `translateX(0)`;
+        return card;
+      }
+
+      function resetAuto() {
+        if (autoTimer) clearInterval(autoTimer);
+        if (allUnits.length > visibleCount) {
+          autoTimer = setInterval(nextSlide, 6000);
+        }
+      }
+
+      function updateTransform(animate = true) {
+        const offset = -(100 / visibleCount) * index;
+        featuredContainer.style.transition = animate ? 'transform 0.6s ease' : 'none';
+        featuredContainer.style.transform = `translateX(${offset}%)`;
+      }
+
+      function buildCarousel() {
+        visibleCount = computeVisible();
+        const width = 100 / visibleCount;
+        featuredContainer.innerHTML = '';
+
+        const slides = allUnits.map(unit => buildCard(unit, width));
+        const prependClones = allUnits.slice(-visibleCount).map(unit => buildCard(unit, width));
+        const appendClones = allUnits.slice(0, visibleCount).map(unit => buildCard(unit, width));
+
+        [...prependClones, ...slides, ...appendClones].forEach(card => featuredContainer.appendChild(card));
+
+        index = visibleCount;
+        requestAnimationFrame(() => updateTransform(false));
+        resetAuto();
+      }
+
+      function handleTransitionEnd() {
+        const total = allUnits.length;
+        const lastRealIndex = visibleCount + total - 1;
+
+        if (index > lastRealIndex) {
+          index = visibleCount;
+          updateTransform(false);
+        } else if (index < visibleCount) {
+          index = visibleCount + total - 1;
+          updateTransform(false);
+        }
       }
 
       function nextSlide() {
-        index = (index + 1) % allUnits.length;
-        renderFeatured();
+        if (allUnits.length <= visibleCount) return;
+        index += 1;
+        featuredContainer.addEventListener('transitionend', handleTransitionEnd, { once: true });
+        updateTransform(true);
+        resetAuto();
       }
 
       function prevSlide() {
-        index = (index - 1 + allUnits.length) % allUnits.length;
-        renderFeatured();
+        if (allUnits.length <= visibleCount) return;
+        index -= 1;
+        featuredContainer.addEventListener('transitionend', handleTransitionEnd, { once: true });
+        updateTransform(true);
+        resetAuto();
       }
 
       nextBtn?.addEventListener('click', nextSlide);
       prevBtn?.addEventListener('click', prevSlide);
-      renderFeatured();
-      window.addEventListener('resize', () => renderFeatured());
-      if (allUnits.length > visibleCount) setInterval(nextSlide, 6000);
+      buildCarousel();
+      window.addEventListener('resize', buildCarousel);
     });
   </script>
 </head>
@@ -758,7 +840,7 @@
   <header>
     <div class="nav">
       <div class="logo">
-        <img class="logo-mark" src="Media/Logo White - Copy.png" alt="M&T Equipment Funding Logo" />
+        <img class="logo-mark" src="Media/LogoTransparent.png" alt="M&T Equipment Funding Logo" />
       </div>
       <nav class="nav-links">
         <a href="index.html">Home</a>
