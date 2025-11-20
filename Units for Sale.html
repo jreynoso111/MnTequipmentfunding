@@ -207,7 +207,6 @@
 
       <div style="margin-top:18px; display:flex; flex-direction:column; gap:6px;">
         <button class="btn-small" style="width:100%; justify-content:center;" type="button" id="toolButton">Settings</button>
-        <div style="font-size:11px; color:#4c5f5a; line-height:1.4;">Restricted access. Sign in to update or remove listings shown on this page.</div>
       </div>
     </aside>
 
@@ -236,57 +235,157 @@
   </div>
 </div>
 
+
 <script>
 const ITEMS_PER_PAGE = 20;
+const storageKey = 'inventoryData';
+const accountsKey = 'inventoryAccounts';
+const sessionKey = 'inventorySession';
+const lockKey = 'inventoryLoginLock';
+const SESSION_TTL_MINUTES = 90;
+const MAX_IMAGES = 10;
+const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg';
 let currentPage = 1;
 let units = [];
 let filteredUnits = [];
-
 const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
 
-function defaultUnits() {
-  return BASE_UNITS.slice();
+function hashPassword(pass) {
+  return 'hash:' + btoa(pass || '');
+}
+
+function normalizeAccount(acc) {
+  if (!acc || !acc.user) return null;
+  const hashed = (acc.pass || '').startsWith('hash:') ? acc.pass : hashPassword(acc.pass || '');
+  return { user: acc.user, pass: hashed, role: acc.role || 'manager' };
+}
+
+function passwordsMatch(account, input) {
+  return account.pass === hashPassword(input);
 }
 
 function ensureAccounts() {
-  const defaults = [
-    { user: 'admin', pass: 'adminmnt', role: 'admin' },
-    { user: 'rcortez', pass: 'cortezmnt', role: 'manager' }
-  ];
-  const saved = localStorage.getItem('inventoryAccounts');
   let accounts = [];
+  const saved = localStorage.getItem(accountsKey);
   if (saved) {
     try {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) accounts = parsed;
+      if (Array.isArray(parsed)) accounts = parsed.map(normalizeAccount).filter(Boolean);
     } catch (e) {
       console.warn('Could not parse saved accounts');
     }
   }
-  defaults.forEach(base => {
-    const idx = accounts.findIndex(a => a.user === base.user);
+  [
+    { user: 'admin', pass: 'adminmnt', role: 'admin' },
+    { user: 'rcortez', pass: 'cortezmnt', role: 'manager' }
+  ].forEach(base => {
+    const normalized = normalizeAccount(base);
+    const idx = accounts.findIndex(a => a.user === normalized.user);
     if (idx >= 0) {
-      accounts[idx] = { ...accounts[idx], ...base };
+      accounts[idx] = { ...normalized, ...accounts[idx] };
     } else {
-      accounts.push({ ...base });
+      accounts.push(normalized);
     }
   });
-  localStorage.setItem('inventoryAccounts', JSON.stringify(accounts));
+  localStorage.setItem(accountsKey, JSON.stringify(accounts));
   return accounts;
+}
+
+function getLock() {
+  try {
+    return JSON.parse(localStorage.getItem(lockKey)) || { attempts: 0, lockedUntil: 0 };
+  } catch (e) {
+    return { attempts: 0, lockedUntil: 0 };
+  }
+}
+
+function saveLock(data) {
+  localStorage.setItem(lockKey, JSON.stringify(data));
+}
+
+function resetLock() {
+  saveLock({ attempts: 0, lockedUntil: 0 });
+}
+
+function recordFailedAttempt() {
+  const lock = getLock();
+  lock.attempts += 1;
+  if (lock.attempts >= 5) {
+    lock.lockedUntil = Date.now() + (15 * 60 * 1000);
+    lock.attempts = 0;
+  }
+  saveLock(lock);
+}
+
+function canAttempt() {
+  const lock = getLock();
+  if (lock.lockedUntil && Date.now() < lock.lockedUntil) return false;
+  return true;
+}
+
+function setSession(account) {
+  const expires = Date.now() + SESSION_TTL_MINUTES * 60 * 1000;
+  localStorage.setItem(sessionKey, JSON.stringify({ user: account.user, role: account.role, expires }));
+}
+
+function normalizeImages(unit) {
+  const fromArray = Array.isArray(unit.images) ? unit.images.filter(Boolean) : [];
+  const merged = [...new Set([unit.image, ...fromArray].filter(Boolean))];
+  return merged.slice(0, MAX_IMAGES);
+}
+
+function normalizeUnit(unit) {
+  const images = normalizeImages(unit || {});
+  const title = unit?.title || 'Unit';
+  const titleYear = (title.match(/(19|20)\d{2}/) || [])[0];
+  const year = Number(unit?.year) || Number(titleYear) || '';
+  const desc = unit?.description || `${title} — well maintained, clean title, and ready for your next haul.`;
+  const defaultFeatures = ['Clean title', 'DOT ready', 'Fresh PM service', 'Warranty options available', 'Maintenance records on file', 'Financing available'];
+  const features = Array.isArray(unit?.features) && unit.features.length ? unit.features : defaultFeatures;
+
+  return {
+    title,
+    vin: unit?.vin || '',
+    type: unit?.type || 'Truck',
+    brand: unit?.brand || 'Unknown',
+    status: unit?.status || 'Available',
+    price: Number(unit?.price) || 0,
+    mileage: Number(unit?.mileage) || 0,
+    state: unit?.state || 'Unknown',
+    color: unit?.color || 'Unknown',
+    year,
+    engine: unit?.engine || 'Not specified',
+    transmission: unit?.transmission || 'Not specified',
+    condition: unit?.condition || 'Used',
+    location: unit?.location || (unit?.state ? `${unit.state} yard` : 'Available nationwide'),
+    phone: unit?.phone || '000-000-0000',
+    description: desc,
+    features,
+    images: images.length ? images : [DEFAULT_IMAGE],
+    image: images[0] || DEFAULT_IMAGE
+  };
+}
+
+function defaultUnits() {
+  return BASE_UNITS.map(normalizeUnit);
 }
 
 function loadUnits() {
   try {
-    const saved = localStorage.getItem('inventoryData');
+    const saved = localStorage.getItem(storageKey);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length) return parsed;
+      if (Array.isArray(parsed) && parsed.length) {
+        const normalizedSaved = parsed.map(normalizeUnit);
+        localStorage.setItem(storageKey, JSON.stringify(normalizedSaved));
+        return normalizedSaved;
+      }
     }
   } catch (e) {
     console.warn('Unable to load saved inventory, using defaults');
   }
   const seeded = defaultUnits();
-  localStorage.setItem('inventoryData', JSON.stringify(seeded));
+  localStorage.setItem(storageKey, JSON.stringify(seeded));
   return seeded;
 }
 
@@ -303,12 +402,16 @@ function buildCard(unit) {
   card.dataset.mileage = unit.mileage;
   card.dataset.color = unit.color || 'Unknown';
   card.dataset.state = unit.state || 'Unknown';
+  card.dataset.vin = unit.vin || '';
+  card.dataset.phone = unit.phone || '000-000-0000';
+  card.dataset.title = unit.title || 'Unit';
 
   const statusClass = unit.status && unit.status.toLowerCase() === 'sold' ? 'sold' : 'available';
+  const hero = (unit.images && unit.images[0]) || DEFAULT_IMAGE;
 
   card.innerHTML = `
     <div class="status-tag ${statusClass}">${unit.status || 'Available'}</div>
-    <img src="${unit.image}" alt="${unit.title}" />
+    <img src="${hero}" alt="${unit.title}" />
     <div class="unit-body">
       <div class="unit-title">${unit.title}</div>
       <div class="unit-info">
@@ -316,7 +419,8 @@ function buildCard(unit) {
         Mileage: ${formatNumber(unit.mileage)}<br>
         Value: USD$ ${formatNumber(unit.price)}<br>
         Color: ${unit.color || 'Unknown'}<br>
-        State: ${unit.state || 'Unknown'}
+        State: ${unit.state || 'Unknown'}<br>
+        Phone: ${unit.phone || '000-000-0000'}
       </div>
       <div class="btn-row">
         <div class="btn-green email-btn">Contact us</div>
@@ -331,11 +435,22 @@ function wireEmailButtons() {
   document.querySelectorAll('.btn-green.email-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const card = btn.closest('.unit-card');
-      const title = card.querySelector('.unit-title')?.textContent?.trim() || 'Unit';
-      const vinLine = card.querySelector('.unit-info')?.innerText?.split('\n').find(line => line.includes('VIN:')) || '';
-      const vin = vinLine.replace('VIN:', '').trim();
+      const title = card?.dataset.title || 'Unit';
+      const vin = card?.dataset.vin || '';
+      const phone = card?.dataset.phone || '000-000-0000';
       const subject = `Interest in ${title} (${vin})`;
-      const body = `Hello Roy,\n\nI am interested in the following unit:\n\n${title}\nVIN: ${vin}\n\nPlease let me know more details about this unit and financing options.\n\nThank you,\n[Your Name]\n[Your Phone Number]`;
+      const body = `Hello,
+
+I am interested in the following unit:
+
+${title}
+VIN: ${vin}
+Phone: ${phone}
+
+Please share more details and availability.
+
+Thank you,
+[Your Name]`;
       window.location.href = `mailto:rcortez@mntfunding.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     });
   });
@@ -441,14 +556,18 @@ function init() {
   function openModal() { modal.style.display = 'flex'; userInput.focus(); }
   function closeModal() { modal.style.display = 'none'; userInput.value = ''; passInput.value = ''; }
   function handleLogin() {
-    const accounts = JSON.parse(localStorage.getItem('inventoryAccounts') || '[]');
-    const match = accounts.find(acc => acc.user === userInput.value.trim() && acc.pass === passInput.value.trim());
+    if (!canAttempt()) {
+      alert('Too many attempts. Please wait a few minutes before trying again.');
+      return;
+    }
+    const accounts = ensureAccounts();
+    const match = accounts.find(acc => acc.user === userInput.value.trim() && passwordsMatch(acc, passInput.value.trim()));
     if (match) {
-      localStorage.setItem('inventoryAdminAuth', 'true');
-      localStorage.setItem('inventoryAuthUser', match.user);
-      localStorage.setItem('inventoryAuthRole', match.role);
+      resetLock();
+      setSession(match);
       window.location.href = 'control-panel.html';
     } else {
+      recordFailedAttempt();
       alert('Invalid credentials');
     }
   }
@@ -465,6 +584,7 @@ if (document.readyState === 'loading') {
   init();
 }
 </script>
+
 
 </body>
 </html>
