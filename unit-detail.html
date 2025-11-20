@@ -161,6 +161,8 @@
     const storageKey = 'inventoryData';
     const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg';
     const MAX_IMAGES = 10;
+    const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
+    const BASE_NORMALIZED = BASE_UNITS.map(normalizeUnit);
 
     function normalizeImages(unit) {
       const fromArray = Array.isArray(unit.images) ? unit.images.filter(Boolean) : [];
@@ -205,12 +207,15 @@
         const saved = localStorage.getItem(storageKey);
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length) return parsed.map(normalizeUnit);
+          if (Array.isArray(parsed) && parsed.length) {
+            const normalizedSaved = parsed.map(normalizeUnit);
+            if (normalizedSaved.length >= BASE_NORMALIZED.length) return normalizedSaved;
+          }
         }
       } catch (e) {
         console.warn('Unable to read saved inventory, using defaults');
       }
-      return Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED.map(normalizeUnit) : [];
+      return BASE_NORMALIZED;
     }
 
     function lookupUnit() {

@@ -265,7 +265,8 @@ const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/2300191
 let currentPage = 1;
 let units = [];
 let filteredUnits = [];
-const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
+  const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
+  const BASE_NORMALIZED = BASE_UNITS.map(normalizeUnit);
 
 function hashPassword(pass) {
   return 'hash:' + btoa(pass || '');
@@ -394,14 +395,17 @@ function loadUnits() {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length) {
         const normalizedSaved = parsed.map(normalizeUnit);
-        localStorage.setItem(storageKey, JSON.stringify(normalizedSaved));
-        return normalizedSaved;
+        // Ensure we always have the full 35-unit demo inventory available
+        if (normalizedSaved.length >= BASE_NORMALIZED.length) {
+          localStorage.setItem(storageKey, JSON.stringify(normalizedSaved));
+          return normalizedSaved;
+        }
       }
     }
   } catch (e) {
     console.warn('Unable to load saved inventory, using defaults');
   }
-  const seeded = defaultUnits();
+  const seeded = BASE_NORMALIZED;
   localStorage.setItem(storageKey, JSON.stringify(seeded));
   return seeded;
 }
