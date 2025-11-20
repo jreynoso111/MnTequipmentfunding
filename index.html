@@ -41,16 +41,94 @@
 
     /* Top bar + header */
     header {
-      background-color: #002f2f;
-      color: white;
-      padding: 10px 24px;
+      background: #ffffff;
+      color: #0b2520;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+    .nav {
+      max-width: 1100px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: space-between;
+      padding: 12px 20px;
+      gap: 16px;
     }
-    header img {
-      max-height: 80px;
-      height: auto;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo img,
+    .logo-mark {
+      height: 72px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 14px;
+      flex-wrap: wrap;
+    }
+    .nav-links a {
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: inherit;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .nav-links a:hover { background: rgba(0, 94, 74, 0.08); }
+    .nav-links .active { background: #005e4a; color: #fff; }
+    .btn-small {
+      border-radius: 999px;
+      border: 1px solid #005e4a;
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #005e4a;
+      background: #fff;
+      cursor: pointer;
+    }
+    .btn-small:hover { background: #005e4a; color: #fff; }
+
+    .dropdown { position: relative; }
+    .dropdown-menu {
+      position: absolute;
+      top: 30px;
+      left: 0;
+      background: #ffffff;
+      border: 1px solid #e3ece9;
+      border-radius: 10px;
+      min-width: 170px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      padding: 6px 0;
+      z-index: 20;
+      transition: opacity 0.2s ease;
+      opacity: 0;
+      pointer-events: none;
+      display: block;
+    }
+    .dropdown-menu a {
+      display: block;
+      padding: 8px 14px;
+      font-size: 13px;
+      color: #005e4a;
+      border-radius: 6px;
+    }
+    .dropdown-menu a:hover { background: #f0faf7; }
+    .dropdown:hover .dropdown-menu { opacity: 1; pointer-events: auto; }
+    .dropdown.delay-hide .dropdown-menu { opacity: 1; pointer-events: auto; }
+
+    @media (max-width: 720px) {
+      .nav { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .nav-links { width: 100%; }
+      .btn-small { width: 100%; text-align: center; }
     }
 
     @media (max-width: 720px) {
@@ -445,17 +523,22 @@
 <body>
 
 <header>
-  <div style="display:flex; align-items:center; justify-content:space-between; width:100%; max-width:1200px; margin:0 auto;">
-    <img src="Media/LogoTransparent.png" alt="M&T Logo" style="margin-left:150px;" />
-    <nav>
-      <ul class="main-nav" style="display:flex; list-style:none; gap:28px; margin:0; padding:0; font-size:16px; font-weight:bold;">
-        <li><a href="index.html" class="nav-active" style="color:white; text-decoration:none;">Home</a></li>
-        <li><a href="Applications.html" style="color:white; text-decoration:none;">Applications</a></li>
-        <li><a href="Services.html" style="color:white; text-decoration:none;">Services</a></li>
-        <li><a href="Inventory.html" style="color:white; text-decoration:none;">Inventory</a></li>
-        <li><a href="About us.html" style="color:white; text-decoration:none;">About Us</a></li>
-        
-      </ul>
+  <div class="nav">
+    <div class="logo">
+      <img class="logo-mark" src="Media/LogoTransparent.png" alt="M&T Equipment Funding Logo" />
+    </div>
+    <nav class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="Applications.html">Applications</a>
+      <a href="Services.html">Services</a>
+      <div class="dropdown">
+        <a href="Inventory.html">Inventory ▾</a>
+        <div class="dropdown-menu">
+          <a href="Units for Sale.html">All Units for Sale</a>
+        </div>
+      </div>
+      <a href="About us.html">About Us</a>
+      <button class="btn-small" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
     </nav>
   </div>
 </header>
@@ -607,7 +690,27 @@
     </div>
   </section>
 
-  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const dropdown = document.querySelector('.dropdown');
+      let hideTimeout;
+      if (dropdown) {
+        dropdown.addEventListener('mouseleave', () => {
+          hideTimeout = setTimeout(() => {
+            dropdown.classList.remove('delay-hide');
+          }, 1000);
+          dropdown.classList.add('delay-hide');
+        });
+
+        dropdown.addEventListener('mouseenter', () => {
+          if (hideTimeout) {
+            clearTimeout(hideTimeout);
+          }
+          dropdown.classList.remove('delay-hide');
+        });
+      }
+    });
+  </script>
 
 <footer>
   <div class="footer-icons" style="display:flex; justify-content:center; gap:24px; margin-bottom:12px;">

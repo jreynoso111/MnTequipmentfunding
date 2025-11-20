@@ -22,8 +22,8 @@
     header { background:#ffffff; box-shadow:0 2px 6px rgba(0,0,0,.08); position:sticky; top:0; z-index:10; }
     .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:12px 20px; }
     .logo{display:flex;align-items:center;gap:10px;}
-    .logo img { width:120px; height:auto; }
-    .logo-mark{width:120px;height:auto;border-radius:0;object-fit:contain;}
+    .logo img { height:72px; width:auto; object-fit:contain; }
+    .logo-mark{height:72px;width:auto;border-radius:0;object-fit:contain;}
     .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
     .nav-links a{padding:6px 10px;border-radius:999px; white-space:nowrap;}
     .nav-links a:hover{background:rgba(0,94,74,.08);}
@@ -111,7 +111,7 @@
     .step-body b { display:block; margin-bottom:3px; }
 
     /* REQUIREMENTS & UPLOAD */
-    .requirements-row { display:flex; gap:36px; align-items:center; margin-top:16px; flex-wrap:wrap; }
+    .requirements-row { display:flex; gap:36px; align-items:stretch; margin-top:16px; flex-wrap:wrap; }
     .checklist { list-style:none; padding:0; margin:0; font-size:13px; color:#333; }
     .checklist li { display:flex; gap:8px; align-items:flex-start; margin-bottom:8px; }
     .circle-check {
@@ -128,8 +128,8 @@
     .circle-check:checked { background:#005e4a; }
     .circle-check:checked::after { content:""; position:absolute; inset:4px; border-radius:50%; background:#fff; }
 
-    .upload-card { flex:1; max-width:360px; display:flex; flex-direction:column; justify-content:center; gap:10px; }
-    .upload-box { border-radius:12px; border:2px dashed rgba(0,94,74,.5); background:#f7fbfa; padding:16px 18px; display:flex; gap:12px; align-items:center; }
+    .upload-card { flex:1; max-width:360px; display:flex; flex-direction:column; height:100%; }
+    .upload-box { border-radius:12px; border:2px dashed rgba(0,94,74,.5); background:#f7fbfa; padding:16px 18px; display:flex; gap:12px; align-items:center; height:100%; }
     .upload-icon { width:34px; height:34px; border-radius:50%; background:#005e4a; color:#fff; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
     .upload-main { font-size:14px; font-weight:700; color:#0b2520; }
     .upload-sub { font-size:12px; color:#555; }
@@ -190,7 +190,7 @@
   <header>
     <div class="nav">
       <div class="logo">
-        <img src="Media/Logo White - Copy.png" alt="M&T Equipment Funding Logo" />
+        <img src="Media/LogoTransparent.png" alt="M&T Equipment Funding Logo" />
       </div>
       <nav class="nav-links">
         <a href="index.html">Home</a>
@@ -217,7 +217,7 @@ dropdown.addEventListener('mouseenter', ()=>{
 dropdown.addEventListener('mouseleave', ()=>{
   hideTimer=setTimeout(()=>{
     menu.style.display='none';
-  },2000);
+  },1000);
 });
 </script>
     </div>
@@ -296,12 +296,11 @@ dropdown.addEventListener('mouseleave', ()=>{
           <li><input type="checkbox" class="circle-check" /> <div>Proof of legal status (Green Card, Work Permit, or Citizenship).</div></li>
         </ul>
         <div class="upload-card">
-          <h3 class="section-title" style="font-size:16px; margin-bottom:8px;">Upload Your Documents</h3>
           <div class="upload-box">
             <div class="upload-icon">⬆</div>
             <div>
-              <div class="upload-main">Upload package</div>
-              <div class="upload-sub">Email your completed application files directly to your representative.</div>
+              <div class="upload-main">Upload documents</div>
+              <div class="upload-sub">Email your completed application documents directly to your representative.</div>
             </div>
           </div>
         </div>
