@@ -396,11 +396,28 @@ function normalizeImages(unit) {
   return merged.slice(0, MAX_IMAGES);
 }
 
+function deriveMake(title = '') {
+  const parts = title.split(' ').filter(Boolean);
+  if (parts.length < 2) return '';
+  const maybeYear = parts[0];
+  const startIdx = /(19|20)\d{2}/.test(maybeYear) ? 1 : 0;
+  return parts[startIdx] || '';
+}
+
+function deriveModel(title = '', make = '') {
+  const cleaned = title.replace(make, '').trim();
+  const pieces = cleaned.split(' ').filter(Boolean);
+  const noYear = pieces.filter(p => !/(19|20)\d{2}/.test(p));
+  return noYear.slice(1).join(' ') || noYear.join(' ') || '';
+}
+
 function normalizeUnit(unit) {
   const images = normalizeImages(unit || {});
   const title = unit?.title || 'Unit';
   const titleYear = (title.match(/(19|20)\d{2}/) || [])[0];
   const year = Number(unit?.year) || Number(titleYear) || '';
+  const make = unit?.brand || unit?.make || deriveMake(title) || 'Unknown';
+  const model = unit?.model || deriveModel(title, make) || 'Not specified';
   const desc = unit?.description || `${title} — well maintained, clean title, and ready for your next haul.`;
   const defaultFeatures = ['Clean title', 'DOT ready', 'Fresh PM service', 'Warranty options available', 'Maintenance records on file', 'Financing available'];
   const features = Array.isArray(unit?.features) && unit.features.length ? unit.features : defaultFeatures;
@@ -409,7 +426,9 @@ function normalizeUnit(unit) {
     title,
     vin: unit?.vin || '',
     type: unit?.type || 'Truck',
-    brand: unit?.brand || 'Unknown',
+    brand: unit?.brand || make || 'Unknown',
+    make,
+    model,
     status: unit?.status || 'Available',
     price: Number(unit?.price) || 0,
     mileage: Number(unit?.mileage) || 0,
@@ -467,6 +486,9 @@ function buildCard(unit) {
   card.dataset.vin = unit.vin || '';
   card.dataset.phone = unit.phone || '000-000-0000';
   card.dataset.title = unit.title || 'Unit';
+  card.dataset.make = unit.make || unit.brand || 'Unknown';
+  card.dataset.model = unit.model || 'Not specified';
+  card.dataset.year = unit.year || '';
 
   const statusClass = unit.status && unit.status.toLowerCase() === 'sold' ? 'sold' : 'available';
   const hero = (unit.images && unit.images[0]) || DEFAULT_IMAGE;
@@ -477,12 +499,12 @@ function buildCard(unit) {
     <div class="unit-body">
       <div class="unit-title">${unit.title}</div>
       <div class="unit-info">
-        VIN: ${unit.vin}<br>
+        Year: ${unit.year || 'Unknown'}<br>
+        Make: ${unit.make || unit.brand || 'Unknown'}<br>
+        Model: ${unit.model || 'Not specified'}<br>
         Mileage: ${formatNumber(unit.mileage)}<br>
-        Value: USD$ ${formatNumber(unit.price)}<br>
-        Color: ${unit.color || 'Unknown'}<br>
-        State: ${unit.state || 'Unknown'}<br>
-        Phone: ${unit.phone || '000-000-0000'}
+        Price: USD$ ${formatNumber(unit.price)}<br>
+        Location: ${unit.location || unit.state || 'Available nationwide'}
       </div>
       <div class="btn-row">
         <div class="btn-green email-btn">Contact us</div>

@@ -104,12 +104,12 @@
         <div class="specs">
           <h3>Key specifications</h3>
           <ul class="spec-list">
-            <li><strong>Type:</strong> <span id="specType"></span></li>
-            <li><strong>Brand:</strong> <span id="specBrand"></span></li>
+            <li><strong>Year:</strong> <span id="specYear"></span></li>
+            <li><strong>Make:</strong> <span id="specMake"></span></li>
+            <li><strong>Model:</strong> <span id="specModel"></span></li>
             <li><strong>Price:</strong> <span id="specPrice"></span></li>
             <li><strong>Mileage:</strong> <span id="specMileage"></span></li>
-            <li><strong>Color:</strong> <span id="specColor"></span></li>
-            <li><strong>State:</strong> <span id="specState"></span></li>
+            <li><strong>Location:</strong> <span id="specLocation"></span></li>
           </ul>
           <div class="cta-row">
             <button class="btn primary" id="ctaCall" type="button">Call 000-000-0000</button>
@@ -125,9 +125,9 @@
           <div class="specs" style="background:#fff;">
             <h3 style="margin-top:0;">Condition & logistics</h3>
             <ul class="spec-list">
-              <li><strong>Year:</strong> <span id="specYear"></span></li>
+              <li><strong>Status:</strong> <span id="specStatus"></span></li>
               <li><strong>Condition:</strong> <span id="specCondition"></span></li>
-              <li><strong>Location:</strong> <span id="specLocation"></span></li>
+              <li><strong>State:</strong> <span id="specState"></span></li>
               <li><strong>Contact:</strong> <span id="specPhone"></span></li>
             </ul>
           </div>
@@ -137,7 +137,7 @@
               <li><strong>Engine:</strong> <span id="specEngine"></span></li>
               <li><strong>Transmission:</strong> <span id="specTransmission"></span></li>
               <li><strong>Type:</strong> <span id="specTypeDetail"></span></li>
-              <li><strong>Status:</strong> <span id="specStatus"></span></li>
+              <li><strong>VIN:</strong> <span id="specVin"></span></li>
             </ul>
           </div>
         </div>
@@ -173,11 +173,28 @@
       return merged.slice(0, MAX_IMAGES);
     }
 
+    function deriveMake(title = '') {
+      const parts = title.split(' ').filter(Boolean);
+      if (parts.length < 2) return '';
+      const maybeYear = parts[0];
+      const startIdx = /(19|20)\d{2}/.test(maybeYear) ? 1 : 0;
+      return parts[startIdx] || '';
+    }
+
+    function deriveModel(title = '', make = '') {
+      const cleaned = title.replace(make, '').trim();
+      const pieces = cleaned.split(' ').filter(Boolean);
+      const noYear = pieces.filter(p => !/(19|20)\d{2}/.test(p));
+      return noYear.slice(1).join(' ') || noYear.join(' ') || '';
+    }
+
     function normalizeUnit(unit) {
       const images = normalizeImages(unit || {});
       const title = unit?.title || 'Unit';
       const titleYear = (title.match(/(19|20)\d{2}/) || [])[0];
       const year = Number(unit?.year) || Number(titleYear) || '';
+      const make = unit?.brand || unit?.make || deriveMake(title) || 'Unknown';
+      const model = unit?.model || deriveModel(title, make) || 'Not specified';
       const desc = unit?.description || `${title} — well maintained, clean title, and ready for your next haul.`;
       const defaultFeatures = ['Clean title', 'DOT ready', 'Fresh PM service', 'Warranty options available', 'Maintenance records on file', 'Financing available'];
       const features = Array.isArray(unit?.features) && unit.features.length ? unit.features : defaultFeatures;
@@ -186,7 +203,9 @@
         title,
         vin: unit?.vin || '',
         type: unit?.type || 'Truck',
-        brand: unit?.brand || 'Unknown',
+        brand: unit?.brand || make || 'Unknown',
+        make,
+        model,
         status: unit?.status || 'Available',
         price: Number(unit?.price) || 0,
         mileage: Number(unit?.mileage) || 0,
@@ -279,19 +298,19 @@
       const heroImage = (unit.images && unit.images.length ? unit.images[0] : (unit.image || DEFAULT_IMAGE));
       document.getElementById('detailImage').src = heroImage;
       document.getElementById('detailImage').alt = unit.title || 'Unit image';
-      document.getElementById('specType').textContent = unit.type || 'N/A';
-      document.getElementById('specBrand').textContent = unit.brand || 'N/A';
+      document.getElementById('specYear').textContent = unit.year || 'Unknown';
+      document.getElementById('specMake').textContent = unit.make || unit.brand || 'Unknown';
+      document.getElementById('specModel').textContent = unit.model || 'Not specified';
       document.getElementById('specPrice').textContent = `USD$ ${formatNumber(unit.price)}`;
       document.getElementById('specMileage').textContent = `${formatNumber(unit.mileage)} mi`;
-      document.getElementById('specColor').textContent = unit.color || 'Unknown';
+      document.getElementById('specLocation').textContent = unit.location || unit.state || 'Available nationwide';
       document.getElementById('specState').textContent = unit.state || 'Unknown';
-      document.getElementById('specYear').textContent = unit.year || 'Unknown';
       document.getElementById('specCondition').textContent = unit.condition || 'Used';
-      document.getElementById('specLocation').textContent = unit.location || 'Available nationwide';
       document.getElementById('specPhone').textContent = unit.phone || '000-000-0000';
       document.getElementById('specEngine').textContent = unit.engine || 'Not specified';
       document.getElementById('specTransmission').textContent = unit.transmission || 'Not specified';
       document.getElementById('specTypeDetail').textContent = unit.type || 'N/A';
+      document.getElementById('specVin').textContent = unit.vin || 'N/A';
       document.getElementById('specStatus').textContent = unit.status || 'Available';
       document.getElementById('detailDescription').textContent = unit.description || '';
 
