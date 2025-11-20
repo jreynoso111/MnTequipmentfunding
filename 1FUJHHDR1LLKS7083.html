@@ -9,17 +9,25 @@
 <head>
   <meta charset="UTF-8" />
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:Arial,Helvetica,sans-serif;background:#f5f7f6;color:#111;line-height:1.5;overflow-x:hidden;}
+    :root {
+      --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    html { font-family: var(--font-main); }
+    *, *::before, *::after { box-sizing:border-box; font-family: inherit; margin:0; padding:0; }
+    body{font-family:inherit;background:#f5f7f6;color:#0b2520;line-height:1.5;overflow-x:hidden;}
     a{text-decoration:none;color:inherit;}
+    img{max-width:100%;height:auto;display:block;}
 
     header{background:#ffffff;box-shadow:0 2px 6px rgba(0,0,0,.08);position:sticky;top:0;z-index:10;}
     .nav{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;}
     .logo{display:flex;align-items:center;gap:10px;}
     .logo img{width:120px;height:auto;}
-    .logo-text{font-size:16px;font-weight:700;line-height:1.2;}
-    .logo-sub{font-size:11px;font-weight:400;color:#555;}
     .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
     .nav-links a{padding:6px 10px;border-radius:999px;}
     .nav-links a:hover{background:rgba(0,94,74,.08);}
@@ -61,6 +69,8 @@
 
     @media (max-width: 900px){
       header{padding:8px 16px;}
+      .nav{flex-direction:column;align-items:flex-start;gap:10px;}
+      .nav-links{flex-wrap:wrap;width:100%;}
       .container{margin:12px auto;padding:0 12px;}
       .details-card{padding:16px 12px 20px;}
       .details-grid{grid-template-columns:1fr;gap:16px;}
@@ -77,9 +87,6 @@
   <div class="nav">
     <div class="logo">
       <img src="Media/Logo White - Copy.png" alt="M&T Equipment Funding Logo" />
-      <div>
-        
-      </div>
     </div>
     <nav class="nav-links">
       <a href="index.html">Home</a>

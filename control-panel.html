@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inventory Control Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="inventory-seed.js"></script>
+  <style>
+    :root {
+      --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    html { font-family: var(--font-main); }
+    *, *::before, *::after { box-sizing:border-box; font-family: inherit; margin:0; padding:0; }
+    body{font-family:inherit;background:#f5f7f6;color:#0b2520;line-height:1.5;padding:24px;}
+    img{max-width:100%;height:auto;display:block;}
+    h1{font-size:26px;font-weight:800;color:#0b2520;margin-bottom:6px;}
+    p.lead{font-size:13px;color:#444;margin-bottom:16px;}
+    .panel{background:#fff;border:1px solid #d8e5e0;border-radius:12px;padding:16px;box-shadow:0 4px 12px rgba(0,0,0,.06);}
+    .flex{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start;margin-bottom:14px;}
+    label{font-weight:700;font-size:12px;display:block;margin-bottom:6px;color:#0b2520;}
+    input, select, textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #cfdad7;font-size:13px;}
+    textarea{min-height:110px;}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;}
+    .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:10px;}
+    .btn{border:none;border-radius:999px;padding:10px 16px;font-weight:700;font-size:13px;cursor:pointer;}
+    .btn.primary{background:#005e4a;color:#fff;}
+    .btn.ghost{background:#fff;color:#005e4a;border:1px solid #005e4a;}
+    table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px;}
+    th,td{padding:10px;border-bottom:1px solid #e6eeeb;text-align:left;}
+    th{background:#f5faf8;color:#0b2520;font-size:12px;text-transform:uppercase;letter-spacing:.04em;}
+    .status-pill{padding:4px 8px;border-radius:999px;font-weight:700;font-size:11px;display:inline-block;}
+    .status-pill.available{background:#dff6f0;color:#005e4a;}
+    .status-pill.sold{background:#ffe5e5;color:#b30000;}
+    .actions{display:flex;gap:6px;}
+    .notice{background:#fff7e6;border:1px solid #ffe0a8;color:#6a3a00;padding:10px 12px;border-radius:10px;font-size:12px;margin-bottom:14px;}
+    .login-wrap{max-width:420px;margin:30px auto;}
+    .card{background:#fff;border:1px solid #d8e5e0;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.08);padding:18px;}
+    .card h2{font-size:18px;margin-bottom:8px;}
+    .muted{font-size:12px;color:#555;margin-bottom:10px;}
+  </style>
+</head>
+<body>
+  <div id="authGate" class="login-wrap" style="display:none;">
+    <div class="card">
+      <h2>Sign in</h2>
+      <p class="muted">Enter the same credentials used on the Inventory page to access the control panel.</p>
+      <p class="muted" style="margin-top:-4px;">Admin: admin / adminmnt &bull; Manager: rcortez / cortezmnt</p>
+      <label for="authUser">Username</label>
+      <input id="authUser" type="text" autocomplete="username" />
+      <label for="authPass" style="margin-top:10px;">Password</label>
+      <input id="authPass" type="password" autocomplete="current-password" />
+      <div class="flex" style="justify-content:flex-end;margin-top:10px;">
+        <button class="btn ghost" id="authBack">Back to Inventory</button>
+        <button class="btn primary" id="authLogin">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel" style="display:none;">
+    <h1>Inventory Control Panel</h1>
+    <p id="userMeta" class="muted" style="margin-top:-6px;"></p>
+    <div class="flex" style="gap:10px; margin:6px 0 14px; flex-wrap:wrap;">
+      <button class="btn ghost" id="logoutProfile">Close profile</button>
+      <a class="btn primary" href="Units for Sale.html">View listings page</a>
+    </div>
+    <p class="lead">Add, edit, or remove vehicle listings. Changes are saved in your browser and will appear on the Units for Sale page.</p>
+
+    <div class="notice">Security reminder: This panel uses a simple browser check. For production use, place behind a server-side login.</div>
+
+    <div class="panel">
+      <h2 style="font-size:16px;margin-bottom:10px;">Add or edit listing</h2>
+      <div class="row">
+        <div>
+          <label for="title">Title</label>
+          <input id="title" placeholder="2020 Freightliner Cascadia PT126SLP" />
+        </div>
+        <div>
+          <label for="vin">VIN</label>
+          <input id="vin" placeholder="1FUJHHDR1LLXXXXXX" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="type">Type</label>
+          <select id="type">
+            <option>Truck</option>
+            <option>Trailer</option>
+          </select>
+        </div>
+        <div>
+          <label for="brand">Brand</label>
+          <input id="brand" placeholder="Freightliner" />
+        </div>
+        <div>
+          <label for="status">Status</label>
+          <select id="status">
+            <option>Available</option>
+            <option>Sold</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="price">Price (USD)</label>
+          <input id="price" type="number" min="0" step="1" placeholder="38386" />
+        </div>
+        <div>
+          <label for="mileage">Mileage</label>
+          <input id="mileage" type="number" min="0" step="1" placeholder="729771" />
+        </div>
+        <div>
+          <label for="state">State</label>
+          <input id="state" placeholder="CA" />
+        </div>
+        <div>
+          <label for="color">Color</label>
+          <input id="color" placeholder="White" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="image">Image URL</label>
+          <input id="image" placeholder="https://example.com/unit.jpg" />
+        </div>
+      </div>
+      <div class="flex" style="justify-content:flex-end;">
+        <button class="btn ghost" id="resetForm">Reset</button>
+        <button class="btn primary" id="saveUnit">Save Listing</button>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:14px;">
+      <div class="flex" style="justify-content:space-between; align-items:center;">
+        <h2 style="font-size:16px;">Current listings</h2>
+        <button class="btn ghost" id="exportData">Export JSON</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>VIN</th>
+            <th>Type</th>
+            <th>Brand</th>
+            <th>Color</th>
+            <th>State</th>
+            <th>Price</th>
+            <th>Mileage</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="panel" id="userManagementPanel" style="margin-top:14px; display:none;">
+      <div class="flex" style="justify-content:space-between; align-items:center;">
+        <h2 style="font-size:16px;">User management</h2>
+        <span class="muted" style="font-size:11px;">Admin only</span>
+      </div>
+      <p class="muted" style="margin-top:-6px;">Create additional admin or manager profiles for the inventory tool.</p>
+      <div class="row">
+        <div>
+          <label for="newUser">Username</label>
+          <input id="newUser" placeholder="newuser" />
+        </div>
+        <div>
+          <label for="newPass">Password</label>
+          <input id="newPass" type="password" placeholder="password" />
+        </div>
+        <div>
+          <label for="newRole">Role</label>
+          <select id="newRole">
+            <option value="admin">Admin</option>
+            <option value="manager">Manager</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex" style="justify-content:flex-end;">
+        <button class="btn primary" id="addAccount">Create profile</button>
+      </div>
+      <div class="muted" style="margin-top:10px; font-weight:700; color:#0b2520;">Saved profiles</div>
+      <ul id="accountList" style="list-style:none; padding-left:0; margin-top:6px; font-size:12px; color:#0b2520;"></ul>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_ACCOUNTS = [
+      { user: 'admin', pass: 'adminmnt', role: 'admin' },
+      { user: 'rcortez', pass: 'cortezmnt', role: 'manager' }
+    ];
+    const storageKey = 'inventoryData';
+    const accountsKey = 'inventoryAccounts';
+
+    let units = [];
+    let editingIndex = null;
+    let accounts = [];
+
+    function loadUnits() {
+      try {
+        const saved = localStorage.getItem(storageKey);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) return parsed;
+        }
+      } catch (e) {
+        console.warn('Could not parse saved inventory');
+      }
+      const seeded = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED.slice() : [];
+      localStorage.setItem(storageKey, JSON.stringify(seeded));
+      return seeded;
+    }
+
+    function saveUnits() {
+      localStorage.setItem(storageKey, JSON.stringify(units));
+    }
+
+    function loadAccounts() {
+      const saved = localStorage.getItem(accountsKey);
+      let stored = [];
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) stored = parsed;
+        } catch (e) {
+          console.warn('Could not parse saved accounts');
+        }
+      }
+      DEFAULT_ACCOUNTS.forEach(base => {
+        const idx = stored.findIndex(a => a.user === base.user);
+        if (idx >= 0) {
+          stored[idx] = { ...stored[idx], ...base };
+        } else {
+          stored.push({ ...base });
+        }
+      });
+      localStorage.setItem(accountsKey, JSON.stringify(stored));
+      accounts = stored;
+    }
+
+    function saveAccountsList() {
+      localStorage.setItem(accountsKey, JSON.stringify(accounts));
+    }
+
+    function renderTable() {
+      const body = document.getElementById('tableBody');
+      body.innerHTML = '';
+      if (!units.length) {
+        body.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#555;">No listings yet. Add one above.</td></tr>';
+        return;
+      }
+      units.forEach((unit, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${unit.title || ''}</td>
+          <td>${unit.vin || ''}</td>
+          <td>${unit.type || ''}</td>
+          <td>${unit.brand || ''}</td>
+          <td>${unit.color || ''}</td>
+          <td>${unit.state || ''}</td>
+          <td>$${Number(unit.price||0).toLocaleString('en-US')}</td>
+          <td>${Number(unit.mileage||0).toLocaleString('en-US')}</td>
+          <td><span class="status-pill ${unit.status && unit.status.toLowerCase()==='sold' ? 'sold' : 'available'}">${unit.status || 'Available'}</span></td>
+          <td class="actions">
+            <button class="btn ghost" style="padding:6px 10px;font-size:11px;" onclick="editUnit(${idx})">Edit</button>
+            <button class="btn primary" style="padding:6px 10px;font-size:11px;" onclick="deleteUnit(${idx})">Delete</button>
+          </td>
+        `;
+        body.appendChild(tr);
+      });
+    }
+
+    function resetForm() {
+      editingIndex = null;
+      ['title','vin','brand','color','state','image'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('type').value = 'Truck';
+      document.getElementById('status').value = 'Available';
+      document.getElementById('price').value = '';
+      document.getElementById('mileage').value = '';
+    }
+
+    function saveUnit() {
+      const unit = {
+        title: document.getElementById('title').value.trim(),
+        vin: document.getElementById('vin').value.trim(),
+        type: document.getElementById('type').value,
+        brand: document.getElementById('brand').value.trim(),
+        status: document.getElementById('status').value,
+        price: Number(document.getElementById('price').value || 0),
+        mileage: Number(document.getElementById('mileage').value || 0),
+        state: document.getElementById('state').value.trim() || 'Unknown',
+        color: document.getElementById('color').value.trim() || 'Unknown',
+        image: document.getElementById('image').value.trim() || 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg'
+      };
+
+      if (!unit.title || !unit.vin) {
+        alert('Title and VIN are required.');
+        return;
+      }
+
+      if (editingIndex === null) {
+        units.push(unit);
+      } else {
+        units[editingIndex] = unit;
+      }
+
+      saveUnits();
+      renderTable();
+      resetForm();
+    }
+
+    function editUnit(index) {
+      const unit = units[index];
+      if (!unit) return;
+      editingIndex = index;
+      document.getElementById('title').value = unit.title || '';
+      document.getElementById('vin').value = unit.vin || '';
+      document.getElementById('type').value = unit.type || 'Truck';
+      document.getElementById('brand').value = unit.brand || '';
+      document.getElementById('status').value = unit.status || 'Available';
+      document.getElementById('price').value = unit.price || '';
+      document.getElementById('mileage').value = unit.mileage || '';
+      document.getElementById('state').value = unit.state || '';
+      document.getElementById('color').value = unit.color || '';
+      document.getElementById('image').value = unit.image || '';
+    }
+
+    function deleteUnit(index) {
+      if (!confirm('Delete this listing?')) return;
+      units.splice(index,1);
+      saveUnits();
+      renderTable();
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify(units, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'inventory.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function renderAccountList() {
+      const list = document.getElementById('accountList');
+      if (!list) return;
+      list.innerHTML = '';
+      if (!accounts.length) {
+        list.innerHTML = '<li style="color:#555;">No profiles saved.</li>';
+        return;
+      }
+      accounts.forEach(acc => {
+        const li = document.createElement('li');
+        li.textContent = `${acc.user} (${formatRole(acc.role) || 'Role not set'})`;
+        list.appendChild(li);
+      });
+    }
+
+    function handleAddAccount() {
+      if (!isAdmin()) {
+        alert('Only admins can create new profiles.');
+        return;
+      }
+      const user = document.getElementById('newUser').value.trim();
+      const pass = document.getElementById('newPass').value.trim();
+      const role = document.getElementById('newRole').value;
+      if (!user || !pass) {
+        alert('Username and password are required.');
+        return;
+      }
+      if (accounts.some(acc => acc.user.toLowerCase() === user.toLowerCase())) {
+        alert('That username already exists.');
+        return;
+      }
+      accounts.push({ user, pass, role });
+      saveAccountsList();
+      renderAccountList();
+      document.getElementById('newUser').value = '';
+      document.getElementById('newPass').value = '';
+      document.getElementById('newRole').value = 'manager';
+    }
+
+    function toggleUserManagement() {
+      const panel = document.getElementById('userManagementPanel');
+      if (!panel) return;
+      if (isAdmin()) {
+        panel.style.display = 'block';
+        renderAccountList();
+      } else {
+        panel.style.display = 'none';
+      }
+    }
+
+    function setSession(account) {
+      localStorage.setItem('inventoryAdminAuth', 'true');
+      localStorage.setItem('inventoryAuthUser', account.user);
+      localStorage.setItem('inventoryAuthRole', account.role);
+    }
+
+    function getSessionDetails() {
+      return {
+        user: localStorage.getItem('inventoryAuthUser') || 'admin',
+        role: localStorage.getItem('inventoryAuthRole') || 'admin'
+      };
+    }
+
+    function formatRole(role) {
+      if (!role) return '';
+      return role.charAt(0).toUpperCase() + role.slice(1);
+    }
+
+    function isAdmin() {
+      return (getSessionDetails().role || '').toLowerCase() === 'admin';
+    }
+
+    function updateUserMeta() {
+      const meta = document.getElementById('userMeta');
+      if (!meta) return;
+      const { user, role } = getSessionDetails();
+      meta.textContent = `Signed in as ${user} (${formatRole(role)})`;
+    }
+
+    function logout() {
+      localStorage.removeItem('inventoryAdminAuth');
+      localStorage.removeItem('inventoryAuthUser');
+      localStorage.removeItem('inventoryAuthRole');
+      document.getElementById('panel').style.display = 'none';
+      document.getElementById('authGate').style.display = 'block';
+      window.location.href = 'Inventory.html';
+    }
+
+    function showPanel() {
+      document.getElementById('authGate').style.display = 'none';
+      document.getElementById('panel').style.display = 'block';
+      loadAccounts();
+      units = loadUnits();
+      renderTable();
+      updateUserMeta();
+      toggleUserManagement();
+    }
+
+    function requireAuth() {
+      const hasAuth = localStorage.getItem('inventoryAdminAuth') === 'true';
+      if (hasAuth) {
+        showPanel();
+        return;
+      }
+      document.getElementById('authGate').style.display = 'block';
+    }
+
+    function tryLogin() {
+      const u = document.getElementById('authUser').value.trim();
+      const p = document.getElementById('authPass').value.trim();
+      const account = accounts.find(a => a.user === u && a.pass === p);
+      if (account) {
+        setSession(account);
+        showPanel();
+      } else {
+        alert('Invalid credentials');
+      }
+    }
+
+    loadAccounts();
+
+    document.getElementById('saveUnit').addEventListener('click', saveUnit);
+    document.getElementById('resetForm').addEventListener('click', resetForm);
+    document.getElementById('exportData').addEventListener('click', exportData);
+    document.getElementById('addAccount').addEventListener('click', handleAddAccount);
+    document.getElementById('authLogin').addEventListener('click', tryLogin);
+    document.getElementById('authBack').addEventListener('click', () => window.location.href = 'Inventory.html');
+    document.getElementById('authPass').addEventListener('keyup', (e) => { if (e.key === 'Enter') tryLogin(); });
+    document.getElementById('logoutProfile')?.addEventListener('click', logout);
+
+    requireAuth();
+    updateUserMeta();
+  </script>
+</body>
+</html>
