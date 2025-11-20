@@ -296,6 +296,14 @@ let filteredUnits = [];
   const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
   const BASE_NORMALIZED = BASE_UNITS.map(normalizeUnit);
 
+function hasDiverseInventory(list) {
+  const arr = Array.isArray(list) ? list : [];
+  const uniqueVin = new Set(arr.map(u => (u.vin || '').toUpperCase())).size;
+  const uniqueTitle = new Set(arr.map(u => (u.title || '').toUpperCase())).size;
+  const uniqueTypes = new Set(arr.map(u => (u.type || '').toLowerCase())).size;
+  return arr.length >= MIN_LISTINGS && uniqueVin >= MIN_LISTINGS && uniqueTitle >= MIN_LISTINGS && uniqueTypes.size > 1;
+}
+
 function ensureMinimumUnits(list) {
   const result = Array.isArray(list) ? list.slice() : [];
   const source = BASE_NORMALIZED.length ? BASE_NORMALIZED : result;
@@ -457,13 +465,16 @@ function loadUnits() {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length) {
         const normalizedSaved = ensureMinimumUnits(parsed.map(normalizeUnit));
-        localStorage.setItem(storageKey, JSON.stringify(normalizedSaved));
-        return normalizedSaved;
+        if (hasDiverseInventory(normalizedSaved)) {
+          localStorage.setItem(storageKey, JSON.stringify(normalizedSaved));
+          return normalizedSaved;
+        }
       }
     }
   } catch (e) {
     console.warn('Unable to load saved inventory, using defaults');
   }
+  console.warn('Reseeding inventory with diverse demo data');
   const seeded = ensureMinimumUnits(BASE_NORMALIZED);
   localStorage.setItem(storageKey, JSON.stringify(seeded));
   return seeded;

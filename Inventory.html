@@ -630,13 +630,23 @@
       if (!featuredContainer) return;
 
       const storageKey = 'inventoryData';
+      const MIN_LISTINGS = 35;
       const MAX_IMAGES = 10;
       const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg';
+      const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
 
       function normalizeImages(unit) {
         const fromArray = Array.isArray(unit.images) ? unit.images.filter(Boolean) : [];
         const merged = [...new Set([unit.image, ...fromArray].filter(Boolean))];
         return merged.slice(0, MAX_IMAGES);
+      }
+
+      function hasDiverseInventory(list) {
+        const arr = Array.isArray(list) ? list : [];
+        const uniqueVin = new Set(arr.map(u => (u.vin || '').toUpperCase())).size;
+        const uniqueTitle = new Set(arr.map(u => (u.title || '').toUpperCase())).size;
+        const uniqueTypes = new Set(arr.map(u => (u.type || '').toLowerCase())).size;
+        return arr.length >= MIN_LISTINGS && uniqueVin >= MIN_LISTINGS && uniqueTitle >= MIN_LISTINGS && uniqueTypes.size > 1;
       }
 
       function deriveMake(title = '') {
@@ -683,10 +693,16 @@
           const saved = localStorage.getItem(storageKey);
           if (saved) {
             const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length) return parsed.map(normalizeUnit);
+            if (Array.isArray(parsed) && parsed.length) {
+              const normalized = parsed.map(normalizeUnit);
+              if (hasDiverseInventory(normalized)) {
+                localStorage.setItem(storageKey, JSON.stringify(normalized));
+                return normalized;
+              }
+            }
           }
         } catch (e) {}
-        const seeded = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED.map(normalizeUnit) : [];
+        const seeded = BASE_UNITS.map(normalizeUnit);
         localStorage.setItem(storageKey, JSON.stringify(seeded));
         return seeded;
       }
