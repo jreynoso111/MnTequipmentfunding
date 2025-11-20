@@ -107,21 +107,21 @@
 <header>
   <div class="nav">
     <div class="logo">
-      <img src="Media/Logo White - Copy.png" alt="Logo" />
+      <a href="index.html"><img src="Media/Logo White - Copy.png" alt="Logo" /></a>
     </div>
     <nav class="nav-links">
-      <a href="Home.html">Home</a>
-      <a href="Applications.html">Applications</a>
+      <a href="index.html">Home</a>
+      <a href="About us.html">About Us</a>
       <a href="Services.html">Services</a>
+      <a href="Applications.html">Applications</a>
 
       <div class="inv-wrapper" style="position:relative;">
-        <a href="Inventory.html" class="inv-link" style="padding:6px 10px; border-radius:999px;">Inventory ▾</a>
+        <a href="Units for Sale.html" class="inv-link active" style="padding:6px 10px; border-radius:999px;">Inventory ▾</a>
         <div class="inv-dropdown" style="position:absolute; top:28px; left:0; background:#ffffff; border:1px solid #ddd; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,.1); width:180px; overflow:hidden; display:none;">
           <a href="Units for Sale.html" style="padding:8px 12px; font-size:14px; display:block;">All Units for Sale</a>
         </div>
       </div>
 
-      <a href="About us.html">About Us</a>
       <button class="btn-small" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
     </nav>
   </div>
@@ -265,7 +265,8 @@ const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/2300191
 let currentPage = 1;
 let units = [];
 let filteredUnits = [];
-const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
+  const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
+  const BASE_NORMALIZED = BASE_UNITS.map(normalizeUnit);
 
 function hashPassword(pass) {
   return 'hash:' + btoa(pass || '');
@@ -394,14 +395,17 @@ function loadUnits() {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length) {
         const normalizedSaved = parsed.map(normalizeUnit);
-        localStorage.setItem(storageKey, JSON.stringify(normalizedSaved));
-        return normalizedSaved;
+        // Ensure we always have the full 35-unit demo inventory available
+        if (normalizedSaved.length >= BASE_NORMALIZED.length) {
+          localStorage.setItem(storageKey, JSON.stringify(normalizedSaved));
+          return normalizedSaved;
+        }
       }
     }
   } catch (e) {
     console.warn('Unable to load saved inventory, using defaults');
   }
-  const seeded = defaultUnits();
+  const seeded = BASE_NORMALIZED;
   localStorage.setItem(storageKey, JSON.stringify(seeded));
   return seeded;
 }
