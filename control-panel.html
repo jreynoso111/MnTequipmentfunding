@@ -33,6 +33,9 @@
     table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px;}
     th,td{padding:10px;border-bottom:1px solid #e6eeeb;text-align:left;}
     th{background:#f5faf8;color:#0b2520;font-size:12px;text-transform:uppercase;letter-spacing:.04em;}
+    th.sortable{cursor:pointer;user-select:none;}
+    th.sortable .sort-label{display:inline-flex;align-items:center;gap:6px;}
+    th.sortable .sort-indicator{font-size:10px;opacity:0.65;}
     .status-pill{padding:4px 8px;border-radius:999px;font-weight:700;font-size:11px;display:inline-block;}
     .status-pill.available{background:#dff6f0;color:#005e4a;}
     .status-pill.sold{background:#ffe5e5;color:#b30000;}
@@ -72,6 +75,7 @@
     <div class="flex" style="gap:10px; margin:6px 0 14px; flex-wrap:wrap;">
       <button class="btn ghost" id="logoutProfile">Close profile</button>
       <a class="btn primary" href="Units for Sale.html">View listings page</a>
+      <a class="btn ghost" href="admin-log.html">View change log</a>
     </div>
     <p class="lead">Add, edit, or remove vehicle listings. Changes are saved in your browser and will appear on the Units for Sale page.</p>
 
@@ -195,21 +199,21 @@
       <table>
         <thead>
           <tr>
-            <th>Title</th>
-            <th>VIN</th>
-            <th>Year</th>
-            <th>Type</th>
-            <th>Brand</th>
-            <th>Color</th>
-            <th>State</th>
-            <th>Location</th>
-            <th>Price</th>
-            <th>Mileage</th>
-            <th>Engine</th>
-            <th>Trans.</th>
-            <th>Cond.</th>
-            <th>Phone</th>
-            <th>Status</th>
+            <th class="sortable" data-sort="title"><span class="sort-label">Title <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="vin"><span class="sort-label">VIN <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="year"><span class="sort-label">Year <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="type"><span class="sort-label">Type <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="brand"><span class="sort-label">Brand <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="color"><span class="sort-label">Color <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="state"><span class="sort-label">State <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="location"><span class="sort-label">Location <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="price"><span class="sort-label">Price <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="mileage"><span class="sort-label">Mileage <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="engine"><span class="sort-label">Engine <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="transmission"><span class="sort-label">Trans. <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="condition"><span class="sort-label">Cond. <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="phone"><span class="sort-label">Phone <span class="sort-indicator">⇅</span></span></th>
+            <th class="sortable" data-sort="status"><span class="sort-label">Status <span class="sort-indicator">⇅</span></span></th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -257,17 +261,22 @@
     ];
     const storageKey = 'inventoryData';
     const accountsKey = 'inventoryAccounts';
+    const auditKey = 'inventoryAuditLog';
     const lockKey = 'inventoryLoginLock';
     const sessionKey = 'inventorySession';
     const SESSION_TTL_MINUTES = 90;
+    const MIN_LISTINGS = 35;
     const MAX_IMAGES = 10;
     const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg';
+    const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
 
     let units = [];
     let editingIndex = null;
     let accounts = [];
     let imagesState = [];
     let editingAccount = null;
+    let auditLog = [];
+    let sortState = { field: 'title', direction: 'asc' };
 
     function hashPassword(pass) {
       return 'hash:' + btoa(pass || '');
@@ -281,6 +290,65 @@
 
     function passwordsMatch(account, input) {
       return account.pass === hashPassword(input);
+    }
+
+    function loadAuditLog() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(auditKey) || '[]');
+        if (Array.isArray(saved)) {
+          auditLog = saved;
+          return saved;
+        }
+      } catch (e) {}
+      auditLog = [];
+      return auditLog;
+    }
+
+    function saveAuditLog(entries) {
+      auditLog = entries.slice();
+      localStorage.setItem(auditKey, JSON.stringify(auditLog));
+    }
+
+    function summarizeChanges(previous, next) {
+      if (!previous || !next) return [];
+      const fields = ['title','vin','type','brand','price','mileage','state','color','year','engine','transmission','condition','location','phone','status','description'];
+      const diffs = [];
+      fields.forEach(key => {
+        const beforeVal = previous[key] ?? '';
+        const afterVal = next[key] ?? '';
+        if (String(beforeVal) !== String(afterVal)) {
+          diffs.push(`${key}: "${beforeVal}" → "${afterVal}"`);
+        }
+      });
+      if ((previous.features || []).join(',') !== (next.features || []).join(',')) {
+        diffs.push('features updated');
+      }
+      if ((previous.images || []).join(',') !== (next.images || []).join(',')) {
+        diffs.push('images updated');
+      }
+      return diffs;
+    }
+
+    function addAuditEntry(action, beforeUnit, afterUnit) {
+      const session = getSessionDetails();
+      const entry = {
+        timestamp: new Date().toISOString(),
+        action,
+        user: session?.user || 'anonymous',
+        vin: afterUnit?.vin || beforeUnit?.vin || '',
+        title: afterUnit?.title || beforeUnit?.title || '',
+        details: []
+      };
+      if (action === 'updated' && beforeUnit && afterUnit) {
+        entry.details = summarizeChanges(beforeUnit, afterUnit);
+      } else if (action === 'created' && afterUnit) {
+        entry.details = [`Created listing ${afterUnit.title || afterUnit.vin}`];
+      } else if (action === 'deleted' && beforeUnit) {
+        entry.details = [`Deleted listing ${beforeUnit.title || beforeUnit.vin}`];
+      }
+      const current = loadAuditLog();
+      current.unshift(entry);
+      saveAuditLog(current.slice(0, 500));
     }
 
     function loadAccounts() {
@@ -316,6 +384,14 @@
       const fromArray = Array.isArray(unit.images) ? unit.images.filter(Boolean) : [];
       const merged = [...new Set([unit.image, ...fromArray].filter(Boolean))];
       return merged.slice(0, MAX_IMAGES);
+    }
+
+    function hasDiverseInventory(list) {
+      const arr = Array.isArray(list) ? list : [];
+      const uniqueVin = new Set(arr.map(u => (u.vin || '').toUpperCase())).size;
+      const uniqueTitle = new Set(arr.map(u => (u.title || '').toUpperCase())).size;
+      const uniqueTypes = new Set(arr.map(u => (u.type || '').toLowerCase())).size;
+      return arr.length >= MIN_LISTINGS && uniqueVin >= MIN_LISTINGS && uniqueTitle >= MIN_LISTINGS && uniqueTypes.size > 1;
     }
 
     function normalizeUnit(unit) {
@@ -361,10 +437,14 @@
       } catch (e) {
         console.warn('Could not parse saved inventory');
       }
-      if (!parsed.length && Array.isArray(window.INVENTORY_SEED)) parsed = window.INVENTORY_SEED.slice();
       const normalized = parsed.map(normalizeUnit);
-      localStorage.setItem(storageKey, JSON.stringify(normalized));
-      return normalized;
+      if (hasDiverseInventory(normalized)) {
+        localStorage.setItem(storageKey, JSON.stringify(normalized));
+        return normalized;
+      }
+      const seeded = BASE_UNITS.map(normalizeUnit);
+      localStorage.setItem(storageKey, JSON.stringify(seeded));
+      return seeded;
     }
 
     function saveUnits() {
@@ -375,16 +455,32 @@
       return Number(n || 0).toLocaleString('en-US');
     }
 
+    function getSortableValue(unit, field) {
+      const numeric = ['price','mileage','year'];
+      const value = unit?.[field];
+      if (numeric.includes(field)) return Number(value) || 0;
+      return (value ?? '').toString().toLowerCase();
+    }
+
     function renderTable() {
       const body = document.getElementById('tableBody');
       body.innerHTML = '';
       if (!units.length) {
         body.innerHTML = '<tr><td colspan="16" style="text-align:center;color:#555;">No listings yet. Add one above.</td></tr>';
+        updateSortIndicators();
         return;
       }
       const rows = units.map((unit, idx) => ({ unit, idx }));
       rows
-        .sort((a, b) => (b.unit.status === 'Available') - (a.unit.status === 'Available'))
+        .sort((a, b) => {
+          const field = sortState.field;
+          const dir = sortState.direction === 'asc' ? 1 : -1;
+          const aVal = getSortableValue(a.unit, field);
+          const bVal = getSortableValue(b.unit, field);
+          if (aVal < bVal) return -1 * dir;
+          if (aVal > bVal) return 1 * dir;
+          return 0;
+        })
         .forEach(({ unit, idx }) => {
           const tr = document.createElement('tr');
           tr.innerHTML = `
@@ -411,6 +507,36 @@
           `;
           body.appendChild(tr);
         });
+      updateSortIndicators();
+    }
+
+    function updateSortIndicators() {
+      document.querySelectorAll('th.sortable').forEach(th => {
+        const indicator = th.querySelector('.sort-indicator');
+        if (!indicator) return;
+        const field = th.dataset.sort;
+        if (sortState.field === field) {
+          indicator.textContent = sortState.direction === 'asc' ? '▲' : '▼';
+        } else {
+          indicator.textContent = '⇅';
+        }
+      });
+    }
+
+    function bindSorters() {
+      document.querySelectorAll('th.sortable').forEach(th => {
+        th.addEventListener('click', () => {
+          const field = th.dataset.sort;
+          if (!field) return;
+          if (sortState.field === field) {
+            sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
+          } else {
+            sortState.field = field;
+            sortState.direction = 'asc';
+          }
+          renderTable();
+        });
+      });
     }
 
     function resetForm() {
@@ -477,6 +603,7 @@
     function saveUnit() {
       const featureLines = (document.getElementById('features').value || '').split(/\n|,/).map(f => f.trim()).filter(Boolean);
       const hero = imagesState[0] || '';
+      const previous = editingIndex === null ? null : JSON.parse(JSON.stringify(units[editingIndex] || {}));
       const unit = normalizeUnit({
         title: document.getElementById('title').value.trim(),
         vin: document.getElementById('vin').value.trim(),
@@ -503,11 +630,12 @@
         alert('Title and VIN are required.');
         return;
       }
-
       if (editingIndex === null) {
         units.push(unit);
+        addAuditEntry('created', null, unit);
       } else {
         units[editingIndex] = unit;
+        addAuditEntry('updated', previous, unit);
       }
 
       saveUnits();
@@ -535,7 +663,9 @@
 
     function deleteUnit(index) {
       if (!confirm('Are you sure you want to delete this listing?')) return;
+      const removed = units[index];
       units.splice(index, 1);
+      addAuditEntry('deleted', removed, null);
       saveUnits();
       renderTable();
     }
@@ -792,6 +922,7 @@
 
     accounts = loadAccounts();
     units = loadUnits();
+    loadAuditLog();
 
     document.getElementById('saveUnit').addEventListener('click', saveUnit);
     document.getElementById('resetForm').addEventListener('click', resetForm);
@@ -804,6 +935,7 @@
     document.getElementById('logoutProfile')?.addEventListener('click', logout);
     document.getElementById('addImageUrl').addEventListener('click', () => addImage(document.getElementById('imageUrl').value));
     document.getElementById('imageFile').addEventListener('change', handleFileInput);
+    bindSorters();
 
     window.editUnit = editUnit;
     window.deleteUnit = deleteUnit;
