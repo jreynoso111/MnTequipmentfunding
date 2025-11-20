@@ -35,7 +35,7 @@
     .detail-header { padding:18px 18px 6px; display:flex; flex-wrap:wrap; gap:10px; align-items:flex-start; justify-content:space-between; }
     .title { font-size:22px; font-weight:800; margin:0; color:#0b2520; }
     .vin { font-size:13px; color:#2d4a43; font-weight:600; }
-    .status { padding:6px 12px; border-radius:999px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
+    .status { padding:8px 14px; border-radius:999px; font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; }
     .status.available { background:#e7f8f1; color:#0b5e48; border:1px solid #b8e3d2; }
     .status.sold { background:#fde8e8; color:#9b1c1c; border:1px solid #f7c5c5; }
     .detail-body { display:grid; grid-template-columns:1.2fr 0.8fr; gap:18px; padding:0 18px 18px; }
@@ -114,6 +114,7 @@
           <div class="cta-row">
             <button class="btn primary" id="ctaCall" type="button">Call 000-000-0000</button>
             <button class="btn ghost" id="ctaEmail" type="button">Email about this unit</button>
+            <button class="btn ghost" id="ctaRepresentative" type="button">Talk to a representative</button>
           </div>
         </div>
       </div>
@@ -316,6 +317,19 @@ VIN: ${unit.vin || ''}
 Phone: ${unit.phone || '000-000-0000'}
 
 Thank you.`;
+        window.location.href = `mailto:RCortez@mntfunding.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      };
+      document.getElementById('ctaRepresentative').onclick = () => {
+        const subject = `Talk to a representative about ${unit.title || 'this unit'}`;
+        const body = `Hello,
+
+I would like to speak with a representative about this listing.
+
+${unit.title || ''}
+VIN: ${unit.vin || ''}
+Phone: ${unit.phone || '000-000-0000'}
+
+Please contact me at your earliest convenience.`;
         window.location.href = `mailto:RCortez@mntfunding.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
       };
     }
