@@ -23,8 +23,8 @@
     header { background:#ffffff; box-shadow:0 2px 6px rgba(0,0,0,.08); position:sticky; top:0; z-index:10; }
     .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:12px 20px; }
     .logo{display:flex;align-items:center;gap:10px;}
-    .logo img { width:120px; height:auto; }
-    .logo-mark{width:120px;height:auto;border-radius:0;object-fit:contain;}
+    .logo img { height:60px; width:auto; object-fit:contain; }
+    .logo-mark{height:60px;width:auto;border-radius:0;object-fit:contain;}
     .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
     .nav-links a{padding:6px 10px;border-radius:999px;}
     .nav-links a:hover{background:rgba(0,94,74,.08);}
@@ -79,7 +79,7 @@
 <header>
   <div class="nav">
     <div class="logo">
-      <img src="Media/Logo White - Copy.png" alt="Company Logo" />
+      <img src="Media/LogoTransparent.png" alt="Company Logo" />
     </div>
     <nav class="nav-links">
       <a href="index.html">Home</a>
@@ -91,7 +91,8 @@
           <a href="Units for Sale.html" style="display:block;padding:10px 14px;">All Units for Sale</a>
         </div>
       </div>
-      <a href="About.html" class="active" style="background:#005e4a;color:#fff;">About Us</a>
+      <a href="About us.html" class="active" style="background:#005e4a;color:#fff;">About Us</a>
+      <button class="btn-small" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
     </nav>
 
 <script>
@@ -107,7 +108,7 @@ dropdown.addEventListener('mouseenter', () => {
 dropdown.addEventListener('mouseleave', () => {
   timeout = setTimeout(() => {
     menu.style.display = 'none';
-  }, 2000); // 2 seconds delay
+  }, 1000); // 1 second delay
 });
 </script>
   </div>
