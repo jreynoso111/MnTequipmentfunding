@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="inventory-seed.js"></script>
   <style>
     :root {
       --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
@@ -63,6 +64,10 @@
   <div id="panel" style="display:none;">
     <h1>Inventory Control Panel</h1>
     <p id="userMeta" class="muted" style="margin-top:-6px;"></p>
+    <div class="flex" style="gap:10px; margin:6px 0 14px; flex-wrap:wrap;">
+      <button class="btn ghost" id="logoutProfile">Close profile</button>
+      <a class="btn primary" href="Units for Sale.html">View listings page</a>
+    </div>
     <p class="lead">Add, edit, or remove vehicle listings. Changes are saved in your browser and will appear on the Units for Sale page.</p>
 
     <div class="notice">Security reminder: This panel uses a simple browser check. For production use, place behind a server-side login.</div>
@@ -141,6 +146,8 @@
             <th>VIN</th>
             <th>Type</th>
             <th>Brand</th>
+            <th>Color</th>
+            <th>State</th>
             <th>Price</th>
             <th>Mileage</th>
             <th>Status</th>
@@ -204,7 +211,9 @@
       } catch (e) {
         console.warn('Could not parse saved inventory');
       }
-      return [];
+      const seeded = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED.slice() : [];
+      localStorage.setItem(storageKey, JSON.stringify(seeded));
+      return seeded;
     }
 
     function saveUnits() {
@@ -252,6 +261,8 @@
           <td>${unit.vin || ''}</td>
           <td>${unit.type || ''}</td>
           <td>${unit.brand || ''}</td>
+          <td>${unit.color || ''}</td>
+          <td>${unit.state || ''}</td>
           <td>$${Number(unit.price||0).toLocaleString('en-US')}</td>
           <td>${Number(unit.mileage||0).toLocaleString('en-US')}</td>
           <td><span class="status-pill ${unit.status && unit.status.toLowerCase()==='sold' ? 'sold' : 'available'}">${unit.status || 'Available'}</span></td>
@@ -415,6 +426,15 @@
       meta.textContent = `Signed in as ${user} (${formatRole(role)})`;
     }
 
+    function logout() {
+      localStorage.removeItem('inventoryAdminAuth');
+      localStorage.removeItem('inventoryAuthUser');
+      localStorage.removeItem('inventoryAuthRole');
+      document.getElementById('panel').style.display = 'none';
+      document.getElementById('authGate').style.display = 'block';
+      window.location.href = 'Inventory.html';
+    }
+
     function showPanel() {
       document.getElementById('authGate').style.display = 'none';
       document.getElementById('panel').style.display = 'block';
@@ -455,6 +475,7 @@
     document.getElementById('authLogin').addEventListener('click', tryLogin);
     document.getElementById('authBack').addEventListener('click', () => window.location.href = 'Inventory.html');
     document.getElementById('authPass').addEventListener('keyup', (e) => { if (e.key === 'Enter') tryLogin(); });
+    document.getElementById('logoutProfile')?.addEventListener('click', logout);
 
     requireAuth();
     updateUserMeta();

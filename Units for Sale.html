@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="inventory-seed.js"></script>
   <style>
     :root {
       --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
@@ -203,6 +204,11 @@
           <option value="Unknown">Unknown</option>
         </select>
       </div>
+
+      <div style="margin-top:18px; display:flex; flex-direction:column; gap:6px;">
+        <button class="btn-small" style="width:100%; justify-content:center;" type="button" id="toolButton">Settings</button>
+        <div style="font-size:11px; color:#4c5f5a; line-height:1.4;">Restricted access. Sign in to update or remove listings shown on this page.</div>
+      </div>
     </aside>
 
     <section class="results-wrapper">
@@ -214,23 +220,59 @@
   </div>
 </main>
 
+<div class="modal-backdrop" id="toolModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.38); align-items:center; justify-content:center; z-index:50; padding:12px;">
+  <div class="modal" style="background:#ffffff; border-radius:12px; width:100%; max-width:360px; padding:18px 16px 16px; box-shadow:0 10px 30px rgba(0,0,0,.18); border:1px solid #e3ece9; font-size:13px;">
+    <h3 style="margin:0 0 6px; font-size:16px; font-weight:800; color:#0b2520;">Admin Access Required</h3>
+    <p style="margin:0 0 10px; font-size:12px; color:#3a4743;">Sign in with <strong>admin/adminmnt</strong> (admin) or <strong>rcortez/cortezmnt</strong> (manager) to edit vehicle listings.</p>
+    <label for="toolUser" style="display:block; font-weight:700; margin-bottom:4px;">Username</label>
+    <input id="toolUser" name="toolUser" type="text" placeholder="Enter username" autocomplete="username" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid #cfdad7; margin-bottom:10px;" />
+    <label for="toolPass" style="display:block; font-weight:700; margin-bottom:4px;">Password</label>
+    <input id="toolPass" name="toolPass" type="password" placeholder="Enter password" autocomplete="current-password" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid #cfdad7; margin-bottom:12px;" />
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:4px;">
+      <button class="btn-small" id="toolCancel" type="button" style="border-color:#cfdad7; color:#0b2520;">Cancel</button>
+      <button class="btn-small" id="toolConfirm" type="button">Continue</button>
+    </div>
+    <p style="margin-top:8px; color:#5a6a66; font-size:11px;">Both roles can manage listings. Admins can also create new profiles.</p>
+  </div>
+</div>
+
 <script>
 const ITEMS_PER_PAGE = 20;
 let currentPage = 1;
 let units = [];
 let filteredUnits = [];
 
+const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
+
 function defaultUnits() {
-  return [
-    { status: 'Available', type: 'Truck', brand: 'Freightliner', price: 38386, mileage: 729771, color: 'Unknown', state: 'Unknown', vin: '1FUJHHDR1LLXXXXXX', title: '2020 Freightliner Cascadia PT126SLP', image: 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg' },
-    { status: 'Sold', type: 'Truck', brand: 'Freightliner', price: 25864, mileage: 732806, color: 'Unknown', state: 'Unknown', vin: '1FUJHHDR2KLXXXXXX', title: '2019 Freightliner Cascadia PT126SLP', image: 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg' },
-    { status: 'Available', type: 'Truck', brand: 'Freightliner', price: 37080, mileage: 777777, color: 'Unknown', state: 'Unknown', vin: '1FUJHHDR2LLXXXXXX', title: '2020 Freightliner Cascadia PT126SLP', image: 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg' },
-    { status: 'Available', type: 'Truck', brand: 'Freightliner', price: 35830, mileage: 644939, color: 'Unknown', state: 'Unknown', vin: '1FUJHHDR4KLXXXXXX', title: '2019 Freightliner Cascadia PT126SLP', image: 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg' },
-    { status: 'Available', type: 'Truck', brand: 'Freightliner', price: 52902, mileage: 530288, color: 'Unknown', state: 'Unknown', vin: '1FUJHHDR4LLXXXXXX', title: '2020 Freightliner Cascadia PT126SLP', image: 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg' },
-    { status: 'Available', type: 'Truck', brand: 'Freightliner', price: 34900, mileage: 777777, color: 'Unknown', state: 'Unknown', vin: '1FUJHHDR7LLXXXXXX', title: '2020 Freightliner Cascadia PT126SLP', image: 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg' },
-    { status: 'Available', type: 'Truck', brand: 'Freightliner', price: 23249, mileage: 777777, color: 'Unknown', state: 'Unknown', vin: '1FUJHHDR8LLXXXXXX', title: '2020 Freightliner Cascadia PT126SLP', image: 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg' },
-    { status: 'Available', type: 'Truck', brand: 'Freightliner', price: 55052, mileage: 414073, color: 'Unknown', state: 'Unknown', vin: '1FUJHHDR9KLXXXXXX', title: '2019 Freightliner Cascadia PT126SLP', image: 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg' }
+  return BASE_UNITS.slice();
+}
+
+function ensureAccounts() {
+  const defaults = [
+    { user: 'admin', pass: 'adminmnt', role: 'admin' },
+    { user: 'rcortez', pass: 'cortezmnt', role: 'manager' }
   ];
+  const saved = localStorage.getItem('inventoryAccounts');
+  let accounts = [];
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) accounts = parsed;
+    } catch (e) {
+      console.warn('Could not parse saved accounts');
+    }
+  }
+  defaults.forEach(base => {
+    const idx = accounts.findIndex(a => a.user === base.user);
+    if (idx >= 0) {
+      accounts[idx] = { ...accounts[idx], ...base };
+    } else {
+      accounts.push({ ...base });
+    }
+  });
+  localStorage.setItem('inventoryAccounts', JSON.stringify(accounts));
+  return accounts;
 }
 
 function loadUnits() {
@@ -243,7 +285,9 @@ function loadUnits() {
   } catch (e) {
     console.warn('Unable to load saved inventory, using defaults');
   }
-  return defaultUnits();
+  const seeded = defaultUnits();
+  localStorage.setItem('inventoryData', JSON.stringify(seeded));
+  return seeded;
 }
 
 function formatNumber(n) {
@@ -270,11 +314,13 @@ function buildCard(unit) {
       <div class="unit-info">
         VIN: ${unit.vin}<br>
         Mileage: ${formatNumber(unit.mileage)}<br>
-        Value: USD$ ${formatNumber(unit.price)}
+        Value: USD$ ${formatNumber(unit.price)}<br>
+        Color: ${unit.color || 'Unknown'}<br>
+        State: ${unit.state || 'Unknown'}
       </div>
       <div class="btn-row">
         <div class="btn-green email-btn">Contact us</div>
-        <a class="btn-white" href="Unit details.html">See Details</a>
+        <a class="btn-white" href="unit-detail.html?vin=${encodeURIComponent(unit.vin)}">See Details</a>
       </div>
     </div>
   `;
@@ -380,9 +426,37 @@ function applyFilters() {
 }
 
 function init() {
+  ensureAccounts();
   units = loadUnits();
   filteredUnits = units.slice();
   applyFilters();
+
+  const modal = document.getElementById('toolModal');
+  const toolBtn = document.getElementById('toolButton');
+  const cancelBtn = document.getElementById('toolCancel');
+  const confirmBtn = document.getElementById('toolConfirm');
+  const userInput = document.getElementById('toolUser');
+  const passInput = document.getElementById('toolPass');
+
+  function openModal() { modal.style.display = 'flex'; userInput.focus(); }
+  function closeModal() { modal.style.display = 'none'; userInput.value = ''; passInput.value = ''; }
+  function handleLogin() {
+    const accounts = JSON.parse(localStorage.getItem('inventoryAccounts') || '[]');
+    const match = accounts.find(acc => acc.user === userInput.value.trim() && acc.pass === passInput.value.trim());
+    if (match) {
+      localStorage.setItem('inventoryAdminAuth', 'true');
+      localStorage.setItem('inventoryAuthUser', match.user);
+      localStorage.setItem('inventoryAuthRole', match.role);
+      window.location.href = 'control-panel.html';
+    } else {
+      alert('Invalid credentials');
+    }
+  }
+
+  toolBtn?.addEventListener('click', openModal);
+  cancelBtn?.addEventListener('click', closeModal);
+  confirmBtn?.addEventListener('click', handleLogin);
+  [userInput, passInput].forEach(input => input?.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleLogin(); }));
 }
 
 if (document.readyState === 'loading') {
