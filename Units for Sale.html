@@ -23,9 +23,9 @@
 
     /* HEADER */
     header{background:#ffffff;box-shadow:0 2px 6px rgba(0,0,0,.08);position:sticky;top:0;z-index:200;}
-    .nav{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;}
+    .nav{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;}
     .logo{display:flex;align-items:center;gap:10px;}
-    .logo img{height:72px;width:auto;object-fit:contain;}
+    .logo img{height:60px;width:auto;object-fit:contain;}
     .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
     .nav-links a{padding:6px 10px;border-radius:999px;}
     .nav-links a:hover{background:rgba(0,94,74,.08);} 
@@ -44,6 +44,9 @@
     main{max-width:1400px;margin:30px auto;padding:0 20px 40px;}
 
     h1{font-size:28px;font-weight:800;color:#003737;margin-bottom:18px;}
+
+    .crumbs{font-size:12px;color:#4c5f5a;margin:4px 0 10px;}
+    .crumbs a{color:#0b5e48;font-weight:700;}
 
     /* LAYOUT: SIDEBAR + GRID */
     .layout{display:grid;grid-template-columns:minmax(220px,260px) minmax(0,1fr);gap:20px;align-items:flex-start;margin-top:10px;}
@@ -123,8 +126,9 @@
       <a href="Applications.html">Applications</a>
       <a href="Services.html">Services</a>
       <div class="inv-wrapper" style="position:relative;">
-        <a href="Units for Sale.html" class="inv-link active" style="padding:6px 10px; border-radius:999px;">Inventory ▾</a>
-        <div class="inv-dropdown" style="position:absolute; top:28px; left:0; background:#ffffff; border:1px solid #ddd; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,.1); width:180px; overflow:hidden; display:none;">
+        <a href="Inventory.html" class="inv-link active" style="padding:6px 10px; border-radius:999px;">Inventory ▾</a>
+        <div class="inv-dropdown" style="position:absolute; top:28px; left:0; background:#ffffff; border:1px solid #ddd; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,.1); width:200px; overflow:hidden; display:none;">
+          <a href="Inventory.html" style="padding:8px 12px; font-size:14px; display:block;">Inventory overview</a>
           <a href="Units for Sale.html" style="padding:8px 12px; font-size:14px; display:block;">All Units for Sale</a>
         </div>
       </div>
@@ -155,6 +159,7 @@
 </script>
 
 <main>
+  <div class="crumbs"><a href="Inventory.html">Inventory</a> &gt; All Units for Sale</div>
   <h1>All Units for Sale</h1>
 
   <!-- LAYOUT: FILTER SIDEBAR + RESULTS -->
