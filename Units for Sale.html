@@ -127,6 +127,25 @@
   </div>
 </header>
 
+<script>
+  const inventoryWrapper = document.querySelector('.inv-wrapper');
+  const inventoryDropdown = inventoryWrapper?.querySelector('.inv-dropdown');
+  let dropdownTimer;
+
+  if (inventoryWrapper && inventoryDropdown) {
+    inventoryWrapper.addEventListener('mouseenter', () => {
+      clearTimeout(dropdownTimer);
+      inventoryDropdown.style.display = 'block';
+    });
+
+    inventoryWrapper.addEventListener('mouseleave', () => {
+      dropdownTimer = setTimeout(() => {
+        inventoryDropdown.style.display = 'none';
+      }, 1000);
+    });
+  }
+</script>
+
 <main>
   <h1>All Units for Sale</h1>
 

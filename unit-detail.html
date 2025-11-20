@@ -335,6 +335,21 @@ Please contact me at your earliest convenience.`;
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      const dropdown = document.querySelector('.dropdown');
+      const menu = dropdown?.querySelector('.dropdown-content');
+      let hideTimer;
+      if (dropdown && menu) {
+        dropdown.addEventListener('mouseenter', () => {
+          clearTimeout(hideTimer);
+          menu.style.display = 'block';
+        });
+        dropdown.addEventListener('mouseleave', () => {
+          hideTimer = setTimeout(() => {
+            menu.style.display = 'none';
+          }, 1000);
+        });
+      }
+
       const unit = lookupUnit();
       render(unit);
     });
