@@ -58,6 +58,7 @@
     .panel { background:#ffffff; border:1px solid #d8e5e0; border-radius:12px; padding:14px; box-shadow:0 3px 12px rgba(0,0,0,.04); }
     .panel h3 { margin:0 0 8px; font-size:15px; font-weight:800; }
     .muted { color:#4f615c; font-size:13px; }
+    .title-sub { font-size:14px; font-weight:700; color:#0b2520; margin-top:-4px; }
     footer { margin-top:24px; font-size:12px; color:#556560; text-align:center; }
     @media (max-width: 768px) { .detail-body { grid-template-columns:1fr; } }
   </style>
@@ -91,6 +92,7 @@
       <div class="detail-header">
         <div>
           <h1 class="title" id="detailTitle"></h1>
+          <div class="title-sub" id="detailSummary"></div>
           <div class="vin" id="detailVin"></div>
         </div>
         <div class="status" id="detailStatus"></div>
@@ -292,6 +294,7 @@
       crumbVin.textContent = unit.vin;
 
       document.getElementById('detailTitle').textContent = unit.title || 'Unit';
+      document.getElementById('detailSummary').textContent = `${unit.year || 'Year'} • ${unit.make || unit.brand || 'Unknown'} • ${unit.model || 'Not specified'}`;
       document.getElementById('detailVin').textContent = `VIN: ${unit.vin || 'N/A'}`;
       const statusEl = document.getElementById('detailStatus');
       statusEl.textContent = unit.status || 'Available';
