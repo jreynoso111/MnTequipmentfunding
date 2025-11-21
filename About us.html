@@ -63,8 +63,12 @@
     .section-text{font-size:14px;color:#444;margin-bottom:10px;}
 
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+    .value-grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+    .value-grid .value-card{height:100%;}
     .team-grid .value-card{display:flex;flex-direction:column;align-items:center;text-align:center;}
-    .team-grid .value-card img{margin:0 auto 10px;}
+    .team-grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+    .team-grid .value-card img{margin:0 auto 10px;width:100%;max-width:160px;}
+    .team-grid .value-card{height:100%;}
 
     .value-card{background:#f7fbfa;border-radius:12px;padding:16px;border:1px solid #d3e8e1;}
     .value-title{font-size:15px;font-weight:700;margin-bottom:4px;color:#005e4a;}
@@ -105,7 +109,6 @@
         </div>
       </div>
       <a href="About us.html" class="active" style="background:#005e4a;color:#fff;">About Us</a>
-      <button class="btn-small" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
     </nav>
 
 <script>
@@ -143,8 +146,8 @@ dropdown.addEventListener('mouseleave', () => {
     </div>
 
     <div style="width:100%; height:100%; text-align:center;">
-      <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1350&q=80"
-           alt="Financing Image"
+      <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=80"
+           alt="Commercial trucks lined up"
            style="width:100%; height:100%; border-radius:14px; object-fit:cover;">
     </div>
 
@@ -161,7 +164,7 @@ dropdown.addEventListener('mouseleave', () => {
 
   <section class="card">
     <h2 class="section-title">What Makes Us Different</h2>
-    <div class="grid-2" style="gap:16px;">
+    <div class="grid-2 value-grid" style="gap:16px;">
       <div class="value-card">
         <div class="value-title">Flexible financing for every stage</div>
         <div class="value-text">We review the full story behind your deal—not just a score—so more buyers and dealers can get to yes.</div>
@@ -262,7 +265,7 @@ dropdown.addEventListener('mouseleave', () => {
     M&amp;T Equipment Funding LLC &middot; Commercial truck and trailer financing &middot; This page is for information only and does not represent a commitment to lend.
   </footer>
   <!-- FOOTER BANNER -->
-  <div style="width:100%; background:#003737; color:#ffffff; padding:14px 0; margin-top:40px; overflow:hidden; white-space:nowrap;">
+  <div style="width:100%; background:#003737; color:#ffffff; padding:14px 0; margin-top:16px; overflow:hidden; white-space:nowrap;">
     <div style="display:inline-block; padding-left:100%; animation:marquee 18s linear infinite; font-size:14px;">
       📧 Email: info@mntfunding.com &nbsp; | &nbsp; 🔗 Instagram: @MTequipmentfunding &nbsp; | &nbsp; 🔗 Facebook: M&T Equipment Funding LLC &nbsp; | &nbsp; © 2025 M&T Equipment Funding LLC — All Rights Reserved &nbsp; | &nbsp; Commercial Truck & Trailer Financing
     </div>
