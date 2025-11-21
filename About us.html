@@ -14,7 +14,6 @@
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
       --accent: #005e4a;
-      --drift-multiplier: 1;
     }
     html { font-family: var(--font-main); }
     *, *::before, *::after { box-sizing: border-box; font-family: inherit; }
@@ -44,20 +43,8 @@
     }
     .btn-small:hover { background: var(--accent); color: #fff; }
 
-    main { max-width: 1100px; margin: 18px auto 36px; padding: 0 20px; position: relative; overflow: hidden; }
-    .dollar-field { position: absolute; inset: -80px; pointer-events: none; z-index: 0; }
-    .dollar { position: absolute; color: var(--accent); opacity: var(--opacity); font-weight: 800; left: var(--x); top: var(--y); font-size: calc(var(--size) * 1px); text-shadow: 0 4px 14px rgba(0, 0, 0, .08); animation: drift calc(var(--duration) * 1s / var(--drift-multiplier)) ease-in-out infinite alternate; animation-delay: calc(var(--delay, 0) * 1s); }
-    .dollar:nth-child(odd) { animation-name: drift-2; }
-    @keyframes drift {
-      0% { transform: translate3d(0, 0, 0) rotate(0deg); }
-      50% { transform: translate3d(12px, -18px, 0) rotate(4deg); }
-      100% { transform: translate3d(-18px, 22px, 0) rotate(-6deg); }
-    }
-    @keyframes drift-2 {
-      0% { transform: translate3d(0, 0, 0) rotate(0deg); }
-      50% { transform: translate3d(-16px, 16px, 0) rotate(-5deg); }
-      100% { transform: translate3d(20px, -20px, 0) rotate(7deg); }
-    }
+    main { max-width: 1100px; margin: 18px auto 36px; padding: 0 20px; position: relative; z-index: 1; }
+    #dollarBackground { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; background: #ffffff; }
 
     .hero { background: #ffffff; border-radius: 18px; padding: 20px; box-shadow: 0 8px 24px rgba(0, 0, 0, .06); position: relative; z-index: 1; }
     .hero-layout { display: grid; grid-template-columns: 1fr 0.9fr; gap: 28px; align-items: center; }
@@ -149,43 +136,11 @@
       menu.style.display = 'none';
     }, 1000);
   });
-
-  const root = document.documentElement;
-  let lastScrollY = window.scrollY;
-  let resetTimer;
-
-  function adjustDriftSpeed() {
-    const currentY = window.scrollY;
-    const delta = Math.abs(currentY - lastScrollY);
-    lastScrollY = currentY;
-    const speed = Math.min(3, 1 + delta / 50);
-    root.style.setProperty('--drift-multiplier', speed.toFixed(2));
-    clearTimeout(resetTimer);
-    resetTimer = setTimeout(() => {
-      root.style.setProperty('--drift-multiplier', '1');
-    }, 240);
-  }
-
-  window.addEventListener('scroll', adjustDriftSpeed, { passive: true });
 </script>
 
+<canvas id="dollarBackground"></canvas>
+
 <main>
-  <div class="dollar-field" aria-hidden="true">
-    <span class="dollar" style="--x:8%;--y:12%;--size:78;--opacity:0.24;--duration:22;--delay:0;">$</span>
-    <span class="dollar" style="--x:26%;--y:18%;--size:54;--opacity:0.18;--duration:18;--delay:1.2;">$</span>
-    <span class="dollar" style="--x:46%;--y:8%;--size:90;--opacity:0.12;--duration:28;--delay:0.6;">$</span>
-    <span class="dollar" style="--x:70%;--y:16%;--size:62;--opacity:0.2;--duration:20;--delay:1.8;">$</span>
-    <span class="dollar" style="--x:86%;--y:6%;--size:48;--opacity:0.14;--duration:24;--delay:2.4;">$</span>
-    <span class="dollar" style="--x:16%;--y:44%;--size:68;--opacity:0.16;--duration:26;--delay:0.9;">$</span>
-    <span class="dollar" style="--x:38%;--y:42%;--size:52;--opacity:0.22;--duration:19;--delay:1.5;">$</span>
-    <span class="dollar" style="--x:62%;--y:46%;--size:86;--opacity:0.15;--duration:23;--delay:0.4;">$</span>
-    <span class="dollar" style="--x:84%;--y:42%;--size:58;--opacity:0.21;--duration:21;--delay:2.1;">$</span>
-    <span class="dollar" style="--x:10%;--y:78%;--size:96;--opacity:0.11;--duration:30;--delay:0.3;">$</span>
-    <span class="dollar" style="--x:28%;--y:72%;--size:60;--opacity:0.19;--duration:17;--delay:1.4;">$</span>
-    <span class="dollar" style="--x:52%;--y:82%;--size:72;--opacity:0.17;--duration:25;--delay:2.2;">$</span>
-    <span class="dollar" style="--x:72%;--y:74%;--size:64;--opacity:0.2;--duration:18;--delay:0.8;">$</span>
-    <span class="dollar" style="--x:90%;--y:78%;--size:50;--opacity:0.23;--duration:21;--delay:1.9;">$</span>
-  </div>
   <section class="hero">
     <div class="hero-layout">
       <div class="hero-visual" style="width:100%;text-align:center;">
@@ -369,5 +324,84 @@
       100% { transform: translateX(-100%); }
     }
   </style>
+
+  <script>
+    const canvas = document.getElementById('dollarBackground');
+    const ctx = canvas.getContext('2d');
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    let deviceScale = window.devicePixelRatio || 1;
+    let lastScrollY = window.scrollY;
+    let targetSpeed = 1;
+    let currentSpeed = 1;
+
+    function resizeCanvas() {
+      deviceScale = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * deviceScale;
+      canvas.height = window.innerHeight * deviceScale;
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(deviceScale, deviceScale);
+      width = canvas.width / deviceScale;
+      height = canvas.height / deviceScale;
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    function createDollar() {
+      return {
+        x: Math.random() * width,
+        y: Math.random() * height,
+        size: 16 + Math.random() * 32,
+        speed: 0.3 + Math.random() * 0.9,
+        opacity: 0.15 + Math.random() * 0.45,
+        drift: (Math.random() - 0.5) * 0.4
+      };
+    }
+
+    const dollars = Array.from({ length: 90 }, createDollar);
+
+    function draw() {
+      currentSpeed += (targetSpeed - currentSpeed) * 0.08;
+      targetSpeed += (1 - targetSpeed) * 0.015;
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, width, height);
+
+      dollars.forEach((d) => {
+        d.y += d.speed * currentSpeed;
+        d.x += d.drift;
+
+        if (d.y - d.size > height) {
+          d.x = Math.random() * width;
+          d.y = -d.size;
+          d.size = 16 + Math.random() * 32;
+          d.speed = 0.3 + Math.random() * 0.9;
+          d.opacity = 0.15 + Math.random() * 0.45;
+          d.drift = (Math.random() - 0.5) * 0.4;
+        }
+
+        if (d.x < -50) d.x = width + 50;
+        if (d.x > width + 50) d.x = -50;
+
+        ctx.font = `${d.size}px "Inter", "Segoe UI", sans-serif`;
+        ctx.fillStyle = `rgba(0, 94, 74, ${d.opacity.toFixed(3)})`;
+        ctx.fillText('$', d.x, d.y);
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    requestAnimationFrame(draw);
+
+    window.addEventListener('scroll', () => {
+      const currentY = window.scrollY;
+      const delta = Math.abs(currentY - lastScrollY);
+      lastScrollY = currentY;
+      targetSpeed = Math.min(3, 1 + delta / 80);
+    }, { passive: true });
+  </script>
 </body>
 </html>
