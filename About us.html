@@ -49,9 +49,13 @@
       .btn-small{width:100%;text-align:center;}
     }
     .hero{background:#ffffff;border-radius:14px;padding:26px 24px 24px;box-shadow:0 8px 24px rgba(0,0,0,.06);}
+    .hero-layout{display:grid;grid-template-columns:1.1fr 0.9fr;gap:24px;align-items:center;}
     .hero-kicker{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#008060;margin-bottom:6px;}
-    .hero-title{font-size:26px;font-weight:800;margin-bottom:6px;color:#0b2520;}
-    .hero-sub{font-size:14px;color:#444;max-width:680px;}
+    .hero-title{font-size:28px;font-weight:800;margin-bottom:10px;color:#0b2520;}
+    .hero-sub{font-size:14px;color:#444;max-width:720px;}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;}
+    .btn-primary{border-radius:10px;border:1px solid #005e4a;background:#005e4a;color:#fff;padding:12px 18px;font-weight:700;cursor:pointer;}
+    .btn-ghost{border-radius:10px;border:1px solid #b8d7cd;background:#fff;color:#005e4a;padding:12px 18px;font-weight:700;cursor:pointer;}
 
     section{margin-top:28px;}
     .card{background:#ffffff;border-radius:14px;padding:22px 20px 20px;box-shadow:0 3px 10px rgba(0,0,0,.04);border:1px solid #e3ece9;}
@@ -59,12 +63,22 @@
     .section-text{font-size:14px;color:#444;margin-bottom:10px;}
 
     .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+    .value-grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+    .value-grid .value-card{height:100%;}
     .team-grid .value-card{display:flex;flex-direction:column;align-items:center;text-align:center;}
-    .team-grid .value-card img{margin:0 auto 10px;}
+    .team-grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+    .team-grid .value-card img{margin:0 auto 10px;width:100%;max-width:160px;}
+    .team-grid .value-card{height:100%;}
 
     .value-card{background:#f7fbfa;border-radius:12px;padding:16px;border:1px solid #d3e8e1;}
     .value-title{font-size:15px;font-weight:700;margin-bottom:4px;color:#005e4a;}
     .value-text{font-size:13px;color:#444;}
+    .pill{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid #b8d7cd;font-size:11px;font-weight:700;color:#005e4a;background:#fff;}
+
+    .cta-section{background:#ffffff;border-radius:14px;padding:22px 20px 20px;box-shadow:0 6px 18px rgba(0,0,0,.05);border:1px solid #e3ece9;text-align:center;}
+    .cta-title{font-size:20px;font-weight:800;margin-bottom:8px;color:#0b2520;}
+    .cta-text{font-size:14px;color:#444;margin-bottom:14px;}
+    .cta-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;}
 
     .team-card{background:#003737;color:#fff;border-radius:14px;padding:20px;}
     .team-title{font-size:18px;font-weight:700;margin-bottom:6px;}
@@ -72,7 +86,10 @@
 
     footer{border-top:1px solid #dde6e2;padding:16px 20px 22px;font-size:11px;color:#777;text-align:center;margin-top:40px;}
 
-    @media(max-width:800px){.grid-2{grid-template-columns:1fr;}}
+    @media(max-width:800px){
+      .grid-2{grid-template-columns:1fr;}
+      .hero-layout{grid-template-columns:1fr;}
+    }
   </style>
 </head>
 <body>
@@ -92,7 +109,6 @@
         </div>
       </div>
       <a href="About us.html" class="active" style="background:#005e4a;color:#fff;">About Us</a>
-      <button class="btn-small" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
     </nav>
 
 <script>
@@ -115,32 +131,23 @@ dropdown.addEventListener('mouseleave', () => {
 </header>
 
 <main>
-  <section class="hero" style="display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start;">
+  <section class="hero hero-layout">
 
     <div>
       <div class="hero-kicker">About Us</div>
-      <h1 class="hero-title">About M&T Equipment Funding LLC</h1>
-      <p class="hero-sub">Welcome to M&T Equipment Funding LLC. We specialize in commercial truck and trailer financing while also offering access to reliable equipment across the country.</p>
+      <h1 class="hero-title">Commercial truck & trailer financing built for small fleets</h1>
+      <p class="hero-sub">M&T Equipment Funding helps owner-operators and dealers secure dependable funding while connecting them with ready-to-roll trucks and trailers nationwide.</p>
+      <p class="hero-sub" style="margin-top:10px;">We make it simple to compare inventory, finance through us, and keep your business moving.</p>
 
-      <p class="hero-sub" style="margin-top:12px;">We finance over 50 dealerships and maintain nationwide inventory. Visit our virtual showroom to explore detailed information, photos, and contact options for every unit.</p>
-
-      <p class="hero-sub" style="margin-top:12px;">For inquiries, you may contact our Truck Sales Manager <strong>Rogelio Cortez (Roy)</strong> at <strong>Rcortez@mntfunding.com</strong>, or reach out to our Financing Representative <strong>Margo Dereshevskaia</strong> at <strong>MDereshevkaia@mntfunding.com</strong> for guidance through the financing process.</p>
-
-      <p class="hero-sub" style="margin-top:12px;">We work directly with dealerships, first‑time buyers, individuals, and businesses looking to grow. Our services offer:</p>
-      <ul class="hero-sub" style="margin:10px 0 0 20px;">
-        <li>A wide inventory of reliable commercial equipment</li>
-        <li>Fast, flexible financing options tailored to your operation</li>
-        <li>Tools and support to help you close more deals</li>
-        <li>All credit scores are welcome</li>
-      </ul>
-
-      <p class="hero-sub" style="margin-top:14px;"><strong>Buy, Finance, Grow!</strong></p>
-      <p class="hero-sub" style="margin-top:4px;"><strong>Let's DRIVE your business forward!</strong></p>
+      <div class="hero-actions">
+        <button class="btn-primary" type="button" onclick="window.location.href='Units for Sale.html'">View Inventory</button>
+        <button class="btn-ghost" type="button" onclick="window.location.href='Applications.html'">Start an Application</button>
+      </div>
     </div>
 
     <div style="width:100%; height:100%; text-align:center;">
-      <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1350&q=80" 
-           alt="Financing Image" 
+      <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=80"
+           alt="Commercial trucks lined up"
            style="width:100%; height:100%; border-radius:14px; object-fit:cover;">
     </div>
 
@@ -157,22 +164,22 @@ dropdown.addEventListener('mouseleave', () => {
 
   <section class="card">
     <h2 class="section-title">What Makes Us Different</h2>
-    <div class="grid-2">
+    <div class="grid-2 value-grid" style="gap:16px;">
       <div class="value-card">
-        <div class="value-title">✔ We work with very low credit scores</div>
-        <div class="value-text">We regularly review applications from clients with challenged or limited credit history. We look at the whole story of the deal, not only the score.</div>
+        <div class="value-title">Flexible financing for every stage</div>
+        <div class="value-text">We review the full story behind your deal—not just a score—so more buyers and dealers can get to yes.</div>
       </div>
       <div class="value-card">
-        <div class="value-title">✔ Constant support during the process</div>
-        <div class="value-text">From the first conversation until funding, you have a direct point of contact who explains every step and keeps you updated.</div>
+        <div class="value-title">Dedicated guidance</div>
+        <div class="value-text">A single point of contact keeps you updated from application to funding so you always know the next step.</div>
       </div>
       <div class="value-card">
-        <div class="value-title">✔ Asset‑focused decisions</div>
-        <div class="value-text">We focus on the quality of the truck or trailer, your experience, and how the unit will work for your business.</div>
+        <div class="value-title">Asset-first decisions</div>
+        <div class="value-text">We focus on the truck or trailer quality, your experience, and how the unit strengthens your business.</div>
       </div>
       <div class="value-card">
-        <div class="value-title">✔ Clear, realistic expectations</div>
-        <div class="value-text">If we can help, we tell you exactly what is needed. If we can’t, we are upfront so you don’t lose time looking for answers.</div>
+        <div class="value-title">Clear expectations</div>
+        <div class="value-text">If we can help, you’ll know exactly what to provide. If not, we’re upfront so you don’t lose time.</div>
       </div>
     </div>
   </section>
@@ -187,50 +194,69 @@ dropdown.addEventListener('mouseleave', () => {
         <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Gil" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
         <div class="value-title">Gil Maman</div>
         <div class="value-text">Chief Executive Officer</div>
+        <div class="value-text" style="margin-top:6px;">Sets the strategy that keeps financing, inventory, and support aligned.</div>
       </div>
 
       <div class="value-card" style="text-align:center;">
         <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Shai" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
         <div class="value-title">Shai Attas</div>
         <div class="value-text">Director</div>
+        <div class="value-text" style="margin-top:6px;">Guides operations and partnerships to keep deals moving smoothly.</div>
       </div>
 
       <div class="value-card" style="text-align:center;">
         <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Mai" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
         <div class="value-title">Mai Kruvi</div>
         <div class="value-text">Executive Assistant</div>
+        <div class="value-text" style="margin-top:6px;">Keeps communication organized and schedules aligned across the team.</div>
       </div>
 
-      <div class="value-card" style="text-align:center;">
+      <div class="value-card" style="text-align:center; position:relative;">
+        <div style="position:absolute;top:10px;right:10px;" aria-hidden="true"><span class="pill">Main contact</span></div>
         <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Margo" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
         <div class="value-title">Margo Dereshevskaia</div>
         <div class="value-text">Financing</div>
+        <div class="value-text" style="margin-top:6px;">Leads credit reviews and guides customers through application requirements.</div>
       </div>
 
-      <div class="value-card" style="text-align:center;">
+      <div class="value-card" style="text-align:center; position:relative;">
+        <div style="position:absolute;top:10px;right:10px;" aria-hidden="true"><span class="pill">Main contact</span></div>
         <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Rogelio" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
-        <div class="value-title">Rogelio Cortez</div>
+        <div class="value-title">Rogelio Cortez (Roy)</div>
         <div class="value-text">Sales</div>
+        <div class="value-text" style="margin-top:6px;">Leads sales and inventory deals, connecting buyers with the right units.</div>
       </div>
 
       <div class="value-card" style="text-align:center;">
         <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Kavita" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
         <div class="value-title">Kavita Gorbadham</div>
         <div class="value-text">Titles</div>
+        <div class="value-text" style="margin-top:6px;">Coordinates titles and documentation so funded units stay compliant.</div>
       </div>
 
       <div class="value-card" style="text-align:center;">
         <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Hector" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
         <div class="value-title">Hector Matos</div>
         <div class="value-text">Customer Service</div>
+        <div class="value-text" style="margin-top:6px;">Supports customers after funding with quick answers and coordination.</div>
       </div>
 
       <div class="value-card" style="text-align:center;">
         <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Juan" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
         <div class="value-title">Juan Perez</div>
         <div class="value-text">Inventory</div>
+        <div class="value-text" style="margin-top:6px;">Keeps inventory details updated so listings stay accurate and ready.</div>
       </div>
 
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-title">Ready to get started?</div>
+    <div class="cta-text">Browse the latest units or download a credit application to move forward today.</div>
+    <div class="cta-actions">
+      <button class="btn-primary" type="button" onclick="window.location.href='Units for Sale.html'">View available units</button>
+      <button class="btn-ghost" type="button" onclick="window.location.href='Applications.html'">Download credit application</button>
     </div>
   </section>
 </main>
@@ -239,7 +265,7 @@ dropdown.addEventListener('mouseleave', () => {
     M&amp;T Equipment Funding LLC &middot; Commercial truck and trailer financing &middot; This page is for information only and does not represent a commitment to lend.
   </footer>
   <!-- FOOTER BANNER -->
-  <div style="width:100%; background:#003737; color:#ffffff; padding:14px 0; margin-top:40px; overflow:hidden; white-space:nowrap;">
+  <div style="width:100%; background:#003737; color:#ffffff; padding:14px 0; margin-top:16px; overflow:hidden; white-space:nowrap;">
     <div style="display:inline-block; padding-left:100%; animation:marquee 18s linear infinite; font-size:14px;">
       📧 Email: info@mntfunding.com &nbsp; | &nbsp; 🔗 Instagram: @MTequipmentfunding &nbsp; | &nbsp; 🔗 Facebook: M&T Equipment Funding LLC &nbsp; | &nbsp; © 2025 M&T Equipment Funding LLC — All Rights Reserved &nbsp; | &nbsp; Commercial Truck & Trailer Financing
     </div>
