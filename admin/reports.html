@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports – M&T Equipment Funding LLC</title>
+  <link rel="icon" href="https://i.imgur.com/kopRNDu.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+      --accent: #005e4a;
+      --logo-scale: 2;
+    }
+    * { box-sizing: border-box; font-family: var(--font-main); }
+    body { margin:0; background:#f5f7f6; color:#0b2520; }
+    a { color: inherit; text-decoration: none; }
+    header { background:#ffffff; position: sticky; top:0; z-index:10; box-shadow:0 2px 6px rgba(0,0,0,.08); }
+    .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:10px 20px;gap:12px; }
+    .logo { display:flex; align-items:center; gap:10px; }
+    .logo img { height:60px; width:auto; object-fit:contain; transform:scale(var(--logo-scale)); transform-origin:left center; }
+    .nav-links { display:flex; align-items:center; gap:18px; font-size:14px; flex-wrap:wrap; }
+    .nav-links a { padding:6px 10px; border-radius:999px; }
+    .nav-links a:hover { background:rgba(0,94,74,.08); }
+    .nav-links .active { background:var(--accent); color:#fff; }
+    .btn-small { border-radius:999px; border:1px solid var(--accent); padding:10px 22px; font-size:14px; font-weight:700; color:var(--accent); background:#fff; cursor:pointer; }
+    .btn-small:hover { background:var(--accent); color:#fff; }
+
+    main { max-width:1100px; margin:20px auto 40px; padding:0 20px; position:relative; z-index:1; }
+    .card { background:#ffffff; border-radius:14px; padding:18px 20px; box-shadow:0 4px 14px rgba(0,0,0,.05); border:1px solid #e3ece9; margin-bottom:16px; }
+    h1 { margin:0 0 6px; font-size:26px; }
+    h2 { margin:0 0 10px; }
+    p { margin:0 0 10px; color:#3a4c45; }
+    .muted { color:#4f615c; font-size:13px; }
+    .canvas-wrap { width:100%; background:#f8fbfa; border:1px dashed #cfe2de; border-radius:12px; overflow:auto; }
+    canvas { display:block; width:100%; }
+    @media (max-width:720px) { .nav { flex-direction:column; align-items:flex-start; gap:10px; } .nav-links { width:100%; flex-wrap:wrap; } .btn-small { width:100%; text-align:center; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="logo">
+        <a href="../index.html"><img src="../Media/LogoTransparent.png" alt="M&T Equipment Funding Logo"></a>
+      </div>
+      <nav class="nav-links">
+        <a href="control-panel.html">Control Panel</a>
+        <a href="reports.html" class="active">Reports</a>
+        <a href="admin-log.html">Admin Log</a>
+        <a href="../index.html">Back to Site</a>
+        <button class="btn-small" type="button" data-track-id="cta_talk_rep" data-track-label="Talk to Representative" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h1>Click Analytics (Local)</h1>
+      <p>Data is stored in your browser via localStorage for testing; a real backend can be added later.</p>
+      <p class="muted">Events and listing clicks are drawn on the canvas below for a full-width view.</p>
+    </section>
+
+    <section class="card">
+      <h2 style="margin:0 0 8px;">Canvas dashboard</h2>
+      <div class="canvas-wrap" id="reportsCanvasWrap">
+        <canvas id="reportsCanvas"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <script src="../analytics.js"></script>
+  <script>
+    const canvas = document.getElementById('reportsCanvas');
+    const canvasWrap = document.getElementById('reportsCanvasWrap');
+    const ctx = canvas.getContext('2d');
+
+    function formatDate(value) {
+      if (!value) return '—';
+      const date = new Date(value);
+      return isNaN(date.getTime()) ? '—' : date.toLocaleString();
+    }
+
+    function resizeCanvas(eventsCount, listingCount) {
+      const width = canvasWrap.clientWidth - 2;
+      canvas.width = width > 0 ? width : 1000;
+      canvas.height = Math.max(520, 140 + eventsCount * 50 + listingCount * 40);
+    }
+
+    function drawStatCard(label, value, x, y, w, h) {
+      ctx.fillStyle = '#f5f7f6';
+      ctx.strokeStyle = '#e3ece9';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(x, y, w, h, 12);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#4f615c';
+      ctx.font = '12px Inter';
+      ctx.fillText(label, x + 12, y + 20);
+      ctx.fillStyle = '#0b2520';
+      ctx.font = '800 24px Inter';
+      ctx.fillText(value, x + 12, y + 48);
+    }
+
+    function drawSectionTitle(text, y) {
+      ctx.fillStyle = '#0b2520';
+      ctx.font = '700 18px Inter';
+      ctx.fillText(text, 24, y);
+    }
+
+    function drawBar(label, value, max, index, baseY, color) {
+      const barWidth = Math.max((value / Math.max(max, 1)) * (canvas.width - 280), 12);
+      const barHeight = 24;
+      const y = baseY + index * 50;
+      ctx.fillStyle = '#3a4c45';
+      ctx.font = '13px Inter';
+      ctx.fillText(label, 32, y + 18);
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.roundRect(200, y + 2, barWidth, barHeight, 10);
+      ctx.fill();
+      ctx.fillStyle = '#0b2520';
+      ctx.font = '700 13px Inter';
+      ctx.fillText(value.toString(), 200 + barWidth + 12, y + 20);
+    }
+
+    function drawEmptyState(message, y) {
+      ctx.fillStyle = '#3f4f49';
+      ctx.font = '14px Inter';
+      ctx.fillText(message, 32, y);
+    }
+
+    function renderDashboard() {
+      const data = window.mntAnalytics.loadAnalytics();
+      const events = Object.values(data.events || {});
+      const listings = Object.values(data.listings || {});
+      resizeCanvas(events.length, listings.length);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Stats row
+      drawSectionTitle('Top stats', 36);
+      drawStatCard('Total Clicks', data.meta?.totalClicks || 0, 24, 48, 220, 70);
+      drawStatCard('Tracked Events', events.length, 256, 48, 220, 70);
+      drawStatCard('Tracked Listings', listings.length, 488, 48, 220, 70);
+      drawStatCard('Last Activity', formatDate(data.meta?.lastRecordedAt), 720, 48, 260, 70);
+
+      // Events section
+      let offsetY = 150;
+      drawSectionTitle('Events', offsetY);
+      offsetY += 16;
+      if (!events.length) {
+        drawEmptyState('No click data recorded yet.', offsetY + 28);
+      } else {
+        events.sort((a, b) => (Number(b.total) || 0) - (Number(a.total) || 0));
+        const maxEvent = Math.max(...events.map(e => Number(e.total) || 0), 1);
+        events.forEach((event, idx) => {
+          drawBar(`${event.label || event.id} (${event.id})`, Number(event.total) || 0, maxEvent, idx, offsetY + 12, '#005e4a');
+        });
+      }
+
+      // Listings section
+      offsetY = 150 + Math.max(events.length, 1) * 50 + 80;
+      drawSectionTitle('Listings', offsetY);
+      offsetY += 16;
+      if (!listings.length) {
+        drawEmptyState('No listing interactions yet.', offsetY + 28);
+      } else {
+        listings.sort((a, b) => (Number(b.totalClicks) || 0) - (Number(a.totalClicks) || 0));
+        const maxListing = Math.max(...listings.map(l => Number(l.totalClicks) || 0), 1);
+        listings.forEach((listing, idx) => {
+          drawBar(`${listing.title || listing.id || 'Listing'} — ${listing.location || 'Unknown'}`, Number(listing.totalClicks) || 0, maxListing, idx, offsetY + 12, '#4a7d6f');
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', renderDashboard);
+    window.addEventListener('resize', renderDashboard);
+  </script>
+</body>
+</html>

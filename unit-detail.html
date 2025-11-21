@@ -81,7 +81,7 @@
         </div>
       </div>
       <a href="About us.html" data-track-id="nav_about" data-track-label="Header About Link">About Us</a>
-      <a href="Reports.html" data-track-id="nav_reports" data-track-label="Header Reports Link">Reports</a>
+      <a href="admin/control-panel.html">Control Panel</a>
       <button class="btn-small" type="button" data-track-id="cta_talk_rep" data-track-label="Talk to Representative" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
     </nav>
   </div>
@@ -167,16 +167,22 @@
   
   <script>
     const storageKey = 'inventoryData';
-    const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg';
-    const MAX_IMAGES = 10;
-    const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
-    const BASE_NORMALIZED = BASE_UNITS.map(normalizeUnit);
+      const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg';
+      const MAX_IMAGES = 10;
+      const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
+      const BASE_NORMALIZED = BASE_UNITS.map(normalizeUnit);
 
-    function normalizeImages(unit) {
-      const fromArray = Array.isArray(unit.images) ? unit.images.filter(Boolean) : [];
-      const merged = [...new Set([unit.image, ...fromArray].filter(Boolean))];
-      return merged.slice(0, MAX_IMAGES);
-    }
+      function normalizeStatus(value) {
+        const val = (value || '').toString().trim().toLowerCase();
+        if (val === 'sold') return 'Sold';
+        return 'Available';
+      }
+
+      function normalizeImages(unit) {
+        const fromArray = Array.isArray(unit.images) ? unit.images.filter(Boolean) : [];
+        const merged = [...new Set([unit.image, ...fromArray].filter(Boolean))];
+        return merged.slice(0, MAX_IMAGES);
+      }
 
     function deriveMake(title = '') {
       const parts = title.split(' ').filter(Boolean);
@@ -196,22 +202,23 @@
     function normalizeUnit(unit) {
       const images = normalizeImages(unit || {});
       const title = unit?.title || 'Unit';
-      const titleYear = (title.match(/(19|20)\d{2}/) || [])[0];
-      const year = Number(unit?.year) || Number(titleYear) || '';
-      const make = unit?.brand || unit?.make || deriveMake(title) || 'Unknown';
-      const model = unit?.model || deriveModel(title, make) || 'Not specified';
-      const desc = unit?.description || `${title} — well maintained, clean title, and ready for your next haul.`;
-      const defaultFeatures = ['Clean title', 'DOT ready', 'Fresh PM service', 'Warranty options available', 'Maintenance records on file', 'Financing available'];
-      const features = Array.isArray(unit?.features) && unit.features.length ? unit.features : defaultFeatures;
+        const titleYear = (title.match(/(19|20)\d{2}/) || [])[0];
+        const year = Number(unit?.year) || Number(titleYear) || '';
+        const make = unit?.brand || unit?.make || deriveMake(title) || 'Unknown';
+        const model = unit?.model || deriveModel(title, make) || 'Not specified';
+        const desc = unit?.description || `${title} — well maintained, clean title, and ready for your next haul.`;
+        const defaultFeatures = ['Clean title', 'DOT ready', 'Fresh PM service', 'Warranty options available', 'Maintenance records on file', 'Financing available'];
+        const features = Array.isArray(unit?.features) && unit.features.length ? unit.features : defaultFeatures;
+        const status = normalizeStatus(unit?.status);
 
-      return {
-        title,
-        vin: unit?.vin || '',
-        type: unit?.type || 'Truck',
-        brand: unit?.brand || make || 'Unknown',
-        make,
-        model,
-        status: unit?.status || 'Available',
+        return {
+          title,
+          vin: unit?.vin || '',
+          type: unit?.type || 'Truck',
+          brand: unit?.brand || make || 'Unknown',
+          make,
+          model,
+          status,
         price: Number(unit?.price) || 0,
         mileage: Number(unit?.mileage) || 0,
         state: unit?.state || 'Unknown',
@@ -281,26 +288,28 @@
       });
     }
 
-    function render(unit) {
-      const card = document.getElementById('detailCard');
-      const missing = document.getElementById('missingPanel');
-      const crumbVin = document.getElementById('crumbVin');
-      if (!unit) {
+      function render(unit) {
+        const card = document.getElementById('detailCard');
+        const missing = document.getElementById('missingPanel');
+        const crumbVin = document.getElementById('crumbVin');
+        if (!unit) {
         card.style.display = 'none';
         missing.style.display = 'block';
         crumbVin.textContent = 'Not found';
         return;
       }
-      card.style.display = 'block';
-      missing.style.display = 'none';
-      crumbVin.textContent = unit.vin;
+        card.style.display = 'block';
+        missing.style.display = 'none';
+        crumbVin.textContent = unit.vin;
+        const statusLabel = normalizeStatus(unit.status);
+        const statusClass = statusLabel.toLowerCase() === 'sold' ? 'sold' : 'available';
 
-      document.getElementById('detailTitle').textContent = unit.title || 'Unit';
-      document.getElementById('detailSummary').textContent = `${unit.year || 'Year'} • ${unit.make || unit.brand || 'Unknown'} • ${unit.model || 'Not specified'}`;
-      document.getElementById('detailVin').textContent = `VIN: ${unit.vin || 'N/A'}`;
-      const statusEl = document.getElementById('detailStatus');
-      statusEl.textContent = unit.status || 'Available';
-      statusEl.className = `status ${(unit.status || '').toLowerCase()==='sold' ? 'sold' : 'available'}`;
+        document.getElementById('detailTitle').textContent = unit.title || 'Unit';
+        document.getElementById('detailSummary').textContent = `${unit.year || 'Year'} • ${unit.make || unit.brand || 'Unknown'} • ${unit.model || 'Not specified'}`;
+        document.getElementById('detailVin').textContent = `VIN: ${unit.vin || 'N/A'}`;
+        const statusEl = document.getElementById('detailStatus');
+        statusEl.textContent = statusLabel;
+        statusEl.className = `status ${statusClass}`;
       const heroImage = (unit.images && unit.images.length ? unit.images[0] : (unit.image || DEFAULT_IMAGE));
       document.getElementById('detailImage').src = heroImage;
       document.getElementById('detailImage').alt = unit.title || 'Unit image';
@@ -317,8 +326,8 @@
       document.getElementById('specTransmission').textContent = unit.transmission || 'Not specified';
       document.getElementById('specTypeDetail').textContent = unit.type || 'N/A';
       document.getElementById('specVin').textContent = unit.vin || 'N/A';
-      document.getElementById('specStatus').textContent = unit.status || 'Available';
-      document.getElementById('detailDescription').textContent = unit.description || '';
+        document.getElementById('specStatus').textContent = statusLabel;
+        document.getElementById('detailDescription').textContent = unit.description || '';
 
       const featureList = document.getElementById('featureList');
       featureList.innerHTML = '';
