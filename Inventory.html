@@ -595,6 +595,10 @@
         if (btn) {
           btn.setAttribute('data-track-id', 'unit_inquiry');
           btn.setAttribute('data-track-label', `Ask about ${unit.title}`);
+          btn.setAttribute('data-listing-id', unit.vin || unit.title || 'unit');
+          btn.setAttribute('data-listing-title', unit.title);
+          btn.setAttribute('data-listing-price', unit.price);
+          btn.setAttribute('data-listing-location', unit.location || unit.state || 'Available nationwide');
           const subject = `Inventory Inquiry – ${unit.title} (${unit.vin})`;
           const bodyLines = [
             'Hello Roy,',

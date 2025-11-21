@@ -400,8 +400,21 @@ function buildCard(unit) {
         Location: ${unit.location || unit.state || 'Available nationwide'}
       </div>
       <div class="btn-row">
-        <div class="btn-green email-btn">Contact us</div>
-        <a class="btn-white" href="unit-detail.html?vin=${encodeURIComponent(unit.vin)}">See Details</a>
+        <div class="btn-green email-btn"
+             data-track-id="unit_contact"
+             data-track-label="Contact about ${unit.title}"
+             data-listing-id="${unit.vin || unit.title}"
+             data-listing-title="${unit.title}"
+             data-listing-price="USD$ ${formatNumber(unit.price)}"
+             data-listing-location="${unit.location || unit.state || 'Available nationwide'}">Contact us</div>
+        <a class="btn-white"
+           href="unit-detail.html?vin=${encodeURIComponent(unit.vin)}"
+           data-track-id="unit_view_details"
+           data-track-label="View details for ${unit.title}"
+           data-listing-id="${unit.vin || unit.title}"
+           data-listing-title="${unit.title}"
+           data-listing-price="USD$ ${formatNumber(unit.price)}"
+           data-listing-location="${unit.location || unit.state || 'Available nationwide'}">See Details</a>
       </div>
     </div>
   `;

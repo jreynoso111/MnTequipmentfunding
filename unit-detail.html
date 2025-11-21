@@ -330,8 +330,34 @@
 
       renderThumbnails(unit.images || []);
 
-      document.getElementById('ctaCall').onclick = () => window.location.href = 'tel:0000000000';
-      document.getElementById('ctaEmail').onclick = () => {
+      const listingId = unit.vin || unit.title || 'listing';
+      const listingPrice = unit.price ? `USD$ ${formatNumber(unit.price)}` : 'Call for price';
+      const listingLocation = unit.location || unit.state || 'Available nationwide';
+
+      function applyTracking(el, eventId, label) {
+        if (!el) return;
+        el.setAttribute('data-track-id', eventId);
+        el.setAttribute('data-track-label', label);
+        el.setAttribute('data-listing-id', listingId);
+        el.setAttribute('data-listing-title', unit.title || 'Listing');
+        el.setAttribute('data-listing-price', listingPrice);
+        el.setAttribute('data-listing-location', listingLocation);
+      }
+
+      const callBtn = document.getElementById('ctaCall');
+      const emailBtn = document.getElementById('ctaEmail');
+      const repBtn = document.getElementById('ctaRepresentative');
+
+      applyTracking(callBtn, 'unit_detail_call', `Call about ${unit.title || 'this unit'}`);
+      applyTracking(emailBtn, 'unit_detail_email', `Email about ${unit.title || 'this unit'}`);
+      applyTracking(repBtn, 'unit_detail_representative', `Talk to rep about ${unit.title || 'this unit'}`);
+
+      callBtn.onclick = () => {
+        const sanitized = (unit.phone || '0000000000').replace(/[^0-9]/g, '') || '0000000000';
+        window.location.href = `tel:${sanitized}`;
+      };
+
+      emailBtn.onclick = () => {
         const subject = `Interest in ${unit.title || 'unit'} (${unit.vin || ''})`;
         const body = `Hello,
 
@@ -344,7 +370,8 @@ Phone: ${unit.phone || '000-000-0000'}
 Thank you.`;
         window.location.href = `mailto:RCortez@mntfunding.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
       };
-      document.getElementById('ctaRepresentative').onclick = () => {
+
+      repBtn.onclick = () => {
         const subject = `Talk to a representative about ${unit.title || 'this unit'}`;
         const body = `Hello,
 

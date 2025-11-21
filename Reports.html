@@ -31,6 +31,7 @@
     main { max-width:1100px; margin:20px auto 40px; padding:0 20px; position:relative; z-index:1; }
     .card { background:#ffffff; border-radius:14px; padding:18px 20px; box-shadow:0 4px 14px rgba(0,0,0,.05); border:1px solid #e3ece9; margin-bottom:16px; }
     h1 { margin:0 0 6px; font-size:26px; }
+    h2 { margin:0 0 10px; }
     p { margin:0 0 10px; color:#3a4c45; }
     table { width:100%; border-collapse:collapse; }
     th, td { text-align:left; padding:10px 8px; font-size:14px; }
@@ -46,12 +47,20 @@
 
     .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center; z-index:30; }
     .overlay.hidden { display:none; }
-    .overlay-card { background:#ffffff; padding:20px 22px; border-radius:14px; width:320px; box-shadow:0 10px 28px rgba(0,0,0,.18); text-align:center; }
+    .overlay-card { background:#ffffff; padding:20px 22px; border-radius:14px; width:340px; box-shadow:0 10px 28px rgba(0,0,0,.18); text-align:center; }
     .overlay-card h2 { margin:0 0 10px; }
     .overlay-card p { margin:0 0 12px; font-size:14px; color:#3a4c45; }
+    .overlay-card select,
     .overlay-card input { width:100%; padding:10px 12px; border-radius:10px; border:1px solid #cfdcd6; margin-bottom:10px; font-size:14px; }
-    .overlay-card button { width:100%; border:none; border-radius:10px; padding:12px; background:var(--accent); color:#fff; font-weight:700; cursor:pointer; }
-    .error { color:#b00020; font-size:12px; min-height:16px; margin-top:4px; }
+    .overlay-card .button-row { display:flex; gap:8px; }
+    .overlay-card button { flex:1; border:none; border-radius:10px; padding:12px; background:var(--accent); color:#fff; font-weight:700; cursor:pointer; }
+    .overlay-card .btn-secondary { background:#eef2f0; color:#0b2520; }
+    .error { color:#b00020; font-size:12px; min-height:16px; margin-top:4px; text-align:left; }
+
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:12px; }
+    .stat-box { background:#f5f7f6; border:1px solid #e3ece9; border-radius:10px; padding:12px; }
+    .stat-label { font-size:12px; color:#4f615c; text-transform:uppercase; letter-spacing:0.5px; }
+    .stat-value { font-size:22px; font-weight:800; color:#0b2520; }
 
     @media (max-width:720px) { .nav { flex-direction:column; align-items:flex-start; gap:10px; } .nav-links { width:100%; } .btn-small { width:100%; text-align:center; } table { display:block; overflow:auto; } }
   </style>
@@ -83,9 +92,17 @@
   <div class="overlay" id="accessOverlay">
     <div class="overlay-card">
       <h2>Admin / Manager Access</h2>
-      <p>Enter the password to view analytics.</p>
+      <p>Choose your role and enter the credentials to view analytics.</p>
+      <select id="accessRole">
+        <option value="admin">Admin</option>
+        <option value="manager">Manager</option>
+      </select>
+      <input type="text" id="accessUsername" placeholder="Username" />
       <input type="password" id="accessPassword" placeholder="Password" />
-      <button id="accessButton">Login</button>
+      <div class="button-row">
+        <button id="accessButton">Login</button>
+        <button class="btn-secondary" type="button" id="accessClose">Close</button>
+      </div>
       <div class="error" id="accessError"></div>
     </div>
   </div>
@@ -98,13 +115,47 @@
     </section>
 
     <section class="card">
-      <h2 style="margin:0 0 8px;">Summary</h2>
+      <h2 style="margin:0 0 8px;">Top stats</h2>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">Total Clicks</div>
+          <div class="stat-value" id="statTotal">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Tracked Events</div>
+          <div class="stat-value" id="statEvents">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Tracked Listings</div>
+          <div class="stat-value" id="statListings">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Last Activity</div>
+          <div class="stat-value" id="statLast">—</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 style="margin:0 0 8px;">Events</h2>
       <div style="overflow:auto;">
         <table>
           <thead>
             <tr><th>Event ID</th><th>Label</th><th>Total Clicks</th><th style="width:200px;">Activity</th></tr>
           </thead>
           <tbody id="summaryBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 style="margin:0 0 8px;">Listings</h2>
+      <div style="overflow:auto;">
+        <table>
+          <thead>
+            <tr><th>Title</th><th>Price</th><th>Location</th><th>Total Clicks</th></tr>
+          </thead>
+          <tbody id="listingBody"></tbody>
         </table>
       </div>
     </section>
@@ -118,62 +169,78 @@
 
   <script src="analytics.js"></script>
   <script>
-    const ADMIN_PASSWORD = "MNTADMIN123";
-    const ACCESS_KEY = "mntAnalyticsAccess";
+    const USERS = {
+      admin: { username: 'admin', password: 'Admin123' },
+      manager: { username: 'manager', password: 'Manager123' }
+    };
+    const ACCESS_KEY = 'mntAnalyticsAccess';
+    const ROLE_KEY = 'mntAnalyticsRole';
 
     const overlay = document.getElementById('accessOverlay');
+    const roleSelect = document.getElementById('accessRole');
+    const usernameInput = document.getElementById('accessUsername');
     const passwordInput = document.getElementById('accessPassword');
     const accessButton = document.getElementById('accessButton');
+    const accessClose = document.getElementById('accessClose');
     const accessError = document.getElementById('accessError');
     const summaryBody = document.getElementById('summaryBody');
+    const listingBody = document.getElementById('listingBody');
     const detailSection = document.getElementById('detailSection');
     const detailLabel = document.getElementById('detailLabel');
     const detailList = document.getElementById('detailList');
     const dropdown = document.querySelector('.dropdown');
     const dropdownMenu = dropdown?.querySelector('.dropdown-menu');
 
-    function showMenu() {
-      if (dropdownMenu) dropdownMenu.style.display = 'block';
-    }
-    function hideMenu() {
-      if (dropdownMenu) dropdownMenu.style.display = 'none';
-    }
+    const statTotal = document.getElementById('statTotal');
+    const statEvents = document.getElementById('statEvents');
+    const statListings = document.getElementById('statListings');
+    const statLast = document.getElementById('statLast');
+
+    function showMenu() { if (dropdownMenu) dropdownMenu.style.display = 'block'; }
+    function hideMenu() { if (dropdownMenu) dropdownMenu.style.display = 'none'; }
 
     dropdown?.addEventListener('mouseenter', showMenu);
-    dropdown?.addEventListener('mouseleave', () => {
-      setTimeout(hideMenu, 300);
-    });
+    dropdown?.addEventListener('mouseleave', () => { setTimeout(hideMenu, 300); });
 
-    function hasAccess() {
-      return localStorage.getItem(ACCESS_KEY) === 'true';
-    }
+    function hasAccess() { return localStorage.getItem(ACCESS_KEY) === 'true'; }
 
-    function grantAccess() {
+    function grantAccess(role) {
       localStorage.setItem(ACCESS_KEY, 'true');
+      localStorage.setItem(ROLE_KEY, role || '');
       overlay.classList.add('hidden');
-      renderSummary();
+      renderDashboard();
     }
 
     function handleLogin() {
-      const value = passwordInput.value.trim();
-      if (value === ADMIN_PASSWORD) {
+      const role = roleSelect.value;
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
+      const record = USERS[role];
+
+      if (record && username === record.username && password === record.password) {
         accessError.textContent = '';
-        grantAccess();
+        grantAccess(role);
       } else {
-        accessError.textContent = 'Incorrect password. Please try again.';
+        accessError.textContent = 'Invalid credentials';
       }
     }
 
-    accessButton.addEventListener('click', handleLogin);
-    passwordInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        handleLogin();
-      }
-    });
+    function formatDate(value) {
+      if (!value) return '—';
+      const date = new Date(value);
+      return isNaN(date.getTime()) ? '—' : date.toLocaleString();
+    }
 
-    function renderSummary() {
-      const data = window.mntAnalytics.loadAnalytics();
-      const events = Object.values(data);
+    function renderStats(data) {
+      const events = Object.keys(data.events || {}).length;
+      const listings = Object.keys(data.listings || {}).length;
+      statTotal.textContent = data.meta?.totalClicks || 0;
+      statEvents.textContent = events;
+      statListings.textContent = listings;
+      statLast.textContent = formatDate(data.meta?.lastRecordedAt);
+    }
+
+    function renderEvents(events = []) {
       summaryBody.innerHTML = '';
       detailSection.style.display = 'none';
 
@@ -187,9 +254,8 @@
         return;
       }
 
-      const max = Math.max(...events.map(e => e.total || 0), 1);
-
-      events.sort((a, b) => (b.total || 0) - (a.total || 0));
+      const max = Math.max(...events.map(e => Number(e.total) || 0), 1);
+      events.sort((a, b) => (Number(b.total) || 0) - (Number(a.total) || 0));
 
       events.forEach(event => {
         const row = document.createElement('tr');
@@ -197,11 +263,36 @@
         row.innerHTML = `
           <td>${event.id}</td>
           <td>${event.label || event.id}</td>
-          <td>${event.total || 0}</td>
-          <td><div class="bar"><span style="width:${Math.max((event.total || 0) / max * 100, 4)}%"></span></div></td>
+          <td>${Number(event.total) || 0}</td>
+          <td><div class="bar"><span style="width:${Math.max(((Number(event.total) || 0) / max) * 100, 4)}%"></span></div></td>
         `;
         row.addEventListener('click', () => renderDetail(event));
         summaryBody.appendChild(row);
+      });
+    }
+
+    function renderListings(listings = []) {
+      listingBody.innerHTML = '';
+      if (!listings.length) {
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = 4;
+        cell.textContent = 'No listing interactions yet.';
+        row.appendChild(cell);
+        listingBody.appendChild(row);
+        return;
+      }
+
+      listings.sort((a, b) => (Number(b.totalClicks) || 0) - (Number(a.totalClicks) || 0));
+      listings.forEach(listing => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${listing.title || listing.id || 'Listing'}</td>
+          <td>${listing.price || '—'}</td>
+          <td>${listing.location || '—'}</td>
+          <td>${Number(listing.totalClicks) || 0}</td>
+        `;
+        listingBody.appendChild(row);
       });
     }
 
@@ -223,10 +314,24 @@
       detailSection.style.display = 'block';
     }
 
+    function renderDashboard() {
+      const data = window.mntAnalytics.loadAnalytics();
+      const events = Object.values(data.events || {});
+      const listings = Object.values(data.listings || {});
+      renderStats(data);
+      renderEvents(events);
+      renderListings(listings);
+    }
+
+    accessButton.addEventListener('click', handleLogin);
+    accessClose.addEventListener('click', () => { window.location.href = 'index.html'; });
+    passwordInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLogin(); });
+    usernameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLogin(); });
+
     document.addEventListener('DOMContentLoaded', () => {
       if (hasAccess()) {
         overlay.classList.add('hidden');
-        renderSummary();
+        renderDashboard();
       }
     });
   </script>
