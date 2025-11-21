@@ -11,6 +11,7 @@
   <style>
     :root {
       --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+      --logo-scale: 2;
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
     }
@@ -22,8 +23,8 @@
     header { background:#ffffff; box-shadow:0 2px 6px rgba(0,0,0,.08); position:sticky; top:0; z-index:10; }
     .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:10px 20px; }
     .logo{display:flex;align-items:center;gap:10px;}
-    .logo img { height:60px; width:auto; object-fit:contain; }
-    .logo-mark{height:60px;width:auto;border-radius:0;object-fit:contain;}
+  .logo img { height:60px; width:auto; object-fit:contain; transform: scale(var(--logo-scale)); transform-origin:left center; }
+  .logo-mark{height:60px;width:auto;border-radius:0;object-fit:contain; transform: scale(var(--logo-scale)); transform-origin:left center;}
     .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
     .nav-links a{padding:6px 10px;border-radius:999px; white-space:nowrap;}
     .nav-links a:hover{background:rgba(0,94,74,.08);}
@@ -193,18 +194,19 @@
         <img src="Media/LogoTransparent.png" alt="M&T Equipment Funding Logo" />
       </div>
       <nav class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="Applications.html" class="active">Applications</a>
-        <a href="Services.html">Services</a>
+        <a href="index.html" data-track-id="nav_home" data-track-label="Header Home Link">Home</a>
+        <a href="Applications.html" class="active" data-track-id="nav_applications" data-track-label="Header Applications Link">Applications</a>
+        <a href="Services.html" data-track-id="nav_services" data-track-label="Header Services Link">Services</a>
         <div class="dropdown">
-          <a href="Inventory.html" class="inventory-link">Inventory</a>
+          <a href="Inventory.html" class="inventory-link" data-track-id="nav_inventory" data-track-label="Header Inventory Link">Inventory</a>
           <div class="dropdown-content">
-            <a href="Units for Sale.html">All units for sale</a>
+            <a href="Units for Sale.html" data-track-id="nav_units" data-track-label="All Units for Sale">All units for sale</a>
           </div>
         </div>
-        <a href="About us.html">About Us</a>
-        
-        <button class="btn-small" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
+        <a href="About us.html" data-track-id="nav_about" data-track-label="Header About Link">About Us</a>
+        <a href="Reports.html" data-track-id="nav_reports" data-track-label="Header Reports Link">Reports</a>
+
+        <button class="btn-small" type="button" data-track-id="cta_talk_rep" data-track-label="Talk to Representative" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
       </nav>
 <script>
 let dropdown = document.querySelector('.dropdown');
@@ -235,21 +237,21 @@ dropdown.addEventListener('mouseleave', ()=>{
             <div class="download-label">Credit Application (PDF)</div>
             <div class="download-meta">Required for all applications</div>
           </div>
-          <a class="download-btn" href="Media/Documents/credit_application_form.pdf" download>Download</a>
+          <a class="download-btn" href="Media/Documents/credit_application_form.pdf" download data-track-id="download_credit_application_pdf" data-track-label="Download Credit Application PDF">Download</a>
         </div>
         <div class="download-box">
           <div>
             <div class="download-label">Bank Statements Form</div>
             <div class="download-meta">Attach last 3 months of statements</div>
           </div>
-          <a class="download-btn" href="Media/Documents/bank_statement_form.pdf" download>Download</a>
+          <a class="download-btn" href="Media/Documents/bank_statement_form.pdf" download data-track-id="download_bank_statement_form" data-track-label="Download Bank Statement Form">Download</a>
         </div>
         <div class="download-box">
           <div>
             <div class="download-label">Truck Purchase Agreement</div>
             <div class="download-meta">Dealer purchase order or bill of sale</div>
           </div>
-          <a class="download-btn" href="Media/Documents/truck_purchase_agreement.pdf" download>Download</a>
+          <a class="download-btn" href="Media/Documents/truck_purchase_agreement.pdf" download data-track-id="download_purchase_agreement" data-track-label="Download Purchase Agreement">Download</a>
         </div>
       </div>
 
@@ -337,6 +339,8 @@ dropdown.addEventListener('mouseleave', ()=>{
       </div>
     </div>
   </main>
+
+  <script src="analytics.js"></script>
 
   <div class="footer-marquee">
     <div class="footer-scroll">

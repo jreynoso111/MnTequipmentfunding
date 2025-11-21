@@ -15,6 +15,7 @@
   <style>
     :root {
       --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+      --logo-scale: 2;
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
     }
@@ -27,7 +28,7 @@
     header{background:#ffffff;box-shadow:0 2px 6px rgba(0,0,0,.08);position:sticky;top:0;z-index:10;}
     .nav{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;}
     .logo{display:flex;align-items:center;gap:10px;}
-    .logo img{height:60px;width:auto;object-fit:contain;}
+    .logo img{height:60px;width:auto;object-fit:contain;transform: scale(var(--logo-scale));transform-origin:left center;}
     .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
     .nav-links a{padding:6px 10px;border-radius:999px;}
     .nav-links a:hover{background:rgba(0,94,74,.08);}
@@ -89,18 +90,19 @@
       <a href="index.html"><img src="Media/LogoTransparent.png" alt="M&T Equipment Funding Logo" /></a>
     </div>
     <nav class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="Applications.html">Applications</a>
-      <a href="Services.html">Services</a>
+      <a href="index.html" data-track-id="nav_home" data-track-label="Header Home Link">Home</a>
+      <a href="Applications.html" data-track-id="nav_applications" data-track-label="Header Applications Link">Applications</a>
+      <a href="Services.html" data-track-id="nav_services" data-track-label="Header Services Link">Services</a>
       <div class="dropdown">
-        <a href="Inventory.html" class="active">Inventory ▾</a>
+        <a href="Inventory.html" class="active" data-track-id="nav_inventory" data-track-label="Header Inventory Link">Inventory ▾</a>
         <div class="dropdown-content">
-          <a href="Inventory.html">Inventory overview</a>
-          <a href="Units for Sale.html">All units for sale</a>
+          <a href="Inventory.html" data-track-id="nav_inventory_overview" data-track-label="Inventory Overview">Inventory overview</a>
+          <a href="Units for Sale.html" data-track-id="nav_units" data-track-label="All Units for Sale">All units for sale</a>
         </div>
       </div>
-      <a href="About us.html">About Us</a>
-      <button class="btn-small" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
+      <a href="About us.html" data-track-id="nav_about" data-track-label="Header About Link">About Us</a>
+      <a href="Reports.html" data-track-id="nav_reports" data-track-label="Header Reports Link">Reports</a>
+      <button class="btn-small" type="button" data-track-id="cta_talk_rep" data-track-label="Talk to Representative" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
     </nav>
   </div>
 </header>
@@ -238,6 +240,8 @@
     </div> <!-- /.details-grid -->
   </div> <!-- /.details-card -->
 </div> <!-- /.container -->
+
+<script src="analytics.js"></script>
 
 </body>
 </html>

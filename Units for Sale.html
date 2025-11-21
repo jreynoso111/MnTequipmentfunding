@@ -12,6 +12,7 @@
   <style>
     :root {
       --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+      --logo-scale: 2;
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
     }
@@ -25,7 +26,7 @@
     header{background:#ffffff;box-shadow:0 2px 6px rgba(0,0,0,.08);position:sticky;top:0;z-index:200;}
     .nav{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;}
     .logo{display:flex;align-items:center;gap:10px;}
-    .logo img{height:60px;width:auto;object-fit:contain;}
+    .logo img{height:60px;width:auto;object-fit:contain;transform: scale(var(--logo-scale));transform-origin:left center;}
     .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
     .nav-links a{padding:6px 10px;border-radius:999px;}
     .nav-links a:hover{background:rgba(0,94,74,.08);} 
@@ -122,19 +123,20 @@
       <a href="index.html"><img src="Media/LogoTransparent.png" alt="Logo" /></a>
     </div>
     <nav class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="Applications.html">Applications</a>
-      <a href="Services.html">Services</a>
+      <a href="index.html" data-track-id="nav_home" data-track-label="Header Home Link">Home</a>
+      <a href="Applications.html" data-track-id="nav_applications" data-track-label="Header Applications Link">Applications</a>
+      <a href="Services.html" data-track-id="nav_services" data-track-label="Header Services Link">Services</a>
       <div class="inv-wrapper" style="position:relative;">
-        <a href="Inventory.html" class="inv-link active" style="padding:6px 10px; border-radius:999px;">Inventory ▾</a>
+        <a href="Inventory.html" class="inv-link active" style="padding:6px 10px; border-radius:999px;" data-track-id="nav_inventory" data-track-label="Header Inventory Link">Inventory ▾</a>
         <div class="inv-dropdown" style="position:absolute; top:28px; left:0; background:#ffffff; border:1px solid #ddd; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,.1); width:200px; overflow:hidden; display:none;">
-          <a href="Inventory.html" style="padding:8px 12px; font-size:14px; display:block;">Inventory overview</a>
-          <a href="Units for Sale.html" style="padding:8px 12px; font-size:14px; display:block;">All Units for Sale</a>
+          <a href="Inventory.html" style="padding:8px 12px; font-size:14px; display:block;" data-track-id="nav_inventory_overview" data-track-label="Inventory Overview">Inventory overview</a>
+          <a href="Units for Sale.html" style="padding:8px 12px; font-size:14px; display:block;" data-track-id="nav_units" data-track-label="All Units for Sale">All Units for Sale</a>
         </div>
       </div>
-      <a href="About us.html">About Us</a>
+      <a href="About us.html" data-track-id="nav_about" data-track-label="Header About Link">About Us</a>
+      <a href="Reports.html" data-track-id="nav_reports" data-track-label="Header Reports Link">Reports</a>
 
-      <button class="btn-small" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
+      <button class="btn-small" data-track-id="cta_talk_rep" data-track-label="Talk to Representative" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
     </nav>
   </div>
 </header>
@@ -255,7 +257,7 @@
       </div>
 
       <div style="margin-top:18px; display:flex; flex-direction:column; gap:6px;">
-        <button class="btn-small" style="width:100%; justify-content:center;" type="button" id="toolButton">Settings</button>
+        <a class="btn-small" style="width:100%; display:inline-block; text-align:center;" href="admin/control-panel.html">Admin tools</a>
       </div>
     </aside>
 
@@ -268,139 +270,19 @@
   </div>
 </main>
 
-<div class="modal-backdrop" id="toolModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.38); align-items:center; justify-content:center; z-index:50; padding:12px;">
-  <div class="modal" style="background:#ffffff; border-radius:12px; width:100%; max-width:360px; padding:18px 16px 16px; box-shadow:0 10px 30px rgba(0,0,0,.18); border:1px solid #e3ece9; font-size:13px;">
-    <h3 style="margin:0 0 6px; font-size:16px; font-weight:800; color:#0b2520;">Admin Access Required</h3>
-    <p style="margin:0 0 10px; font-size:12px; color:#3a4743;">Sign in with <strong>admin/adminmnt</strong> (admin) or <strong>rcortez/cortezmnt</strong> (manager) to edit vehicle listings.</p>
-    <label for="toolUser" style="display:block; font-weight:700; margin-bottom:4px;">Username</label>
-    <input id="toolUser" name="toolUser" type="text" placeholder="Enter username" autocomplete="username" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid #cfdad7; margin-bottom:10px;" />
-    <label for="toolPass" style="display:block; font-weight:700; margin-bottom:4px;">Password</label>
-    <input id="toolPass" name="toolPass" type="password" placeholder="Enter password" autocomplete="current-password" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid #cfdad7; margin-bottom:12px;" />
-    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:4px;">
-      <button class="btn-small" id="toolCancel" type="button" style="border-color:#cfdad7; color:#0b2520;">Cancel</button>
-      <button class="btn-small" id="toolConfirm" type="button">Continue</button>
-    </div>
-    <p style="margin-top:8px; color:#5a6a66; font-size:11px;">Both roles can manage listings. Admins can also create new profiles.</p>
-  </div>
-</div>
+
 
 
 <script>
 const ITEMS_PER_PAGE = 20;
-const MIN_LISTINGS = 35;
 const storageKey = 'inventoryData';
-const accountsKey = 'inventoryAccounts';
-const sessionKey = 'inventorySession';
-const lockKey = 'inventoryLoginLock';
-const SESSION_TTL_MINUTES = 90;
 const MAX_IMAGES = 10;
 const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg';
+const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
+
 let currentPage = 1;
 let units = [];
 let filteredUnits = [];
-  const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
-  const BASE_NORMALIZED = BASE_UNITS.map(normalizeUnit);
-
-function hasDiverseInventory(list) {
-  const arr = Array.isArray(list) ? list : [];
-  const uniqueVin = new Set(arr.map(u => (u.vin || '').toUpperCase())).size;
-  const uniqueTitle = new Set(arr.map(u => (u.title || '').toUpperCase())).size;
-  const uniqueTypes = new Set(arr.map(u => (u.type || '').toLowerCase())).size;
-  return arr.length >= MIN_LISTINGS && uniqueVin >= MIN_LISTINGS && uniqueTitle >= MIN_LISTINGS && uniqueTypes.size > 1;
-}
-
-function ensureMinimumUnits(list) {
-  const result = Array.isArray(list) ? list.slice() : [];
-  const source = BASE_NORMALIZED.length ? BASE_NORMALIZED : result;
-  let idx = 0;
-
-  while (result.length < MIN_LISTINGS && source.length) {
-    const template = source[idx % source.length] || {};
-    const vinSuffix = result.length + 1;
-    result.push({ ...template, vin: `${template.vin || 'VIN'}-SIM${vinSuffix}` });
-    idx++;
-  }
-
-  return result;
-}
-
-function hashPassword(pass) {
-  return 'hash:' + btoa(pass || '');
-}
-
-function normalizeAccount(acc) {
-  if (!acc || !acc.user) return null;
-  const hashed = (acc.pass || '').startsWith('hash:') ? acc.pass : hashPassword(acc.pass || '');
-  return { user: acc.user, pass: hashed, role: acc.role || 'manager' };
-}
-
-function passwordsMatch(account, input) {
-  return account.pass === hashPassword(input);
-}
-
-function ensureAccounts() {
-  let accounts = [];
-  const saved = localStorage.getItem(accountsKey);
-  if (saved) {
-    try {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) accounts = parsed.map(normalizeAccount).filter(Boolean);
-    } catch (e) {
-      console.warn('Could not parse saved accounts');
-    }
-  }
-  [
-    { user: 'admin', pass: 'adminmnt', role: 'admin' },
-    { user: 'rcortez', pass: 'cortezmnt', role: 'manager' }
-  ].forEach(base => {
-    const normalized = normalizeAccount(base);
-    const idx = accounts.findIndex(a => a.user === normalized.user);
-    if (idx >= 0) {
-      accounts[idx] = { ...normalized, ...accounts[idx] };
-    } else {
-      accounts.push(normalized);
-    }
-  });
-  localStorage.setItem(accountsKey, JSON.stringify(accounts));
-  return accounts;
-}
-
-function getLock() {
-  try {
-    return JSON.parse(localStorage.getItem(lockKey)) || { attempts: 0, lockedUntil: 0 };
-  } catch (e) {
-    return { attempts: 0, lockedUntil: 0 };
-  }
-}
-
-function saveLock(data) {
-  localStorage.setItem(lockKey, JSON.stringify(data));
-}
-
-function resetLock() {
-  saveLock({ attempts: 0, lockedUntil: 0 });
-}
-
-function recordFailedAttempt() {
-  const lock = getLock();
-  lock.attempts += 1;
-  if (lock.attempts >= 5) {
-    lock.lockedUntil = Date.now() + (15 * 60 * 1000);
-    lock.attempts = 0;
-  }
-  saveLock(lock);
-}
-
-function canAttempt() {
-  const lock = getLock();
-  if (lock.lockedUntil && Date.now() < lock.lockedUntil) return false;
-  return true;
-}
-
-function setSession(account) {
-  const expires = Date.now() + SESSION_TTL_MINUTES * 60 * 1000;
-  localStorage.setItem(sessionKey, JSON.stringify({ user: account.user, role: account.role, expires }));
-}
 
 function normalizeImages(unit) {
   const fromArray = Array.isArray(unit.images) ? unit.images.filter(Boolean) : [];
@@ -460,7 +342,7 @@ function normalizeUnit(unit) {
 }
 
 function defaultUnits() {
-  return ensureMinimumUnits(BASE_UNITS.map(normalizeUnit));
+  return Array.isArray(BASE_UNITS) ? BASE_UNITS.map(normalizeUnit) : [];
 }
 
 function loadUnits() {
@@ -469,19 +351,15 @@ function loadUnits() {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length) {
-        const normalizedSaved = ensureMinimumUnits(parsed.map(normalizeUnit));
-        if (hasDiverseInventory(normalizedSaved)) {
-          localStorage.setItem(storageKey, JSON.stringify(normalizedSaved));
-          return normalizedSaved;
-        }
+        const normalizedSaved = parsed.map(normalizeUnit).filter(Boolean);
+        if (normalizedSaved.length) return normalizedSaved;
       }
     }
   } catch (e) {
     console.warn('Unable to load saved inventory, using defaults');
   }
-  console.warn('Reseeding inventory with diverse demo data');
-  const seeded = ensureMinimumUnits(BASE_NORMALIZED);
-  localStorage.setItem(storageKey, JSON.stringify(seeded));
+  const seeded = defaultUnits();
+  if (seeded.length) localStorage.setItem(storageKey, JSON.stringify(seeded));
   return seeded;
 }
 
@@ -647,41 +525,9 @@ function applyFilters() {
 }
 
 function init() {
-  ensureAccounts();
   units = loadUnits();
   filteredUnits = units.slice();
   applyFilters();
-
-  const modal = document.getElementById('toolModal');
-  const toolBtn = document.getElementById('toolButton');
-  const cancelBtn = document.getElementById('toolCancel');
-  const confirmBtn = document.getElementById('toolConfirm');
-  const userInput = document.getElementById('toolUser');
-  const passInput = document.getElementById('toolPass');
-
-  function openModal() { modal.style.display = 'flex'; userInput.focus(); }
-  function closeModal() { modal.style.display = 'none'; userInput.value = ''; passInput.value = ''; }
-  function handleLogin() {
-    if (!canAttempt()) {
-      alert('Too many attempts. Please wait a few minutes before trying again.');
-      return;
-    }
-    const accounts = ensureAccounts();
-    const match = accounts.find(acc => acc.user === userInput.value.trim() && passwordsMatch(acc, passInput.value.trim()));
-    if (match) {
-      resetLock();
-      setSession(match);
-      window.location.href = 'control-panel.html';
-    } else {
-      recordFailedAttempt();
-      alert('Invalid credentials');
-    }
-  }
-
-  toolBtn?.addEventListener('click', openModal);
-  cancelBtn?.addEventListener('click', closeModal);
-  confirmBtn?.addEventListener('click', handleLogin);
-  [userInput, passInput].forEach(input => input?.addEventListener('keyup', (e) => { if (e.key === 'Enter') handleLogin(); }));
 }
 
 if (document.readyState === 'loading') {
@@ -690,6 +536,8 @@ if (document.readyState === 'loading') {
   init();
 }
 </script>
+
+<script src="analytics.js"></script>
 
 
 </body>
