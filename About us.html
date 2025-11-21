@@ -11,6 +11,7 @@
   <style>
     :root {
       --font-main: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      --logo-scale: 2;
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
       --accent: #005e4a;
@@ -24,7 +25,7 @@
     header { background: #ffffff; box-shadow: 0 2px 6px rgba(0, 0, 0, .08); position: sticky; top: 0; z-index: 10; }
     .nav { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; gap: 12px; }
     .logo { display: flex; align-items: center; gap: 10px; }
-    .logo img { height: 60px; width: auto; object-fit: contain; transform: scale(2); transform-origin: left center; }
+    .logo img { height: 60px; width: auto; object-fit: contain; transform: scale(var(--logo-scale)); transform-origin: left center; }
     .nav-links { display: flex; align-items: center; gap: 18px; font-size: 14px; }
     .nav-links a { padding: 6px 10px; border-radius: 999px; }
     .nav-links a:hover { background: rgba(0, 94, 74, .08); }
@@ -49,10 +50,10 @@
     .hero-layout { display: grid; grid-template-columns: 1fr 0.9fr; gap: 28px; align-items: center; }
     .hero-kicker { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: #0b5c47; text-transform: uppercase; margin-bottom: 8px; }
     .hero-title { font-size: 30px; font-weight: 800; margin: 0 0 10px; color: #0b2520; }
-    .hero-sub { font-size: 15px; color: #1f3a33; margin: 0 0 10px; }
+    .hero-sub { font-size: 15px; color: #1f3a33; margin: 0 0 10px; text-align: justify; }
     .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
     .hero-visual { order: 2; }
-    .hero-visual img { width: 100%; height: 420px; border-radius: 24px; object-fit: cover; box-shadow: 0 10px 30px rgba(0, 0, 0, .12); }
+    .hero-visual img { width: 75%; height: 315px; border-radius: 24px; object-fit: cover; box-shadow: 0 10px 30px rgba(0, 0, 0, .12); margin: 0 auto; }
     .btn-primary { border-radius: 10px; border: 1px solid var(--accent); background: var(--accent); color: #fff; padding: 12px 18px; font-weight: 700; cursor: pointer; transition: all .18s ease; }
     .btn-ghost { border-radius: 10px; border: 1px solid #b8d7cd; background: #fff; color: var(--accent); padding: 12px 18px; font-weight: 700; cursor: pointer; transition: all .18s ease; }
     .btn-primary:hover { background: #024b3c; }
@@ -61,7 +62,7 @@
     section { margin-top: 18px; }
     .card { background: #ffffff; border-radius: 14px; padding: 16px 18px; box-shadow: 0 3px 10px rgba(0, 0, 0, .04); border: 1px solid #e3ece9; position: relative; z-index: 1; }
     .section-title { font-size: 20px; font-weight: 700; margin: 0 0 8px; color: #0b2520; }
-    .section-text { font-size: 14px; color: #444; margin: 0 0 8px; }
+    .section-text { font-size: 14px; color: #444; margin: 0 0 8px; text-align: justify; }
     .list { margin: 8px 0 0; padding-left: 18px; color: #1f3a33; }
     .list li { margin-bottom: 6px; }
 
@@ -93,6 +94,7 @@
     @media(max-width: 900px) {
       .hero-layout { grid-template-columns: 1fr; }
       .hero-visual { order: -1; }
+      .hero-visual img { width: 100%; height: 360px; }
       .hero-actions button { width: 100%; }
     }
     @media(max-width: 720px) {
@@ -148,6 +150,7 @@
         <h1 class="hero-title">About M&T Equipment Funding LLC</h1>
         <p class="hero-sub">We are a commercial truck and equipment financing company—not a vehicle dealer. Our team partners with owner-operators and small fleets to fund the right trucks and trailers.</p>
         <p class="hero-sub">We review collateral, deal structure, and your overall profile, often providing a clear pre-qualification update in about one business day (timing may vary).</p>
+        <p class="hero-sub">Every conversation focuses on practical guidance, transparent requirements, and realistic timelines so you know what to expect before moving forward with a truck or trailer purchase.</p>
         <div class="hero-actions">
           <button class="btn-primary" type="button" onclick="window.location.href='mailto:MDereshevkaia@mntfunding.com'">Talk to a Representative</button>
           <button class="btn-ghost" type="button" onclick="window.location.href='Applications.html'">Start Application</button>
