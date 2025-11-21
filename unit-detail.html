@@ -10,14 +10,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="inventory-seed.js"></script>
   <style>
-    :root { --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif; }
+    :root { --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif; --logo-scale: 2; }
     *, *::before, *::after { box-sizing: border-box; font-family: var(--font-main); }
     body { margin:0; background:#f5f7f6; color:#0b2520; line-height:1.6; }
     a { color:inherit; text-decoration:none; }
     img { max-width:100%; display:block; }
     header { background:#fff; box-shadow:0 2px 6px rgba(0,0,0,.08); position:sticky; top:0; z-index:10; }
     .nav{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;}
-    .logo img{height:60px;width:auto;object-fit:contain;display:block;}
+    .logo img{height:60px;width:auto;object-fit:contain;display:block;transform: scale(var(--logo-scale));transform-origin:left center;}
     .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
     .nav-links a{padding:6px 10px;border-radius:999px;}
     .nav-links a:hover{background:rgba(0,94,74,.08);}
@@ -70,24 +70,24 @@
       <a href="index.html"><img src="Media/LogoTransparent.png" alt="Logo" /></a>
     </div>
     <nav class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="Applications.html">Applications</a>
-      <a href="Services.html">Services</a>
+      <a href="index.html" data-track-id="nav_home" data-track-label="Header Home Link">Home</a>
+      <a href="Applications.html" data-track-id="nav_applications" data-track-label="Header Applications Link">Applications</a>
+      <a href="Services.html" data-track-id="nav_services" data-track-label="Header Services Link">Services</a>
       <div class="dropdown">
-        <a href="Inventory.html" class="active">Inventory ▾</a>
+        <a href="Inventory.html" class="active" data-track-id="nav_inventory" data-track-label="Header Inventory Link">Inventory ▾</a>
         <div class="dropdown-content">
-          <a href="Inventory.html">Inventory overview</a>
-          <a href="Units for Sale.html">All units for sale</a>
+          <a href="Inventory.html" data-track-id="nav_inventory_overview" data-track-label="Inventory Overview">Inventory overview</a>
+          <a href="Units for Sale.html" data-track-id="nav_units" data-track-label="All Units for Sale">All units for sale</a>
         </div>
       </div>
-      <a href="About us.html">About Us</a>
-      <button class="btn-small" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
+      <a href="About us.html" data-track-id="nav_about" data-track-label="Header About Link">About Us</a>
+      <button class="btn-small" type="button" data-track-id="cta_talk_rep" data-track-label="Talk to Representative" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
     </nav>
   </div>
 </header>
 
   <main class="container">
-    <div class="back-row"><a class="back-link" href="Units for Sale.html" onclick="event.preventDefault(); if (history.length > 1) { history.back(); } else { window.location.href='Units for Sale.html'; }">&larr; Return to last page</a></div>
+    <div class="back-row"><a class="back-link" href="Units for Sale.html" data-track-id="unit_back" data-track-label="Return to inventory" onclick="event.preventDefault(); if (history.length > 1) { history.back(); } else { window.location.href='Units for Sale.html'; }">&larr; Return to last page</a></div>
     <div class="crumbs"><a href="Inventory.html">Inventory</a> &gt; <a href="Units for Sale.html">All units</a> &gt; <span id="crumbVin">Details</span></div>
     <div class="detail-card" id="detailCard" style="display:none;">
       <div class="detail-header">
@@ -329,8 +329,34 @@
 
       renderThumbnails(unit.images || []);
 
-      document.getElementById('ctaCall').onclick = () => window.location.href = 'tel:0000000000';
-      document.getElementById('ctaEmail').onclick = () => {
+      const listingId = unit.vin || unit.title || 'listing';
+      const listingPrice = unit.price ? `USD$ ${formatNumber(unit.price)}` : 'Call for price';
+      const listingLocation = unit.location || unit.state || 'Available nationwide';
+
+      function applyTracking(el, eventId, label) {
+        if (!el) return;
+        el.setAttribute('data-track-id', eventId);
+        el.setAttribute('data-track-label', label);
+        el.setAttribute('data-listing-id', listingId);
+        el.setAttribute('data-listing-title', unit.title || 'Listing');
+        el.setAttribute('data-listing-price', listingPrice);
+        el.setAttribute('data-listing-location', listingLocation);
+      }
+
+      const callBtn = document.getElementById('ctaCall');
+      const emailBtn = document.getElementById('ctaEmail');
+      const repBtn = document.getElementById('ctaRepresentative');
+
+      applyTracking(callBtn, 'unit_detail_call', `Call about ${unit.title || 'this unit'}`);
+      applyTracking(emailBtn, 'unit_detail_email', `Email about ${unit.title || 'this unit'}`);
+      applyTracking(repBtn, 'unit_detail_representative', `Talk to rep about ${unit.title || 'this unit'}`);
+
+      callBtn.onclick = () => {
+        const sanitized = (unit.phone || '0000000000').replace(/[^0-9]/g, '') || '0000000000';
+        window.location.href = `tel:${sanitized}`;
+      };
+
+      emailBtn.onclick = () => {
         const subject = `Interest in ${unit.title || 'unit'} (${unit.vin || ''})`;
         const body = `Hello,
 
@@ -343,7 +369,8 @@ Phone: ${unit.phone || '000-000-0000'}
 Thank you.`;
         window.location.href = `mailto:RCortez@mntfunding.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
       };
-      document.getElementById('ctaRepresentative').onclick = () => {
+
+      repBtn.onclick = () => {
         const subject = `Talk to a representative about ${unit.title || 'this unit'}`;
         const body = `Hello,
 
@@ -378,6 +405,8 @@ Please contact me at your earliest convenience.`;
       render(unit);
     });
   </script>
+
+  <script src="analytics.js"></script>
 
 </body>
 </html>
