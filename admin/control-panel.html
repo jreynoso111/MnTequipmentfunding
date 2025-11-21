@@ -16,7 +16,20 @@
     }
     html { font-family: var(--font-main); }
     *, *::before, *::after { box-sizing:border-box; font-family: inherit; margin:0; padding:0; }
-    body{font-family:inherit;background:#f5f7f6;color:#0b2520;line-height:1.5;padding:24px;}
+    body{font-family:inherit;background:#f5f7f6;color:#0b2520;line-height:1.5;padding:0;}
+    a { color: inherit; text-decoration: none; }
+    header.site-header { background:#ffffff; position:sticky; top:0; z-index:50; box-shadow:0 2px 6px rgba(0,0,0,.08); }
+    .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:10px 20px; gap:12px; flex-wrap:wrap; }
+    .logo { display:flex; align-items:center; gap:10px; }
+    .logo img { height:60px; width:auto; object-fit:contain; }
+    .nav-links { display:flex; align-items:center; gap:18px; font-size:14px; flex-wrap:wrap; flex:1; justify-content:flex-end; }
+    .nav-links a { padding:6px 10px; border-radius:999px; }
+    .nav-links a:hover { background:rgba(0,94,74,.08); }
+    .nav-links .active { background:#005e4a; color:#fff; }
+    .nav-actions { display:flex; align-items:center; justify-content:flex-end; }
+    .btn-small { border-radius:999px; border:1px solid #005e4a; padding:10px 22px; font-size:14px; font-weight:700; color:#005e4a; background:#fff; cursor:pointer; }
+    .btn-small:hover { background:#005e4a; color:#fff; }
+    .page { max-width:1200px; margin:20px auto 40px; padding:0 20px; }
     img{max-width:100%;height:auto;display:block;}
     h1{font-size:26px;font-weight:800;color:#0b2520;margin-bottom:6px;}
     p.lead{font-size:13px;color:#444;margin-bottom:16px;}
@@ -30,7 +43,8 @@
     .btn{border:none;border-radius:999px;padding:10px 16px;font-weight:700;font-size:13px;cursor:pointer;}
     .btn.primary{background:#005e4a;color:#fff;}
     .btn.ghost{background:#fff;color:#005e4a;border:1px solid #005e4a;}
-    table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px;}
+    .table-wrap{width:100%;overflow-x:auto;}
+    table{width:100%;min-width:1100px;border-collapse:collapse;font-size:12px;margin-top:12px;}
     th,td{padding:10px;border-bottom:1px solid #e6eeeb;text-align:left;}
     th{background:#f5faf8;color:#0b2520;font-size:12px;text-transform:uppercase;letter-spacing:.04em;}
     th.sortable{cursor:pointer;user-select:none;}
@@ -50,7 +64,24 @@
   </style>
 </head>
 <body>
-  <div id="panel">
+  <header class="site-header">
+    <div class="nav">
+      <div class="logo">
+        <a href="../index.html"><img src="../Media/LogoTransparent.png" alt="M&T Equipment Funding Logo"></a>
+      </div>
+      <nav class="nav-links">
+        <a href="control-panel.html" class="active">Control Panel</a>
+        <a href="reports.html">Reports</a>
+        <a href="admin-log.html">Admin Log</a>
+        <a href="../index.html">Back to Site</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="btn-small" type="button" data-track-id="cta_talk_rep" data-track-label="Talk to Representative" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
+      </div>
+    </div>
+  </header>
+  <main class="page">
+    <div id="panel">
     <h1>Inventory Control Panel</h1>
     <p class="lead">Offline-ready tools for managing equipment listings. Access is restricted with Hostinger directory protection; no in-browser passwords are used.</p>
     <div class="flex" style="gap:10px; margin:6px 0 14px; flex-wrap:wrap;">
@@ -192,31 +223,34 @@
         <h2 style="font-size:16px;">Current listings</h2>
         <button class="btn ghost" id="exportDataSecondary" type="button">Export JSON</button>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th class="sortable" data-sort="title"><span class="sort-label">Title <span class="sort-indicator">⇅</span></span></th>
-            <th class="sortable" data-sort="vin"><span class="sort-label">VIN <span class="sort-indicator">⇅</span></span></th>
-            <th class="sortable" data-sort="year"><span class="sort-label">Year <span class="sort-indicator">⇅</span></span></th>
-            <th class="sortable" data-sort="type"><span class="sort-label">Type <span class="sort-indicator">⇅</span></span></th>
-            <th class="sortable" data-sort="brand"><span class="sort-label">Brand <span class="sort-indicator">⇅</span></span></th>
-            <th class="sortable" data-sort="color"><span class="sort-label">Color <span class="sort-indicator">⇅</span></span></th>
-            <th class="sortable" data-sort="state"><span class="sort-label">State <span class="sort-indicator">⇅</span></span></th>
-            <th class="sortable" data-sort="location"><span class="sort-label">Location <span class="sort-indicator">⇅</span></span></th>
-            <th class="sortable" data-sort="price"><span class="sort-label">Price <span class="sort-indicator">⇅</span></span></th>
-            <th class="sortable" data-sort="mileage"><span class="sort-label">Mileage <span class="sort-indicator">⇅</span></span></th>
-            <th class="sortable" data-sort="engine"><span class="sort-label">Engine <span class="sort-indicator">⇅</span></span></th>
-            <th class="sortable" data-sort="transmission"><span class="sort-label">Trans. <span class="sort-indicator">⇅</span></span></th>
-            <th class="sortable" data-sort="condition"><span class="sort-label">Cond. <span class="sort-indicator">⇅</span></span></th>
-            <th class="sortable" data-sort="phone"><span class="sort-label">Phone <span class="sort-indicator">⇅</span></span></th>
-            <th class="sortable" data-sort="status"><span class="sort-label">Status <span class="sort-indicator">⇅</span></span></th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="sortable" data-sort="title"><span class="sort-label">Title <span class="sort-indicator">⇅</span></span></th>
+              <th class="sortable" data-sort="vin"><span class="sort-label">VIN <span class="sort-indicator">⇅</span></span></th>
+              <th class="sortable" data-sort="year"><span class="sort-label">Year <span class="sort-indicator">⇅</span></span></th>
+              <th class="sortable" data-sort="type"><span class="sort-label">Type <span class="sort-indicator">⇅</span></span></th>
+              <th class="sortable" data-sort="brand"><span class="sort-label">Brand <span class="sort-indicator">⇅</span></span></th>
+              <th class="sortable" data-sort="color"><span class="sort-label">Color <span class="sort-indicator">⇅</span></span></th>
+              <th class="sortable" data-sort="state"><span class="sort-label">State <span class="sort-indicator">⇅</span></span></th>
+              <th class="sortable" data-sort="location"><span class="sort-label">Location <span class="sort-indicator">⇅</span></span></th>
+              <th class="sortable" data-sort="price"><span class="sort-label">Price <span class="sort-indicator">⇅</span></span></th>
+              <th class="sortable" data-sort="mileage"><span class="sort-label">Mileage <span class="sort-indicator">⇅</span></span></th>
+              <th class="sortable" data-sort="engine"><span class="sort-label">Engine <span class="sort-indicator">⇅</span></span></th>
+              <th class="sortable" data-sort="transmission"><span class="sort-label">Trans. <span class="sort-indicator">⇅</span></span></th>
+              <th class="sortable" data-sort="condition"><span class="sort-label">Cond. <span class="sort-indicator">⇅</span></span></th>
+              <th class="sortable" data-sort="phone"><span class="sort-label">Phone <span class="sort-indicator">⇅</span></span></th>
+              <th class="sortable" data-sort="status"><span class="sort-label">Status <span class="sort-indicator">⇅</span></span></th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
+  </main>
 
   <script>
     const storageKey = 'inventoryData';
@@ -231,6 +265,12 @@
     let imagesState = [];
     let auditLog = [];
     let sortState = { field: 'title', direction: 'asc' };
+
+    function normalizeStatus(value) {
+      const val = (value || '').toString().trim().toLowerCase();
+      if (val === 'sold') return 'Sold';
+      return 'Available';
+    }
 
     function getEditorName() {
       const input = document.getElementById('editorName');
@@ -254,12 +294,14 @@
       const defaultFeatures = ['Clean title', 'DOT ready', 'Fresh PM service', 'Warranty options available', 'Maintenance records on file', 'Financing available'];
       const features = Array.isArray(unit.features) && unit.features.length ? unit.features : defaultFeatures;
 
+      const status = normalizeStatus(unit.status);
+
       return {
         title,
         vin: unit.vin || '',
         type: unit.type || 'Truck',
         brand: unit.brand || 'Unknown',
-        status: unit.status || 'Available',
+        status,
         price: Number(unit.price) || 0,
         mileage: Number(unit.mileage) || 0,
         state: unit.state || 'Unknown',
@@ -334,6 +376,8 @@
         })
         .forEach(({ unit, idx }) => {
           const tr = document.createElement('tr');
+          const statusLabel = normalizeStatus(unit.status);
+          const statusClass = statusLabel.toLowerCase() === 'sold' ? 'sold' : 'available';
           tr.innerHTML = `
             <td>${unit.title || ''}</td>
             <td>${unit.vin || ''}</td>
@@ -349,7 +393,7 @@
             <td>${unit.transmission || ''}</td>
             <td>${unit.condition || ''}</td>
             <td>${unit.phone || '000-000-0000'}</td>
-            <td><span class="status-pill ${(unit.status || '').toLowerCase()==='sold' ? 'sold' : 'available'}">${unit.status || 'Available'}</span></td>
+            <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
             <td class="actions" style="flex-wrap:wrap;">
               <button class="btn ghost" style="padding:6px 10px;font-size:11px;" onclick="editUnit(${idx})">Edit</button>
               <button class="btn primary" style="padding:6px 10px;font-size:11px;" onclick="deleteUnit(${idx})">Delete</button>
