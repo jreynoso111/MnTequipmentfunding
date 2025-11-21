@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inventory Change Log</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root { --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; font-family:var(--font-main); }
+    body { background:#f5f7f6; color:#0b2520; padding:24px; line-height:1.5; }
+    h1 { font-size:26px; font-weight:800; margin-bottom:6px; }
+    p.lead { font-size:13px; color:#3d4a47; margin-bottom:16px; }
+    .panel { background:#fff; border:1px solid #d8e5e0; border-radius:12px; padding:16px; box-shadow:0 4px 12px rgba(0,0,0,.06); }
+    table { width:100%; border-collapse:collapse; font-size:12px; margin-top:8px; }
+    th, td { padding:10px; border-bottom:1px solid #e6eeeb; text-align:left; vertical-align:top; }
+    th { background:#f5faf8; color:#0b2520; font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+    .btn { border:none; border-radius:999px; padding:10px 16px; font-weight:700; font-size:13px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+    .btn.primary { background:#005e4a; color:#fff; }
+    .btn.ghost { background:#fff; color:#005e4a; border:1px solid #005e4a; }
+    .muted { color:#4d5b57; font-size:12px; }
+    .badge { display:inline-flex; align-items:center; padding:4px 8px; background:#eef6f3; border:1px solid #cfe2de; border-radius:999px; font-size:11px; font-weight:700; color:#0b2520; }
+    .flex { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  </style>
+</head>
+<body>
+  <h1>Inventory change log</h1>
+  <p class="lead">Offline record of edits made in the browser. Directory protection keeps this page private; no in-page passwords are used.</p>
+  <div class="flex" style="margin:10px 0 14px;">
+    <a class="btn ghost" href="control-panel.html">Back to control panel</a>
+    <a class="btn primary" href="../Units for Sale.html">View listings</a>
+    <button class="btn ghost" id="clearLog" type="button">Clear log</button>
+    <button class="btn primary" id="exportLog" type="button">Export log</button>
+  </div>
+
+  <div class="panel">
+    <div class="flex" style="justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h2 style="font-size:16px;">Recent activity</h2>
+      <span class="badge" id="entryCount">0 entries</span>
+    </div>
+    <p class="muted" style="margin-top:-6px;">Tracks created, updated, and deleted listings with editor names and timestamps.</p>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th style="min-width:120px;">Timestamp</th>
+            <th style="min-width:120px;">Editor</th>
+            <th style="min-width:90px;">Action</th>
+            <th style="min-width:120px;">VIN</th>
+            <th style="min-width:160px;">Title</th>
+            <th style="min-width:220px;">Details</th>
+          </tr>
+        </thead>
+        <tbody id="logBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const auditKey = 'inventoryAuditLog';
+
+    function loadAuditLog() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(auditKey) || '[]');
+        if (Array.isArray(saved)) return saved;
+      } catch (e) {}
+      return [];
+    }
+
+    function saveAuditLog(entries) {
+      localStorage.setItem(auditKey, JSON.stringify(entries));
+    }
+
+    function formatTime(ts) {
+      try {
+        return new Date(ts).toLocaleString();
+      } catch (e) {
+        return ts;
+      }
+    }
+
+    function renderLog() {
+      const body = document.getElementById('logBody');
+      const entries = loadAuditLog();
+      body.innerHTML = '';
+      if (!entries.length) {
+        body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#555;">No activity recorded yet.</td></tr>';
+      } else {
+        entries.forEach(entry => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${formatTime(entry.timestamp)}</td>
+            <td>${entry.user || 'offline-admin'}</td>
+            <td>${entry.action || ''}</td>
+            <td>${entry.vin || ''}</td>
+            <td>${entry.title || ''}</td>
+            <td>${(entry.details || []).join('<br>')}</td>
+          `;
+          body.appendChild(tr);
+        });
+      }
+      document.getElementById('entryCount').textContent = `${entries.length} entr${entries.length === 1 ? 'y' : 'ies'}`;
+    }
+
+    function clearLog() {
+      if (!confirm('Clear the change log stored in this browser?')) return;
+      saveAuditLog([]);
+      renderLog();
+    }
+
+    function exportLog() {
+      const entries = loadAuditLog();
+      const blob = new Blob([JSON.stringify(entries, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'inventory-audit-log.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('clearLog').addEventListener('click', clearLog);
+    document.getElementById('exportLog').addEventListener('click', exportLog);
+    renderLog();
+  </script>
+</body>
+</html>
