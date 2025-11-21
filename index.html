@@ -531,17 +531,18 @@
       <img class="logo-mark" src="Media/LogoTransparent.png" alt="M&T Equipment Funding Logo" />
     </div>
     <nav class="nav-links">
-      <a href="index.html" class="active">Home</a>
-      <a href="Applications.html">Applications</a>
-      <a href="Services.html">Services</a>
+      <a href="index.html" class="active" data-track-id="nav_home" data-track-label="Header Home Link">Home</a>
+      <a href="Applications.html" data-track-id="nav_applications" data-track-label="Header Applications Link">Applications</a>
+      <a href="Services.html" data-track-id="nav_services" data-track-label="Header Services Link">Services</a>
       <div class="dropdown">
-        <a href="Inventory.html">Inventory ▾</a>
+        <a href="Inventory.html" data-track-id="nav_inventory" data-track-label="Header Inventory Link">Inventory ▾</a>
         <div class="dropdown-menu">
-          <a href="Units for Sale.html">All Units for Sale</a>
+          <a href="Units for Sale.html" data-track-id="nav_units" data-track-label="All Units for Sale">All Units for Sale</a>
         </div>
       </div>
-      <a href="About us.html">About Us</a>
-      <button class="btn-small" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
+      <a href="About us.html" data-track-id="nav_about" data-track-label="Header About Link">About Us</a>
+      <a href="Reports.html" data-track-id="nav_reports" data-track-label="Header Reports Link">Reports</a>
+      <button class="btn-small" type="button" data-track-id="cta_talk_rep" data-track-label="Talk to Representative" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
     </nav>
   </div>
 </header>
@@ -560,7 +561,7 @@
     </div>
 
     <div style="flex:0 1 360px; max-width:380px; display:flex; align-items:center; justify-content:center;">
-  <a href="Applications.html" class="btn-primary" style="font-size:18px; padding:16px 32px;">START YOUR APPLICATION</a>
+  <a href="Applications.html" class="btn-primary" style="font-size:18px; padding:16px 32px;" data-track-id="cta_start_application" data-track-label="Hero Start Application">START YOUR APPLICATION</a>
 </div>
       
     </div>
@@ -714,6 +715,8 @@
       }
     });
   </script>
+
+  <script src="analytics.js"></script>
 
 <footer>
   <div class="footer-icons" style="display:flex; justify-content:center; gap:24px; margin-bottom:12px;">

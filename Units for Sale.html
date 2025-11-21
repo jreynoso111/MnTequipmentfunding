@@ -123,19 +123,20 @@
       <a href="index.html"><img src="Media/LogoTransparent.png" alt="Logo" /></a>
     </div>
     <nav class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="Applications.html">Applications</a>
-      <a href="Services.html">Services</a>
+      <a href="index.html" data-track-id="nav_home" data-track-label="Header Home Link">Home</a>
+      <a href="Applications.html" data-track-id="nav_applications" data-track-label="Header Applications Link">Applications</a>
+      <a href="Services.html" data-track-id="nav_services" data-track-label="Header Services Link">Services</a>
       <div class="inv-wrapper" style="position:relative;">
-        <a href="Inventory.html" class="inv-link active" style="padding:6px 10px; border-radius:999px;">Inventory ▾</a>
+        <a href="Inventory.html" class="inv-link active" style="padding:6px 10px; border-radius:999px;" data-track-id="nav_inventory" data-track-label="Header Inventory Link">Inventory ▾</a>
         <div class="inv-dropdown" style="position:absolute; top:28px; left:0; background:#ffffff; border:1px solid #ddd; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,.1); width:200px; overflow:hidden; display:none;">
-          <a href="Inventory.html" style="padding:8px 12px; font-size:14px; display:block;">Inventory overview</a>
-          <a href="Units for Sale.html" style="padding:8px 12px; font-size:14px; display:block;">All Units for Sale</a>
+          <a href="Inventory.html" style="padding:8px 12px; font-size:14px; display:block;" data-track-id="nav_inventory_overview" data-track-label="Inventory Overview">Inventory overview</a>
+          <a href="Units for Sale.html" style="padding:8px 12px; font-size:14px; display:block;" data-track-id="nav_units" data-track-label="All Units for Sale">All Units for Sale</a>
         </div>
       </div>
-      <a href="About us.html">About Us</a>
+      <a href="About us.html" data-track-id="nav_about" data-track-label="Header About Link">About Us</a>
+      <a href="Reports.html" data-track-id="nav_reports" data-track-label="Header Reports Link">Reports</a>
 
-      <button class="btn-small" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
+      <button class="btn-small" data-track-id="cta_talk_rep" data-track-label="Talk to Representative" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
     </nav>
   </div>
 </header>
@@ -535,6 +536,8 @@ if (document.readyState === 'loading') {
   init();
 }
 </script>
+
+<script src="analytics.js"></script>
 
 
 </body>

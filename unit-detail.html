@@ -70,24 +70,25 @@
       <a href="index.html"><img src="Media/LogoTransparent.png" alt="Logo" /></a>
     </div>
     <nav class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="Applications.html">Applications</a>
-      <a href="Services.html">Services</a>
+      <a href="index.html" data-track-id="nav_home" data-track-label="Header Home Link">Home</a>
+      <a href="Applications.html" data-track-id="nav_applications" data-track-label="Header Applications Link">Applications</a>
+      <a href="Services.html" data-track-id="nav_services" data-track-label="Header Services Link">Services</a>
       <div class="dropdown">
-        <a href="Inventory.html" class="active">Inventory ▾</a>
+        <a href="Inventory.html" class="active" data-track-id="nav_inventory" data-track-label="Header Inventory Link">Inventory ▾</a>
         <div class="dropdown-content">
-          <a href="Inventory.html">Inventory overview</a>
-          <a href="Units for Sale.html">All units for sale</a>
+          <a href="Inventory.html" data-track-id="nav_inventory_overview" data-track-label="Inventory Overview">Inventory overview</a>
+          <a href="Units for Sale.html" data-track-id="nav_units" data-track-label="All Units for Sale">All units for sale</a>
         </div>
       </div>
-      <a href="About us.html">About Us</a>
-      <button class="btn-small" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
+      <a href="About us.html" data-track-id="nav_about" data-track-label="Header About Link">About Us</a>
+      <a href="Reports.html" data-track-id="nav_reports" data-track-label="Header Reports Link">Reports</a>
+      <button class="btn-small" type="button" data-track-id="cta_talk_rep" data-track-label="Talk to Representative" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
     </nav>
   </div>
 </header>
 
   <main class="container">
-    <div class="back-row"><a class="back-link" href="Units for Sale.html" onclick="event.preventDefault(); if (history.length > 1) { history.back(); } else { window.location.href='Units for Sale.html'; }">&larr; Return to last page</a></div>
+    <div class="back-row"><a class="back-link" href="Units for Sale.html" data-track-id="unit_back" data-track-label="Return to inventory" onclick="event.preventDefault(); if (history.length > 1) { history.back(); } else { window.location.href='Units for Sale.html'; }">&larr; Return to last page</a></div>
     <div class="crumbs"><a href="Inventory.html">Inventory</a> &gt; <a href="Units for Sale.html">All units</a> &gt; <span id="crumbVin">Details</span></div>
     <div class="detail-card" id="detailCard" style="display:none;">
       <div class="detail-header">
@@ -378,6 +379,8 @@ Please contact me at your earliest convenience.`;
       render(unit);
     });
   </script>
+
+  <script src="analytics.js"></script>
 
 </body>
 </html>

@@ -157,17 +157,18 @@
         <img src="Media/LogoTransparent.png" alt="Company Logo" class="logo-mark" />
       </div>
       <nav class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="Applications.html">Applications</a>
-        <a href="Services.html" class="active">Services</a>
+        <a href="index.html" data-track-id="nav_home" data-track-label="Header Home Link">Home</a>
+        <a href="Applications.html" data-track-id="nav_applications" data-track-label="Header Applications Link">Applications</a>
+        <a href="Services.html" class="active" data-track-id="nav_services" data-track-label="Header Services Link">Services</a>
         <div class="dropdown">
-          <a href="Inventory.html" class="dropdown-toggle">Inventory ▾</a>
+          <a href="Inventory.html" class="dropdown-toggle" data-track-id="nav_inventory" data-track-label="Header Inventory Link">Inventory ▾</a>
           <div class="dropdown-menu">
-            <a href="Units for Sale.html">All units for sale</a>
+            <a href="Units for Sale.html" data-track-id="nav_units" data-track-label="All Units for Sale">All units for sale</a>
           </div>
         </div>
-        <a href="About us.html">About Us</a>
-        <button class="btn-small" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
+        <a href="About us.html" data-track-id="nav_about" data-track-label="Header About Link">About Us</a>
+        <a href="Reports.html" data-track-id="nav_reports" data-track-label="Header Reports Link">Reports</a>
+        <button class="btn-small" type="button" data-track-id="cta_talk_rep" data-track-label="Talk to Representative" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
       </nav>
     </div>
   </header>
@@ -338,10 +339,12 @@
           <div class="cta-main">Not sure if your situation fits?</div>
           <div class="cta-sub">Share the year, make, model and approximate price of the unit, plus a few lines about your business. We will let you know if it is something we can look at.</div>
         </div>
-        <button class="cta-btn" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
+        <button class="cta-btn" type="button" data-track-id="cta_talk_rep" data-track-label="Services CTA Talk to Representative" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
       </div>
     </section>
   </main>
+
+  <script src="analytics.js"></script>
 
   <footer>
     M&T Equipment Funding LLC &middot; Commercial truck and trailer financing &middot; This page is for information only and does not represent a commitment to lend.

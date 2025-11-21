@@ -111,16 +111,17 @@
       <img src="Media/LogoTransparent.png" alt="Company Logo" />
     </div>
     <nav class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="Applications.html">Applications</a>
-      <a href="Services.html">Services</a>
+      <a href="index.html" data-track-id="nav_home" data-track-label="Header Home Link">Home</a>
+      <a href="Applications.html" data-track-id="nav_applications" data-track-label="Header Applications Link">Applications</a>
+      <a href="Services.html" data-track-id="nav_services" data-track-label="Header Services Link">Services</a>
       <div class="dropdown" style="position:relative;">
-        <a href="Inventory.html" class="dropbtn">Inventory</a>
+        <a href="Inventory.html" class="dropbtn" data-track-id="nav_inventory" data-track-label="Header Inventory Link">Inventory</a>
         <div class="dropdown-content" style="display:none; position:absolute; top:32px; left:0; background:#ffffff; border:1px solid #ddd; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,.1); min-width:160px;">
-          <a href="Units for Sale.html" style="display:block;padding:10px 14px;">All Units for Sale</a>
+          <a href="Units for Sale.html" style="display:block;padding:10px 14px;" data-track-id="nav_units" data-track-label="All Units for Sale">All Units for Sale</a>
         </div>
       </div>
-      <a href="About us.html" class="active">About Us</a>
+      <a href="About us.html" class="active" data-track-id="nav_about" data-track-label="Header About Link">About Us</a>
+      <a href="Reports.html" data-track-id="nav_reports" data-track-label="Header Reports Link">Reports</a>
     </nav>
   </div>
 </header>
@@ -152,8 +153,8 @@
         <p class="hero-sub">We review collateral, deal structure, and your overall profile, often providing a clear pre-qualification update in about one business day (timing may vary).</p>
         <p class="hero-sub">Every conversation focuses on practical guidance, transparent requirements, and realistic timelines so you know what to expect before moving forward with a truck or trailer purchase.</p>
         <div class="hero-actions">
-          <button class="btn-primary" type="button" onclick="window.location.href='mailto:MDereshevkaia@mntfunding.com'">Talk to a Representative</button>
-          <button class="btn-ghost" type="button" onclick="window.location.href='Applications.html'">Start Application</button>
+          <button class="btn-primary" type="button" data-track-id="cta_talk_rep" data-track-label="About Hero Talk to Representative" onclick="window.location.href='mailto:MDereshevkaia@mntfunding.com'">Talk to a Representative</button>
+          <button class="btn-ghost" type="button" data-track-id="cta_start_application" data-track-label="About Hero Start Application" onclick="window.location.href='Applications.html'">Start Application</button>
         </div>
       </div>
     </div>
@@ -263,7 +264,7 @@
       <div class="team-card">
         <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=1200&q=80" alt="Line of semi-trucks parked in a yard">
         <div class="team-name">Margo Dereshevskaia</div>
-        <div class="team-role">Financing Director</div>
+        <div class="team-role">Financing Manager</div>
         <p class="team-bio">Leads funding reviews, structures deals, and keeps applicants informed from submission through approval.</p>
         <a class="team-email" href="mailto:MDereshevkaia@mntfunding.com">MDereshevkaia@mntfunding.com</a>
       </div>
@@ -313,10 +314,12 @@
   </footer>
   <!-- FOOTER BANNER -->
   <div style="width:100%; background:#003737; color:#ffffff; padding:14px 0; margin-top:16px; overflow:hidden; white-space:nowrap;">
-    <div style="display:inline-block; padding-left:100%; animation:marquee 18s linear infinite; font-size:14px;">
+  <div style="display:inline-block; padding-left:100%; animation:marquee 18s linear infinite; font-size:14px;">
       📧 Email: info@mntfunding.com &nbsp; | &nbsp; 🔗 Instagram: @MTequipmentfunding &nbsp; | &nbsp; 🔗 Facebook: M&T Equipment Funding LLC &nbsp; | &nbsp; © 2025 M&T Equipment Funding LLC — All Rights Reserved &nbsp; | &nbsp; Commercial Truck & Trailer Financing
     </div>
   </div>
+
+  <script src="analytics.js"></script>
 
   <style>
     @keyframes marquee {
