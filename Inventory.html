@@ -366,21 +366,6 @@
     }
     .cta-btn:hover { background:#f0faf7; }
 
-    .settings-access {
-      margin:16px auto 6px;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-      align-items:center;
-      text-align:center;
-    }
-
-    .settings-note {
-      font-size:12px;
-      color:#444;
-      max-width:520px;
-    }
-
     footer {
       border-top:1px solid #dde6e2;
       padding:10px 20px 22px;
@@ -478,134 +463,6 @@
   </style>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const DEFAULT_ACCOUNTS = [
-        { user: 'admin', pass: 'adminmnt', role: 'admin' },
-        { user: 'rcortez', pass: 'cortezmnt', role: 'manager' }
-      ];
-      const lockKey = 'inventoryLoginLock';
-      const sessionKey = 'inventorySession';
-      const SESSION_TTL_MINUTES = 90;
-
-      function hashPassword(pass) {
-        return 'hash:' + btoa(pass || '');
-      }
-
-      function normalizeAccount(acc) {
-        if (!acc || !acc.user) return null;
-        const hashed = (acc.pass || '').startsWith('hash:') ? acc.pass : hashPassword(acc.pass || '');
-        return { user: acc.user, pass: hashed, role: acc.role || 'manager' };
-      }
-
-      function passwordsMatch(account, input) {
-        return account.pass === hashPassword(input);
-      }
-
-      function loadAccounts() {
-        const saved = localStorage.getItem('inventoryAccounts');
-        let accounts = [];
-        if (saved) {
-          try {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed)) accounts = parsed.map(normalizeAccount).filter(Boolean);
-          } catch (e) {
-            console.warn('Could not parse saved accounts');
-          }
-        }
-        DEFAULT_ACCOUNTS.forEach(base => {
-          const normalized = normalizeAccount(base);
-          const idx = accounts.findIndex(a => a.user === normalized.user);
-          if (idx >= 0) {
-            accounts[idx] = { ...normalized, ...accounts[idx] };
-          } else {
-            accounts.push(normalized);
-          }
-        });
-        localStorage.setItem('inventoryAccounts', JSON.stringify(accounts));
-        return accounts;
-      }
-
-      function getLock() {
-        try {
-          return JSON.parse(localStorage.getItem(lockKey)) || { attempts: 0, lockedUntil: 0 };
-        } catch (e) {
-          return { attempts: 0, lockedUntil: 0 };
-        }
-      }
-
-      function saveLock(data) { localStorage.setItem(lockKey, JSON.stringify(data)); }
-      function resetLock() { saveLock({ attempts: 0, lockedUntil: 0 }); }
-      function recordFailedAttempt() {
-        const lock = getLock();
-        lock.attempts += 1;
-        if (lock.attempts >= 5) {
-          lock.lockedUntil = Date.now() + (15 * 60 * 1000);
-          lock.attempts = 0;
-        }
-        saveLock(lock);
-      }
-      function canAttempt() {
-        const lock = getLock();
-        if (lock.lockedUntil && Date.now() < lock.lockedUntil) return false;
-        return true;
-      }
-
-      function setSession(account) {
-        const expires = Date.now() + SESSION_TTL_MINUTES * 60 * 1000;
-        localStorage.setItem(sessionKey, JSON.stringify({ user: account.user, role: account.role, expires }));
-      }
-
-      let accounts = loadAccounts();
-
-      const modal = document.getElementById('toolModal');
-      const toolBtn = document.getElementById('toolButton');
-      const cancelBtn = document.getElementById('toolCancel');
-      const confirmBtn = document.getElementById('toolConfirm');
-      const userInput = document.getElementById('toolUser');
-      const passInput = document.getElementById('toolPass');
-
-      function openModal() {
-        if (modal) {
-          modal.style.display = 'flex';
-          userInput.focus();
-        }
-      }
-
-      function closeModal() {
-        if (modal) {
-          modal.style.display = 'none';
-          userInput.value = '';
-          passInput.value = '';
-        }
-      }
-
-      function handleLogin() {
-        if (!canAttempt()) {
-          alert('Too many attempts. Please wait a few minutes before trying again.');
-          return;
-        }
-        const user = userInput.value.trim();
-        const pass = passInput.value.trim();
-        const account = accounts.find(a => a.user === user && passwordsMatch(a, pass));
-        if (account) {
-          resetLock();
-          setSession(account);
-          window.location.href = 'control-panel.html';
-        } else {
-          recordFailedAttempt();
-          alert('Invalid username or password.');
-        }
-      }
-
-      if (toolBtn) toolBtn.addEventListener('click', openModal);
-      if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-      if (confirmBtn) confirmBtn.addEventListener('click', handleLogin);
-      [userInput, passInput].forEach(input => input && input.addEventListener('keyup', (e) => {
-        if (e.key === 'Enter') {
-          handleLogin();
-        }
-      }));
-
-      // Dropdown delayed hide
       const dropdown = document.querySelector('.dropdown');
       let hideTimeout;
       if (dropdown) {
@@ -630,7 +487,6 @@
       if (!featuredContainer) return;
 
       const storageKey = 'inventoryData';
-      const MIN_LISTINGS = 35;
       const MAX_IMAGES = 10;
       const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg';
       const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
@@ -639,14 +495,6 @@
         const fromArray = Array.isArray(unit.images) ? unit.images.filter(Boolean) : [];
         const merged = [...new Set([unit.image, ...fromArray].filter(Boolean))];
         return merged.slice(0, MAX_IMAGES);
-      }
-
-      function hasDiverseInventory(list) {
-        const arr = Array.isArray(list) ? list : [];
-        const uniqueVin = new Set(arr.map(u => (u.vin || '').toUpperCase())).size;
-        const uniqueTitle = new Set(arr.map(u => (u.title || '').toUpperCase())).size;
-        const uniqueTypes = new Set(arr.map(u => (u.type || '').toLowerCase())).size;
-        return arr.length >= MIN_LISTINGS && uniqueVin >= MIN_LISTINGS && uniqueTitle >= MIN_LISTINGS && uniqueTypes.size > 1;
       }
 
       function deriveMake(title = '') {
@@ -694,16 +542,13 @@
           if (saved) {
             const parsed = JSON.parse(saved);
             if (Array.isArray(parsed) && parsed.length) {
-              const normalized = parsed.map(normalizeUnit);
-              if (hasDiverseInventory(normalized)) {
-                localStorage.setItem(storageKey, JSON.stringify(normalized));
-                return normalized;
-              }
+              const normalized = parsed.map(normalizeUnit).filter(Boolean);
+              if (normalized.length) return normalized;
             }
           }
         } catch (e) {}
-        const seeded = BASE_UNITS.map(normalizeUnit);
-        localStorage.setItem(storageKey, JSON.stringify(seeded));
+        const seeded = BASE_UNITS.map(normalizeUnit).filter(Boolean);
+        if (seeded.length) localStorage.setItem(storageKey, JSON.stringify(seeded));
         return seeded;
       }
 
@@ -962,26 +807,8 @@
       <button class="cta-btn" type="button" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
     </section>
 
-    <div class="settings-access">
-      <button class="tool-link" type="button" id="toolButton">Settings</button>
-    </div>
   </main>
 
-  <div class="modal-backdrop" id="toolModal">
-    <div class="modal">
-      <h3>Admin Access Required</h3>
-      <p>Sign in with <strong>admin/adminmnt</strong> (admin) or <strong>rcortez/cortezmnt</strong> (manager) to edit vehicle listings.</p>
-      <label for="toolUser">Username</label>
-      <input id="toolUser" name="toolUser" type="text" placeholder="Enter username" autocomplete="username" />
-      <label for="toolPass">Password</label>
-      <input id="toolPass" name="toolPass" type="password" placeholder="Enter password" autocomplete="current-password" />
-      <div class="modal-actions">
-        <button class="ghost" type="button" id="toolCancel">Cancel</button>
-        <button class="primary" type="button" id="toolConfirm">Continue</button>
-      </div>
-      <p style="margin-top:8px;color:#666;font-size:11px;">Tip: Save your selection to stay signed in while updating listings.</p>
-    </div>
-  </div>
 
   <footer>
     <div>&copy; 2025 M&amp;T Equipment Funding LLC &mdash; Commercial Truck &amp; Trailer Financing</div>
