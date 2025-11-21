@@ -10,91 +10,95 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --font-main: "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+      --font-main: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
+      --accent: #005e4a;
     }
     html { font-family: var(--font-main); }
     *, *::before, *::after { box-sizing: border-box; font-family: inherit; }
-    body{margin:0;font-family:inherit;background:#f5f7f6;color:#0b2520;line-height:1.5;}
-    a{text-decoration:none;color:inherit;}
-    img{max-width:100%;height:auto;display:block;}
+    body { margin: 0; background: #f5f7f6; color: #0b2520; line-height: 1.6; }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; height: auto; display: block; }
 
-    header { background:#ffffff; box-shadow:0 2px 6px rgba(0,0,0,.08); position:sticky; top:0; z-index:10; }
-    .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:10px 20px; }
-    .logo{display:flex;align-items:center;gap:10px;}
-    .logo img { height:60px; width:auto; object-fit:contain; }
-    .logo-mark{height:60px;width:auto;border-radius:0;object-fit:contain;}
-    .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
-    .nav-links a{padding:6px 10px;border-radius:999px;}
-    .nav-links a:hover{background:rgba(0,94,74,.08);}
-    .nav-links .active{background:#005e4a;color:#fff;}
+    header { background: #ffffff; box-shadow: 0 2px 6px rgba(0, 0, 0, .08); position: sticky; top: 0; z-index: 10; }
+    .nav { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; gap: 12px; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo img { height: 60px; width: auto; object-fit: contain; }
+    .nav-links { display: flex; align-items: center; gap: 18px; font-size: 14px; }
+    .nav-links a { padding: 6px 10px; border-radius: 999px; }
+    .nav-links a:hover { background: rgba(0, 94, 74, .08); }
+    .nav-links .active { background: #005e4a; color: #fff; }
+    .nav-actions { display: flex; align-items: center; gap: 12px; }
     .btn-small {
-      border-radius:999px;
-      border:1px solid #005e4a;
-      padding:10px 22px;
-      font-size:14px;
-      font-weight:600;
-      color:#005e4a;
-      background:#fff;
-      cursor:pointer;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      background: #fff;
+      cursor: pointer;
+      transition: all .18s ease;
     }
-    .btn-small:hover{background:#005e4a;color:#fff;}
+    .btn-small:hover { background: var(--accent); color: #fff; }
 
-    main{max-width:1100px;margin:20px auto 40px;padding:0 20px;}
+    main { max-width: 1100px; margin: 18px auto 36px; padding: 0 20px; }
 
-    @media (max-width:720px){
-      .nav{flex-direction:column;align-items:flex-start;gap:10px;}
-      .nav-links{flex-wrap:wrap;width:100%;}
-      .btn-small{width:100%;text-align:center;}
+    .hero { background: #ffffff; border-radius: 18px; padding: 20px; box-shadow: 0 8px 24px rgba(0, 0, 0, .06); }
+    .hero-layout { display: grid; grid-template-columns: 1fr 0.9fr; gap: 28px; align-items: center; }
+    .hero-kicker { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: #0b5c47; text-transform: uppercase; margin-bottom: 8px; }
+    .hero-title { font-size: 30px; font-weight: 800; margin: 0 0 10px; color: #0b2520; }
+    .hero-sub { font-size: 15px; color: #1f3a33; margin: 0 0 10px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+    .hero-visual { order: 2; }
+    .hero-visual img { width: 100%; height: 420px; border-radius: 24px; object-fit: cover; box-shadow: 0 10px 30px rgba(0, 0, 0, .12); }
+    .btn-primary { border-radius: 10px; border: 1px solid var(--accent); background: var(--accent); color: #fff; padding: 12px 18px; font-weight: 700; cursor: pointer; transition: all .18s ease; }
+    .btn-ghost { border-radius: 10px; border: 1px solid #b8d7cd; background: #fff; color: var(--accent); padding: 12px 18px; font-weight: 700; cursor: pointer; transition: all .18s ease; }
+    .btn-primary:hover { background: #024b3c; }
+    .btn-ghost:hover { border-color: var(--accent); }
+
+    section { margin-top: 18px; }
+    .card { background: #ffffff; border-radius: 14px; padding: 16px 18px; box-shadow: 0 3px 10px rgba(0, 0, 0, .04); border: 1px solid #e3ece9; }
+    .section-title { font-size: 20px; font-weight: 700; margin: 0 0 8px; color: #0b2520; }
+    .section-text { font-size: 14px; color: #444; margin: 0 0 8px; }
+    .list { margin: 8px 0 0; padding-left: 18px; color: #1f3a33; }
+    .list li { margin-bottom: 6px; }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .value-card { background: #f8fbfa; border-radius: 12px; padding: 14px; border: 1px solid #d3e8e1; height: 100%; }
+    .value-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--accent); }
+    .value-text { font-size: 13px; color: #3a4c45; margin: 0; }
+
+    .process-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+    .process-card { background: #ffffff; border: 1px solid #dfe9e5; border-radius: 12px; padding: 14px; box-shadow: 0 2px 8px rgba(0,0,0,.03); }
+    .process-label { display: inline-block; font-size: 11px; font-weight: 700; color: #005e4a; background: #e4f1ec; padding: 4px 10px; border-radius: 999px; margin-bottom: 8px; }
+
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+    .team-card { background: #ffffff; border: 1px solid #dfe9e5; border-radius: 14px; padding: 14px; box-shadow: 0 3px 10px rgba(0, 0, 0, .04); display: flex; flex-direction: column; height: 100%; }
+    .team-card img { width: 100%; max-width: 160px; border-radius: 12px; margin: 0 auto 10px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,.06); }
+    .team-name { font-weight: 700; font-size: 16px; margin-bottom: 4px; text-align: center; }
+    .team-role { font-size: 13px; color: #0b5c47; text-align: center; margin-bottom: 8px; }
+    .team-bio { font-size: 13px; color: #3a4c45; margin-bottom: 8px; }
+    .team-email { font-size: 13px; color: var(--accent); font-weight: 700; text-align: center; }
+
+    .cta-section { background: #ffffff; border-radius: 14px; padding: 16px 18px; box-shadow: 0 6px 18px rgba(0,0,0,.05); border: 1px solid #e3ece9; text-align: center; }
+    .cta-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; color: #0b2520; }
+    .cta-text { font-size: 14px; color: #444; margin-bottom: 12px; }
+    .cta-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
+
+    footer { border-top: 1px solid #dde6e2; padding: 16px 20px 22px; font-size: 11px; color: #777; text-align: center; margin-top: 32px; }
+
+    @media(max-width: 900px) {
+      .hero-layout { grid-template-columns: 1fr; }
+      .hero-visual { order: -1; }
+      .hero-actions button { width: 100%; }
     }
-    .hero{background:#ffffff;border-radius:16px;padding:22px 22px 20px;box-shadow:0 8px 24px rgba(0,0,0,.06);}
-    .hero-layout{display:grid;grid-template-columns:1.1fr 0.9fr;gap:28px;align-items:center;}
-    .hero-kicker{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#008060;margin-bottom:8px;}
-    .hero-title{font-size:30px;font-weight:800;margin-bottom:12px;color:#0b2520;}
-    .hero-sub{font-size:14px;color:#1f3a33;max-width:720px;margin-bottom:10px;}
-    .hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;}
-    .hero-visual{order:2;}
-    .hero-visual img{width:100%;height:420px;border-radius:24px;object-fit:cover;box-shadow:0 10px 30px rgba(0,0,0,.12);}
-    .btn-primary{border-radius:10px;border:1px solid #005e4a;background:#005e4a;color:#fff;padding:12px 18px;font-weight:700;cursor:pointer;}
-    .btn-ghost{border-radius:10px;border:1px solid #b8d7cd;background:#fff;color:#005e4a;padding:12px 18px;font-weight:700;cursor:pointer;}
-
-    section{margin-top:22px;}
-    .card{background:#ffffff;border-radius:14px;padding:18px 18px 16px;box-shadow:0 3px 10px rgba(0,0,0,.04);border:1px solid #e3ece9;}
-    .section-title{font-size:20px;font-weight:700;margin-bottom:8px;color:#0b2520;}
-    .section-text{font-size:14px;color:#444;margin-bottom:10px;}
-
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
-    .value-grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
-    .value-grid .value-card{height:100%;}
-    .team-grid .value-card{display:flex;flex-direction:column;align-items:center;text-align:center;}
-    .team-grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
-    .team-grid .value-card img{margin:0 auto 10px;width:100%;max-width:160px;}
-    .team-grid .value-card{height:100%;}
-
-    .value-card{background:#f7fbfa;border-radius:12px;padding:16px;border:1px solid #d3e8e1;}
-    .value-title{font-size:15px;font-weight:700;margin-bottom:4px;color:#005e4a;}
-    .value-text{font-size:13px;color:#444;}
-    .pill{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid #b8d7cd;font-size:11px;font-weight:700;color:#005e4a;background:#fff;}
-
-    .cta-section{background:#ffffff;border-radius:14px;padding:18px 18px 16px;box-shadow:0 6px 18px rgba(0,0,0,.05);border:1px solid #e3ece9;text-align:center;}
-    .cta-title{font-size:20px;font-weight:800;margin-bottom:8px;color:#0b2520;}
-    .cta-text{font-size:14px;color:#444;margin-bottom:14px;}
-    .cta-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;}
-
-    .team-card{background:#003737;color:#fff;border-radius:14px;padding:20px;}
-    .team-title{font-size:18px;font-weight:700;margin-bottom:6px;}
-    .team-sub{font-size:13px;margin-bottom:10px;opacity:.9;}
-
-    footer{border-top:1px solid #dde6e2;padding:16px 20px 22px;font-size:11px;color:#777;text-align:center;margin-top:40px;}
-
-    @media(max-width:800px){
-      .grid-2{grid-template-columns:1fr;}
-      .hero-layout{grid-template-columns:1fr;}
-    }
-    @media(max-width:768px){
-      .hero-visual{order:-1;}
-      .hero-actions button{width:100%;}
+    @media(max-width: 720px) {
+      .nav { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .nav-links { flex-wrap: wrap; width: 100%; }
+      .btn-small { width: 100%; text-align: center; }
     }
   </style>
 </head>
@@ -114,142 +118,164 @@
           <a href="Units for Sale.html" style="display:block;padding:10px 14px;">All Units for Sale</a>
         </div>
       </div>
-      <a href="About us.html" class="active" style="background:#005e4a;color:#fff;">About Us</a>
+      <a href="About us.html" class="active">About Us</a>
     </nav>
-
-<script>
-let dropdown = document.querySelector('.dropdown');
-let menu = document.querySelector('.dropdown-content');
-let timeout;
-
-dropdown.addEventListener('mouseenter', () => {
-  clearTimeout(timeout);
-  menu.style.display = 'block';
-});
-
-dropdown.addEventListener('mouseleave', () => {
-  timeout = setTimeout(() => {
-    menu.style.display = 'none';
-  }, 1000); // 1 second delay
-});
-</script>
+    <div class="nav-actions">
+      <a class="btn-small" href="mailto:MDereshevkaia@mntfunding.com">Talk to Representative</a>
+    </div>
   </div>
 </header>
+<script>
+  let dropdown = document.querySelector('.dropdown');
+  let menu = document.querySelector('.dropdown-content');
+  let timeout;
+  dropdown.addEventListener('mouseenter', () => {
+    clearTimeout(timeout);
+    menu.style.display = 'block';
+  });
+  dropdown.addEventListener('mouseleave', () => {
+    timeout = setTimeout(() => {
+      menu.style.display = 'none';
+    }, 1000);
+  });
+</script>
 
 <main>
-  <section class="hero" style="margin-bottom:14px;">
+  <section class="hero">
     <div class="hero-layout">
+      <div class="hero-visual" style="width:100%;text-align:center;">
+        <img src="https://images.unsplash.com/photo-1501700493788-fa1a4fc9fe62?auto=format&fit=crop&w=1400&q=80" alt="Semi trucks driving on an open road at sunset">
+      </div>
       <div class="hero-content">
         <div class="hero-kicker">ABOUT US</div>
-        <h1 class="hero-title">Commercial truck & trailer financing built for small fleets</h1>
-        <p class="hero-sub">M&T Equipment Funding provides straightforward financing for owner-operators, small fleets, and dealers who need reliable trucks and trailers.</p>
-        <p class="hero-sub">We pair funding with ready-to-roll inventory so you can pick the right unit, secure financing fast, and keep your business moving.</p>
+        <h1 class="hero-title">About M&T Equipment Funding LLC</h1>
+        <p class="hero-sub">We are a commercial truck and equipment financing company—not a vehicle dealer. Our team partners with owner-operators and small fleets to fund the right trucks and trailers.</p>
+        <p class="hero-sub">We review collateral, deal structure, and your overall profile, often providing a clear pre-qualification update in about one business day (timing may vary).</p>
         <div class="hero-actions">
-          <button class="btn-primary" type="button" onclick="window.location.href='Inventory.html'">View Inventory</button>
-          <button class="btn-ghost" type="button" onclick="window.location.href='Applications.html'">Start an Application</button>
+          <button class="btn-primary" type="button" onclick="window.location.href='mailto:MDereshevkaia@mntfunding.com'">Talk to a Representative</button>
+          <button class="btn-ghost" type="button" onclick="window.location.href='Applications.html'">Start Application</button>
         </div>
       </div>
-      <div class="hero-visual" style="width:100%;text-align:center;">
-        <img src="https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=1400&q=80" alt="Long-haul trucks driving on a highway">
-      </div>
-    </div>
-  </section>
-
-  
-
-  <section class="card">
-    <h2 class="section-title">Our Mission</h2>
-    <p class="section-text">To help hardworking drivers and business owners access reliable, fair, and fast financing—so they can keep their operations moving, expand their fleets, and grow their businesses without unnecessary delays or complications.</p>
-
-    <p class="section-text">We understand that commercial trucking is the backbone of the economy. Our team works every day to make sure financing doesn’t slow you down.</p>
-  </section>
-
-  <section class="card">
-    <h2 class="section-title">What Makes Us Different</h2>
-    <div class="grid-2 value-grid" style="gap:16px;">
-      <div class="value-card">
-        <div class="value-title">Flexible financing for every stage</div>
-        <div class="value-text">We review the full story behind your deal—not just a score—so more buyers and dealers can get to yes.</div>
-      </div>
-      <div class="value-card">
-        <div class="value-title">Dedicated guidance</div>
-        <div class="value-text">A single point of contact keeps you updated from application to funding so you always know the next step.</div>
-      </div>
-      <div class="value-card">
-        <div class="value-title">Asset-first decisions</div>
-        <div class="value-text">We focus on the truck or trailer quality, your experience, and how the unit strengthens your business.</div>
-      </div>
-      <div class="value-card">
-        <div class="value-title">Clear expectations</div>
-        <div class="value-text">If we can help, you’ll know exactly what to provide. If not, we’re upfront so you don’t lose time.</div>
-      </div>
     </div>
   </section>
 
   <section class="card">
-    <h2 class="section-title">Our Team</h2>
-    <p class="section-text">Meet the people who keep everything moving.</p>
+    <h2 class="section-title">Who We Are</h2>
+    <p class="section-text">M&T Equipment Funding LLC is a commercial truck and equipment financing company focused on keeping drivers and fleets on the road.</p>
+    <p class="section-text">We work with owner-operators and small fleets every day, so our process stays straightforward, responsive, and built around the realities of trucking.</p>
+    <p class="section-text">Our goal is to make financing efficient and clear, with practical guidance from the first conversation through funding.</p>
+  </section>
 
-    <div class="grid-2 team-grid" style="gap:20px;">
+  <section class="card">
+    <h2 class="section-title">What We Do</h2>
+    <p class="section-text">We finance the equipment that keeps freight moving and businesses growing. Every deal considers the unit, the structure, and your broader profile—not just a credit score.</p>
+    <ul class="list">
+      <li>Class 6–8 trucks, including sleepers and day cabs</li>
+      <li>Dry vans, reefers, flatbeds, and specialty trailers</li>
+      <li>Select vocational and light construction equipment</li>
+      <li>Purchases from dealers, auctions, fleets, or private sellers</li>
+    </ul>
+  </section>
 
-      <div class="value-card" style="text-align:center;">
-        <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Gil" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
-        <div class="value-title">Gil Maman</div>
-        <div class="value-text">Chief Executive Officer</div>
-        <div class="value-text" style="margin-top:6px;">Sets the strategy that keeps financing, inventory, and support aligned.</div>
+  <section class="card">
+    <h2 class="section-title">How Our Process Works</h2>
+    <div class="process-steps">
+      <div class="process-card">
+        <div class="process-label">Step 1</div>
+        <div class="value-title" style="margin-bottom:6px;">Apply</div>
+        <p class="value-text">Share the unit details and your application so we can review the structure and collateral quickly.</p>
       </div>
-
-      <div class="value-card" style="text-align:center;">
-        <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Shai" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
-        <div class="value-title">Shai Attas</div>
-        <div class="value-text">Director</div>
-        <div class="value-text" style="margin-top:6px;">Guides operations and partnerships to keep deals moving smoothly.</div>
+      <div class="process-card">
+        <div class="process-label">Step 2</div>
+        <div class="value-title" style="margin-bottom:6px;">Review</div>
+        <p class="value-text">We evaluate the equipment, deal terms, and your overall profile. In many cases, we can provide a pre-qualification update in about one business day (not guaranteed).</p>
       </div>
-
-      <div class="value-card" style="text-align:center;">
-        <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Mai" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
-        <div class="value-title">Mai Kruvi</div>
-        <div class="value-text">Executive Assistant</div>
-        <div class="value-text" style="margin-top:6px;">Keeps communication organized and schedules aligned across the team.</div>
+      <div class="process-card">
+        <div class="process-label">Step 3</div>
+        <div class="value-title" style="margin-bottom:6px;">Funding</div>
+        <p class="value-text">We finalize requirements, outline next steps, and coordinate funding so you can move forward with confidence.</p>
       </div>
+    </div>
+  </section>
 
-      <div class="value-card" style="text-align:center; position:relative;">
-        <div style="position:absolute;top:10px;right:10px;" aria-hidden="true"><span class="pill">Main contact</span></div>
-        <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Margo" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
-        <div class="value-title">Margo Dereshevskaia</div>
-        <div class="value-text">Financing</div>
-        <div class="value-text" style="margin-top:6px;">Leads credit reviews and guides customers through application requirements.</div>
+  <section class="card">
+    <h2 class="section-title">Who We Work With</h2>
+    <ul class="list">
+      <li>Owner-operators building or refreshing a truck</li>
+      <li>Small fleets expanding capacity</li>
+      <li>Buyers purchasing from dealers, auctions, fleets, or private sellers</li>
+      <li>Businesses upgrading trailers or adding specialty equipment</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2 class="section-title">Challenging Credit Considered</h2>
+    <p class="section-text">If you have prior credit challenges or a limited history, we can still review your application. While approval is never guaranteed, strong collateral and a realistic structure help us find the best path forward.</p>
+  </section>
+
+  <section class="card">
+    <h2 class="section-title">Meet the Team</h2>
+    <p class="section-text">You will work directly with people who understand trucking and keep communication clear.</p>
+    <div class="team-grid">
+      <div class="team-card">
+        <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80" alt="Portrait of Gil Maman">
+        <div class="team-name">Gil Maman</div>
+        <div class="team-role">Chief Executive Officer</div>
+        <p class="team-bio">Leads company strategy and partnerships to keep financing aligned with what drivers and fleets need most.</p>
+        <a class="team-email" href="mailto:gil@mntfunding.com">gil@mntfunding.com</a>
       </div>
-
-      <div class="value-card" style="text-align:center; position:relative;">
-        <div style="position:absolute;top:10px;right:10px;" aria-hidden="true"><span class="pill">Main contact</span></div>
-        <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Rogelio" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
-        <div class="value-title">Rogelio Cortez (Roy)</div>
-        <div class="value-text">Sales</div>
-        <div class="value-text" style="margin-top:6px;">Leads sales and inventory deals, connecting buyers with the right units.</div>
+      <div class="team-card">
+        <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80" alt="Portrait of Margo Dereshevskaia">
+        <div class="team-name">Margo Dereshevskaia</div>
+        <div class="team-role">Financing Director</div>
+        <p class="team-bio">Reviews credit packages, structures deals, and keeps applicants informed from submission through funding.</p>
+        <a class="team-email" href="mailto:MDereshevkaia@mntfunding.com">MDereshevkaia@mntfunding.com</a>
       </div>
-
-      <div class="value-card" style="text-align:center;">
-        <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Kavita" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
-        <div class="value-title">Kavita Gorbadham</div>
-        <div class="value-text">Titles</div>
-        <div class="value-text" style="margin-top:6px;">Coordinates titles and documentation so funded units stay compliant.</div>
+      <div class="team-card">
+        <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80" alt="Portrait of Rogelio Cortez">
+        <div class="team-name">Rogelio Cortez (Roy)</div>
+        <div class="team-role">Sales & Customer Success</div>
+        <p class="team-bio">Connects buyers with the right trucks and trailers, coordinating details between applicants and our financing team.</p>
+        <a class="team-email" href="mailto:roy@mntfunding.com">roy@mntfunding.com</a>
       </div>
-
-      <div class="value-card" style="text-align:center;">
-        <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Hector" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
-        <div class="value-title">Hector Matos</div>
-        <div class="value-text">Customer Service</div>
-        <div class="value-text" style="margin-top:6px;">Supports customers after funding with quick answers and coordination.</div>
+      <div class="team-card">
+        <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80" alt="Portrait of Mai Kruvi">
+        <div class="team-name">Mai Kruvi</div>
+        <div class="team-role">Operations & Documentation</div>
+        <p class="team-bio">Keeps titles, paperwork, and schedules organized so funded units stay compliant and ready to roll.</p>
+        <a class="team-email" href="mailto:operations@mntfunding.com">operations@mntfunding.com</a>
       </div>
+    </div>
+  </section>
 
-      <div class="value-card" style="text-align:center;">
-        <img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=600&q=60" alt="Juan" style="width:100%;max-width:160px;border-radius:12px;margin-bottom:10px;">
-        <div class="value-title">Juan Perez</div>
-        <div class="value-text">Inventory</div>
-        <div class="value-text" style="margin-top:6px;">Keeps inventory details updated so listings stay accurate and ready.</div>
+  <section class="card">
+    <h2 class="section-title">Why Customers Choose Us</h2>
+    <div class="grid-2">
+      <div class="value-card">
+        <div class="value-title">Built for trucking and equipment</div>
+        <p class="value-text">We specialize in commercial trucks, trailers, and related gear, so conversations stay practical and on-point.</p>
       </div>
+      <div class="value-card">
+        <div class="value-title">Fast, clear responses</div>
+        <p class="value-text">You get timely updates and plain-language requirements, often with pre-qualification feedback in about one business day.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-title">Flexible structures</div>
+        <p class="value-text">We look at collateral, experience, and deal terms together to recommend structures that fit your situation.</p>
+      </div>
+      <div class="value-card">
+        <div class="value-title">Direct contact with a representative</div>
+        <p class="value-text">You always have a named contact to ask questions, review options, and keep your deal moving.</p>
+      </div>
+    </div>
+  </section>
 
+  <section class="cta-section">
+    <div class="cta-title">Ready to talk through your next truck or trailer?</div>
+    <div class="cta-text">Reach a representative or start an application to see what financing could look like for your deal.</div>
+    <div class="cta-actions">
+      <button class="btn-primary" type="button" onclick="window.location.href='mailto:MDereshevkaia@mntfunding.com'">Talk to a Representative</button>
+      <button class="btn-ghost" type="button" onclick="window.location.href='Applications.html'">Start Application</button>
     </div>
   </section>
 
