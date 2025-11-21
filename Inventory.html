@@ -23,10 +23,10 @@
 
     /* HEADER */
     header { background:#ffffff; box-shadow:0 2px 6px rgba(0,0,0,.08); position:sticky; top:0; z-index:10; }
-    .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:12px 20px; }
+    .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:10px 20px; }
     .logo{display:flex;align-items:center;gap:10px;}
-    .logo img { width:120px; height:auto; }
-    .logo-mark{width:120px;height:auto;border-radius:0;object-fit:contain;}
+    .logo img { height:60px; width:auto; object-fit:contain; }
+    .logo-mark{height:60px;width:auto;border-radius:0;object-fit:contain;}
     .nav-links{display:flex;align-items:center;gap:18px;font-size:14px;}
     .nav-links a{padding:6px 10px;border-radius:999px;}
     .nav-links a:hover{background:rgba(0,94,74,.08);}
@@ -211,6 +211,7 @@
       color:#777;
       margin-top:4px;
     }
+    .unit-highlight { font-size:12px; color:#0b2520; font-weight:700; }
     .unit-foot {
       padding:10px 14px 12px;
       display:flex;
@@ -444,165 +445,9 @@
     .dropdown-menu a:hover{background:#f0faf7;}
     .dropdown:hover .dropdown-menu{display:block; opacity:1; pointer-events:auto;}
     .dropdown.delay-hide .dropdown-menu{display:block; opacity:1; pointer-events:auto;}
-
-    /* TOOL MODAL */
-    .modal-backdrop {
-      display:none;
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.38);
-      align-items:center;
-      justify-content:center;
-      z-index:50;
-      padding:12px;
-    }
-    .modal {
-      background:#ffffff;
-      border-radius:12px;
-      width:100%;
-      max-width:360px;
-      padding:18px 16px 16px;
-      box-shadow:0 10px 30px rgba(0,0,0,.18);
-      border:1px solid #e3ece9;
-      font-size:13px;
-    }
-    .modal h3 { font-size:16px; font-weight:800; color:#0b2520; margin-bottom:8px; }
-    .modal p { color:#444; font-size:12px; margin-bottom:10px; }
-    .modal label { display:block; font-weight:600; margin-bottom:4px; }
-    .modal input { width:100%; padding:8px 10px; border-radius:8px; border:1px solid #cfdad7; font-size:13px; margin-bottom:10px; }
-    .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:4px; }
-    .modal-actions button { border-radius:999px; padding:8px 14px; font-weight:700; border:1px solid #005e4a; cursor:pointer; }
-    .modal-actions .primary { background:#005e4a; color:#fff; }
-    .modal-actions .ghost { background:#ffffff; color:#005e4a; }
   </style>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const DEFAULT_ACCOUNTS = [
-        { user: 'admin', pass: 'adminmnt', role: 'admin' },
-        { user: 'rcortez', pass: 'cortezmnt', role: 'manager' }
-      ];
-      const lockKey = 'inventoryLoginLock';
-      const sessionKey = 'inventorySession';
-      const SESSION_TTL_MINUTES = 90;
-
-      function hashPassword(pass) {
-        return 'hash:' + btoa(pass || '');
-      }
-
-      function normalizeAccount(acc) {
-        if (!acc || !acc.user) return null;
-        const hashed = (acc.pass || '').startsWith('hash:') ? acc.pass : hashPassword(acc.pass || '');
-        return { user: acc.user, pass: hashed, role: acc.role || 'manager' };
-      }
-
-      function passwordsMatch(account, input) {
-        return account.pass === hashPassword(input);
-      }
-
-      function loadAccounts() {
-        const saved = localStorage.getItem('inventoryAccounts');
-        let accounts = [];
-        if (saved) {
-          try {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed)) accounts = parsed.map(normalizeAccount).filter(Boolean);
-          } catch (e) {
-            console.warn('Could not parse saved accounts');
-          }
-        }
-        DEFAULT_ACCOUNTS.forEach(base => {
-          const normalized = normalizeAccount(base);
-          const idx = accounts.findIndex(a => a.user === normalized.user);
-          if (idx >= 0) {
-            accounts[idx] = { ...normalized, ...accounts[idx] };
-          } else {
-            accounts.push(normalized);
-          }
-        });
-        localStorage.setItem('inventoryAccounts', JSON.stringify(accounts));
-        return accounts;
-      }
-
-      function getLock() {
-        try {
-          return JSON.parse(localStorage.getItem(lockKey)) || { attempts: 0, lockedUntil: 0 };
-        } catch (e) {
-          return { attempts: 0, lockedUntil: 0 };
-        }
-      }
-
-      function saveLock(data) { localStorage.setItem(lockKey, JSON.stringify(data)); }
-      function resetLock() { saveLock({ attempts: 0, lockedUntil: 0 }); }
-      function recordFailedAttempt() {
-        const lock = getLock();
-        lock.attempts += 1;
-        if (lock.attempts >= 5) {
-          lock.lockedUntil = Date.now() + (15 * 60 * 1000);
-          lock.attempts = 0;
-        }
-        saveLock(lock);
-      }
-      function canAttempt() {
-        const lock = getLock();
-        if (lock.lockedUntil && Date.now() < lock.lockedUntil) return false;
-        return true;
-      }
-
-      function setSession(account) {
-        const expires = Date.now() + SESSION_TTL_MINUTES * 60 * 1000;
-        localStorage.setItem(sessionKey, JSON.stringify({ user: account.user, role: account.role, expires }));
-      }
-
-      let accounts = loadAccounts();
-
-      const modal = document.getElementById('toolModal');
-      const toolBtn = document.getElementById('toolButton');
-      const cancelBtn = document.getElementById('toolCancel');
-      const confirmBtn = document.getElementById('toolConfirm');
-      const userInput = document.getElementById('toolUser');
-      const passInput = document.getElementById('toolPass');
-
-      function openModal() {
-        if (modal) {
-          modal.style.display = 'flex';
-          userInput.focus();
-        }
-      }
-
-      function closeModal() {
-        if (modal) {
-          modal.style.display = 'none';
-          userInput.value = '';
-          passInput.value = '';
-        }
-      }
-
-      function handleLogin() {
-        if (!canAttempt()) {
-          alert('Too many attempts. Please wait a few minutes before trying again.');
-          return;
-        }
-        const user = userInput.value.trim();
-        const pass = passInput.value.trim();
-        const account = accounts.find(a => a.user === user && passwordsMatch(a, pass));
-        if (account) {
-          resetLock();
-          setSession(account);
-          window.location.href = 'control-panel.html';
-        } else {
-          recordFailedAttempt();
-          alert('Invalid username or password.');
-        }
-      }
-
-      if (toolBtn) toolBtn.addEventListener('click', openModal);
-      if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-      if (confirmBtn) confirmBtn.addEventListener('click', handleLogin);
-      [userInput, passInput].forEach(input => input && input.addEventListener('keyup', (e) => {
-        if (e.key === 'Enter') {
-          handleLogin();
-        }
-      }));
 
       // Dropdown delayed hide
       const dropdown = document.querySelector('.dropdown');
@@ -611,7 +456,7 @@
         dropdown.addEventListener('mouseleave', () => {
           hideTimeout = setTimeout(() => {
             dropdown.classList.remove('delay-hide');
-          }, 2000);
+          }, 1000);
           dropdown.classList.add('delay-hide');
         });
 
@@ -623,32 +468,86 @@
         });
       }
 
+      const toolBtn = document.getElementById('toolButton');
+      if (toolBtn) {
+        toolBtn.addEventListener('click', () => {
+          window.location.href = 'admin/control-panel.html';
+        });
+      }
+
       const featuredContainer = document.getElementById('featured-units');
       const prevBtn = document.getElementById('prevSlide');
       const nextBtn = document.getElementById('nextSlide');
       if (!featuredContainer) return;
 
       const storageKey = 'inventoryData';
+      const MIN_LISTINGS = 35;
       const MAX_IMAGES = 10;
       const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg';
+      const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
+
+      function gallerySeed(unit = {}) {
+        const key = (unit.vin || unit.title || 'unit').toString();
+        const cleaned = key.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+        return cleaned || 'unit';
+      }
+
+      function buildPlaceholderGallery(unit = {}) {
+        const seed = gallerySeed(unit);
+        return Array.from({ length: MAX_IMAGES }, (_, i) => `https://picsum.photos/seed/${seed}-${i}/900/600`);
+      }
 
       function normalizeImages(unit) {
         const fromArray = Array.isArray(unit.images) ? unit.images.filter(Boolean) : [];
         const merged = [...new Set([unit.image, ...fromArray].filter(Boolean))];
-        return merged.slice(0, MAX_IMAGES);
+        const padded = merged.length >= MAX_IMAGES ? merged : [...merged, ...buildPlaceholderGallery(unit)];
+        return padded.slice(0, MAX_IMAGES);
+      }
+
+      function hasDiverseInventory(list) {
+        const arr = Array.isArray(list) ? list : [];
+        const uniqueVin = new Set(arr.map(u => (u.vin || '').toUpperCase())).size;
+        const uniqueTitle = new Set(arr.map(u => (u.title || '').toUpperCase())).size;
+        const uniqueTypes = new Set(arr.map(u => (u.type || '').toLowerCase())).size;
+        return arr.length >= MIN_LISTINGS && uniqueVin >= MIN_LISTINGS && uniqueTitle >= MIN_LISTINGS && uniqueTypes.size > 1;
+      }
+
+      function deriveMake(title = '') {
+        const parts = title.split(' ').filter(Boolean);
+        if (parts.length < 2) return '';
+        const maybeYear = parts[0];
+        const startIdx = /(19|20)\d{2}/.test(maybeYear) ? 1 : 0;
+        return parts[startIdx] || '';
+      }
+
+      function deriveModel(title = '', make = '') {
+        const cleaned = title.replace(make, '').trim();
+        const pieces = cleaned.split(' ').filter(Boolean);
+        const noYear = pieces.filter(p => !/(19|20)\d{2}/.test(p));
+        return noYear.slice(1).join(' ') || noYear.join(' ') || '';
       }
 
       function normalizeUnit(unit) {
         const images = normalizeImages(unit || {});
+        const title = unit?.title || 'Unit';
+        const titleYear = (title.match(/(19|20)\d{2}/) || [])[0];
+        const year = Number(unit?.year) || Number(titleYear) || '';
+        const make = unit?.brand || unit?.make || deriveMake(title) || 'Unknown';
+        const model = unit?.model || deriveModel(title, make) || 'Not specified';
+
         return {
-          title: unit?.title || 'Unit',
+          title,
           type: unit?.type || 'Truck',
           vin: unit?.vin || '',
           mileage: unit?.mileage ? Number(unit.mileage).toLocaleString('en-US') : '0',
           location: unit?.location || 'Available nationwide',
           state: unit?.state || 'Unknown',
           price: unit?.price ? `USD$ ${Number(unit.price).toLocaleString('en-US')}` : 'Call for price',
-          image: images[0] || DEFAULT_IMAGE
+          image: images[0] || DEFAULT_IMAGE,
+          make,
+          brand: unit?.brand || make || 'Unknown',
+          model,
+          year
         };
       }
 
@@ -657,10 +556,16 @@
           const saved = localStorage.getItem(storageKey);
           if (saved) {
             const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length) return parsed.map(normalizeUnit);
+            if (Array.isArray(parsed) && parsed.length) {
+              const normalized = parsed.map(normalizeUnit);
+              if (hasDiverseInventory(normalized)) {
+                localStorage.setItem(storageKey, JSON.stringify(normalized));
+                return normalized;
+              }
+            }
           }
         } catch (e) {}
-        const seeded = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED.map(normalizeUnit) : [];
+        const seeded = BASE_UNITS.map(normalizeUnit);
         localStorage.setItem(storageKey, JSON.stringify(seeded));
         return seeded;
       }
@@ -669,6 +574,7 @@
       if (!allUnits.length) return;
       let visibleCount = 1;
       let index = 0;
+      let autoTimer;
 
       function computeVisible() {
         if (allUnits.length === 1) return 1;
@@ -677,80 +583,119 @@
         return Math.min(3, allUnits.length);
       }
 
-      function renderFeatured() {
-        featuredContainer.innerHTML = '';
-        visibleCount = computeVisible();
-        const slides = [];
-        for (let i = 0; i < visibleCount; i++) {
-          const unit = allUnits[(index + i) % allUnits.length];
-          const card = document.createElement('article');
-          card.className = 'unit-card';
-          card.style.minWidth = `${100 / visibleCount}%`;
-          card.innerHTML = `
-            <div class="unit-img-wrap">
-              <img src="${unit.image}" alt="${unit.title}" />
+      function buildCard(unit, width) {
+        const card = document.createElement('article');
+        card.className = 'unit-card';
+        card.style.minWidth = `${width}%`;
+        card.innerHTML = `
+          <div class="unit-img-wrap">
+            <img src="${unit.image}" alt="${unit.title}" />
+          </div>
+          <div class="unit-body">
+            <div class="unit-tag">${unit.type}</div>
+            <h2 class="unit-title">${unit.title}</h2>
+            <div class="unit-highlight">${unit.year || 'Year'} • ${unit.make || 'Unknown'} • ${unit.model || 'Not specified'}</div>
+            <div class="unit-specs">
+              <span>Mileage: ${unit.mileage}</span>
+              <span>Location: ${unit.location}</span>
+              ${unit.state ? `<span>State: ${unit.state}</span>` : ''}
             </div>
-            <div class="unit-body">
-              <div class="unit-tag">${unit.type}</div>
-              <h2 class="unit-title">${unit.title}</h2>
-              <div class="unit-specs">
-                <span>Mileage: ${unit.mileage}</span>
-                <span>Location: ${unit.location}</span>
-                ${unit.state ? `<span>State: ${unit.state}</span>` : ''}
-              </div>
-              <div class="unit-meta">VIN: ${unit.vin}</div>
-            </div>
-            <div class="unit-foot">
-              <span class="unit-price">${unit.price}</span>
-              <button class="unit-cta" type="button">Ask about this unit</button>
-            </div>
-          `;
+            <div class="unit-meta">VIN: ${unit.vin}</div>
+          </div>
+          <div class="unit-foot">
+            <span class="unit-price">${unit.price}</span>
+            <button class="unit-cta" type="button">Ask about this unit</button>
+          </div>
+        `;
 
-          const btn = card.querySelector('.unit-cta');
-          if (btn) {
-            const subject = `Inventory Inquiry – ${unit.title} (${unit.vin})`;
-            const bodyLines = [
-              'Hello Roy,',
-              '',
-              'I\'m interested in this unit:',
-              `- Title: ${unit.title}`,
-              `- VIN: ${unit.vin}`,
-              `- Mileage: ${unit.mileage}`,
-              `- Location: ${unit.location}${unit.state ? ' ' + unit.state : ''}`,
-              '',
-              'Please let me know availability and next steps.',
-              '',
-              'Thank you.'
-            ];
-            const body = encodeURIComponent(bodyLines.join('\n'));
-            const mailto = `mailto:RCortez@mntfunding.com?subject=${encodeURIComponent(subject)}&body=${body}`;
-            btn.addEventListener('click', () => {
-              window.location.href = mailto;
-            });
-          }
-
-          slides.push(card);
+        const btn = card.querySelector('.unit-cta');
+        if (btn) {
+          const subject = `Inventory Inquiry – ${unit.title} (${unit.vin})`;
+          const bodyLines = [
+            'Hello Roy,',
+            '',
+            'I\'m interested in this unit:',
+            `- Title: ${unit.title}`,
+            `- VIN: ${unit.vin}`,
+            `- Mileage: ${unit.mileage}`,
+            `- Location: ${unit.location}${unit.state ? ' ' + unit.state : ''}`,
+            '',
+            'Please let me know availability and next steps.',
+            '',
+            'Thank you.'
+          ];
+          const body = encodeURIComponent(bodyLines.join('\n'));
+          const mailto = `mailto:RCortez@mntfunding.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+          btn.addEventListener('click', () => {
+            window.location.href = mailto;
+          });
         }
 
-        slides.forEach(slide => featuredContainer.appendChild(slide));
-        featuredContainer.style.transform = `translateX(0)`;
+        return card;
+      }
+
+      function resetAuto() {
+        if (autoTimer) clearInterval(autoTimer);
+        if (allUnits.length > visibleCount) {
+          autoTimer = setInterval(nextSlide, 6000);
+        }
+      }
+
+      function updateTransform(animate = true) {
+        const offset = -(100 / visibleCount) * index;
+        featuredContainer.style.transition = animate ? 'transform 0.6s ease' : 'none';
+        featuredContainer.style.transform = `translateX(${offset}%)`;
+      }
+
+      function buildCarousel() {
+        visibleCount = computeVisible();
+        const width = 100 / visibleCount;
+        featuredContainer.innerHTML = '';
+
+        const slides = allUnits.map(unit => buildCard(unit, width));
+        const prependClones = allUnits.slice(-visibleCount).map(unit => buildCard(unit, width));
+        const appendClones = allUnits.slice(0, visibleCount).map(unit => buildCard(unit, width));
+
+        [...prependClones, ...slides, ...appendClones].forEach(card => featuredContainer.appendChild(card));
+
+        index = visibleCount;
+        requestAnimationFrame(() => updateTransform(false));
+        resetAuto();
+      }
+
+      function handleTransitionEnd() {
+        const total = allUnits.length;
+        const lastRealIndex = visibleCount + total - 1;
+
+        if (index > lastRealIndex) {
+          index = visibleCount;
+          updateTransform(false);
+        } else if (index < visibleCount) {
+          index = visibleCount + total - 1;
+          updateTransform(false);
+        }
       }
 
       function nextSlide() {
-        index = (index + 1) % allUnits.length;
-        renderFeatured();
+        if (allUnits.length <= visibleCount) return;
+        index += 1;
+        featuredContainer.addEventListener('transitionend', handleTransitionEnd, { once: true });
+        updateTransform(true);
+        resetAuto();
       }
 
       function prevSlide() {
-        index = (index - 1 + allUnits.length) % allUnits.length;
-        renderFeatured();
+        if (allUnits.length <= visibleCount) return;
+        index -= 1;
+        featuredContainer.addEventListener('transitionend', handleTransitionEnd, { once: true });
+        updateTransform(true);
+        resetAuto();
       }
 
       nextBtn?.addEventListener('click', nextSlide);
       prevBtn?.addEventListener('click', prevSlide);
-      renderFeatured();
-      window.addEventListener('resize', () => renderFeatured());
-      if (allUnits.length > visibleCount) setInterval(nextSlide, 6000);
+      buildCarousel();
+      window.addEventListener('resize', buildCarousel);
     });
   </script>
 </head>
@@ -758,7 +703,7 @@
   <header>
     <div class="nav">
       <div class="logo">
-        <img class="logo-mark" src="Media/Logo White - Copy.png" alt="M&T Equipment Funding Logo" />
+        <img class="logo-mark" src="Media/LogoTransparent.png" alt="M&T Equipment Funding Logo" />
       </div>
       <nav class="nav-links">
         <a href="index.html">Home</a>
@@ -881,25 +826,9 @@
     </section>
 
     <div class="settings-access">
-      <button class="tool-link" type="button" id="toolButton">Settings</button>
+      <button class="tool-link" type="button" id="toolButton">Admin tools</button>
     </div>
   </main>
-
-  <div class="modal-backdrop" id="toolModal">
-    <div class="modal">
-      <h3>Admin Access Required</h3>
-      <p>Sign in with <strong>admin/adminmnt</strong> (admin) or <strong>rcortez/cortezmnt</strong> (manager) to edit vehicle listings.</p>
-      <label for="toolUser">Username</label>
-      <input id="toolUser" name="toolUser" type="text" placeholder="Enter username" autocomplete="username" />
-      <label for="toolPass">Password</label>
-      <input id="toolPass" name="toolPass" type="password" placeholder="Enter password" autocomplete="current-password" />
-      <div class="modal-actions">
-        <button class="ghost" type="button" id="toolCancel">Cancel</button>
-        <button class="primary" type="button" id="toolConfirm">Continue</button>
-      </div>
-      <p style="margin-top:8px;color:#666;font-size:11px;">Tip: Save your selection to stay signed in while updating listings.</p>
-    </div>
-  </div>
 
   <footer>
     <div>&copy; 2025 M&amp;T Equipment Funding LLC &mdash; Commercial Truck &amp; Trailer Financing</div>

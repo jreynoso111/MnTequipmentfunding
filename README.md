@@ -5,17 +5,10 @@ This repository contains the static HTML, CSS, and JavaScript used to present th
 - `index.html` for the home/marketing landing page.
 - `Applications.html` for application downloads and document guidance.
 - `Inventory.html` and `Units for Sale.html` for representative inventory and the paginated listings view.
-- `control-panel.html` for browser-based inventory administration (secured by role-based credentials).
+- `admin/control-panel.html` for browser-based inventory administration (protected by your hosting directory password).
 
 ## Local development
-Open any of the HTML files directly in a browser. All data for inventory and user accounts is stored in `localStorage` and pre-seeded through `inventory-seed.js`. To reset to defaults, clear browser storage for the site.
-
-## Credentials
-Two default profiles exist for unlocking the inventory tools:
-- Admin: `admin` / `adminmnt`
-- Manager: `rcortez` / `cortezmnt`
-
-Administrators can create additional admin or manager profiles within the control panel.
+Open any of the HTML files directly in a browser. All data for inventory is stored in `localStorage` and pre-seeded through `inventory-seed.js`. To reset to defaults, clear browser storage for the site.
 
 ## Notes
 - Inventory listings and generated VIN detail pages are built client-side; ensure browser storage is enabled.
