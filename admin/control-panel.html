@@ -263,6 +263,12 @@
       return 'Available';
     }
 
+    function normalizeStatus(value) {
+      const val = (value || '').toString().trim().toLowerCase();
+      if (val === 'sold') return 'Sold';
+      return 'Available';
+    }
+
     function getEditorName() {
       const input = document.getElementById('editorName');
       const name = (input?.value || '').trim();
