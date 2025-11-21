@@ -45,18 +45,6 @@
     .detail-list li:last-child { border-bottom:none; }
     .muted { color:#4f615c; font-size:13px; }
 
-    .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center; z-index:30; }
-    .overlay.hidden { display:none; }
-    .overlay-card { background:#ffffff; padding:20px 22px; border-radius:14px; width:340px; box-shadow:0 10px 28px rgba(0,0,0,.18); text-align:center; }
-    .overlay-card h2 { margin:0 0 10px; }
-    .overlay-card p { margin:0 0 12px; font-size:14px; color:#3a4c45; }
-    .overlay-card select,
-    .overlay-card input { width:100%; padding:10px 12px; border-radius:10px; border:1px solid #cfdcd6; margin-bottom:10px; font-size:14px; }
-    .overlay-card .button-row { display:flex; gap:8px; }
-    .overlay-card button { flex:1; border:none; border-radius:10px; padding:12px; background:var(--accent); color:#fff; font-weight:700; cursor:pointer; }
-    .overlay-card .btn-secondary { background:#eef2f0; color:#0b2520; }
-    .error { color:#b00020; font-size:12px; min-height:16px; margin-top:4px; text-align:left; }
-
     .stats-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:12px; }
     .stat-box { background:#f5f7f6; border:1px solid #e3ece9; border-radius:10px; padding:12px; }
     .stat-label { font-size:12px; color:#4f615c; text-transform:uppercase; letter-spacing:0.5px; }
@@ -69,43 +57,17 @@
   <header>
     <div class="nav">
       <div class="logo">
-        <a href="index.html"><img src="Media/LogoTransparent.png" alt="M&T Equipment Funding Logo"></a>
+        <a href="../index.html"><img src="../Media/LogoTransparent.png" alt="M&T Equipment Funding Logo"></a>
       </div>
       <nav class="nav-links">
-        <a href="index.html" data-track-id="nav_home" data-track-label="Header Home Link">Home</a>
-        <a href="Applications.html" data-track-id="nav_applications" data-track-label="Header Applications Link">Applications</a>
-        <a href="Services.html" data-track-id="nav_services" data-track-label="Header Services Link">Services</a>
-        <div class="dropdown" style="position:relative;">
-          <a href="Inventory.html" data-track-id="nav_inventory" data-track-label="Header Inventory Link">Inventory ▾</a>
-          <div class="dropdown-menu" style="position:absolute; top:28px; left:0; background:#ffffff; border:1px solid #e3ece9; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,.08); padding:6px 0; display:none; min-width:180px;">
-            <a href="Inventory.html" style="display:block; padding:8px 12px;" data-track-id="nav_inventory_overview" data-track-label="Inventory Overview">Inventory overview</a>
-            <a href="Units for Sale.html" style="display:block; padding:8px 12px;" data-track-id="nav_units" data-track-label="All Units for Sale">All Units for Sale</a>
-          </div>
-        </div>
-        <a href="About us.html" data-track-id="nav_about" data-track-label="Header About Link">About Us</a>
-        <a href="Reports.html" class="active" data-track-id="nav_reports" data-track-label="Header Reports Link">Reports</a>
+        <a href="control-panel.html">Control Panel</a>
+        <a href="reports.html" class="active">Reports</a>
+        <a href="admin-log.html">Admin Log</a>
+        <a href="../index.html">Back to Site</a>
         <button class="btn-small" type="button" data-track-id="cta_talk_rep" data-track-label="Talk to Representative" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
       </nav>
     </div>
   </header>
-
-  <div class="overlay" id="accessOverlay">
-    <div class="overlay-card">
-      <h2>Admin / Manager Access</h2>
-      <p>Choose your role and enter the credentials to view analytics.</p>
-      <select id="accessRole">
-        <option value="admin">Admin</option>
-        <option value="manager">Manager</option>
-      </select>
-      <input type="text" id="accessUsername" placeholder="Username" />
-      <input type="password" id="accessPassword" placeholder="Password" />
-      <div class="button-row">
-        <button id="accessButton">Login</button>
-        <button class="btn-secondary" type="button" id="accessClose">Close</button>
-      </div>
-      <div class="error" id="accessError"></div>
-    </div>
-  </div>
 
   <main>
     <section class="card">
@@ -167,63 +129,18 @@
     </section>
   </main>
 
-  <script src="analytics.js"></script>
+  <script src="../analytics.js"></script>
   <script>
-    const USERS = {
-      admin: { username: 'admin', password: 'Admin123' },
-      manager: { username: 'manager', password: 'Manager123' }
-    };
-    const ACCESS_KEY = 'mntAnalyticsAccess';
-    const ROLE_KEY = 'mntAnalyticsRole';
-
-    const overlay = document.getElementById('accessOverlay');
-    const roleSelect = document.getElementById('accessRole');
-    const usernameInput = document.getElementById('accessUsername');
-    const passwordInput = document.getElementById('accessPassword');
-    const accessButton = document.getElementById('accessButton');
-    const accessClose = document.getElementById('accessClose');
-    const accessError = document.getElementById('accessError');
     const summaryBody = document.getElementById('summaryBody');
     const listingBody = document.getElementById('listingBody');
     const detailSection = document.getElementById('detailSection');
     const detailLabel = document.getElementById('detailLabel');
     const detailList = document.getElementById('detailList');
-    const dropdown = document.querySelector('.dropdown');
-    const dropdownMenu = dropdown?.querySelector('.dropdown-menu');
 
     const statTotal = document.getElementById('statTotal');
     const statEvents = document.getElementById('statEvents');
     const statListings = document.getElementById('statListings');
     const statLast = document.getElementById('statLast');
-
-    function showMenu() { if (dropdownMenu) dropdownMenu.style.display = 'block'; }
-    function hideMenu() { if (dropdownMenu) dropdownMenu.style.display = 'none'; }
-
-    dropdown?.addEventListener('mouseenter', showMenu);
-    dropdown?.addEventListener('mouseleave', () => { setTimeout(hideMenu, 300); });
-
-    function hasAccess() { return localStorage.getItem(ACCESS_KEY) === 'true'; }
-
-    function grantAccess(role) {
-      localStorage.setItem(ACCESS_KEY, 'true');
-      localStorage.setItem(ROLE_KEY, role || '');
-      overlay.classList.add('hidden');
-      renderDashboard();
-    }
-
-    function handleLogin() {
-      const role = roleSelect.value;
-      const username = usernameInput.value.trim();
-      const password = passwordInput.value.trim();
-      const record = USERS[role];
-
-      if (record && username === record.username && password === record.password) {
-        accessError.textContent = '';
-        grantAccess(role);
-      } else {
-        accessError.textContent = 'Invalid credentials';
-      }
-    }
 
     function formatDate(value) {
       if (!value) return '—';
@@ -323,17 +240,7 @@
       renderListings(listings);
     }
 
-    accessButton.addEventListener('click', handleLogin);
-    accessClose.addEventListener('click', () => { window.location.href = 'index.html'; });
-    passwordInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLogin(); });
-    usernameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLogin(); });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      if (hasAccess()) {
-        overlay.classList.add('hidden');
-        renderDashboard();
-      }
-    });
+    document.addEventListener('DOMContentLoaded', renderDashboard);
   </script>
 </body>
 </html>
