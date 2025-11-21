@@ -18,7 +18,7 @@
     body { margin:0; background:#f5f7f6; color:#0b2520; }
     a { color: inherit; text-decoration: none; }
     header { background:#ffffff; position: sticky; top:0; z-index:10; box-shadow:0 2px 6px rgba(0,0,0,.08); }
-    .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:10px 20px; gap:12px; }
+    .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:10px 20px;gap:12px; }
     .logo { display:flex; align-items:center; gap:10px; }
     .logo img { height:60px; width:auto; object-fit:contain; transform:scale(var(--logo-scale)); transform-origin:left center; }
     .nav-links { display:flex; align-items:center; gap:18px; font-size:14px; flex-wrap:wrap; }
@@ -33,24 +33,10 @@
     h1 { margin:0 0 6px; font-size:26px; }
     h2 { margin:0 0 10px; }
     p { margin:0 0 10px; color:#3a4c45; }
-    table { width:100%; border-collapse:collapse; }
-    th, td { text-align:left; padding:10px 8px; font-size:14px; }
-    th { background:#f5f7f6; color:#0b2520; border-bottom:1px solid #e0e7e4; }
-    tr + tr td { border-top:1px solid #eef2f0; }
-    tr.clickable:hover { background:#f0faf7; cursor:pointer; }
-    .bar { height:8px; border-radius:999px; background:#d9ede6; overflow:hidden; margin-top:6px; }
-    .bar > span { display:block; height:100%; background:var(--accent); }
-    .detail-list { margin:0; padding:0; list-style:none; }
-    .detail-list li { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #eef2f0; font-size:14px; }
-    .detail-list li:last-child { border-bottom:none; }
     .muted { color:#4f615c; font-size:13px; }
-
-    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:12px; }
-    .stat-box { background:#f5f7f6; border:1px solid #e3ece9; border-radius:10px; padding:12px; }
-    .stat-label { font-size:12px; color:#4f615c; text-transform:uppercase; letter-spacing:0.5px; }
-    .stat-value { font-size:22px; font-weight:800; color:#0b2520; }
-
-    @media (max-width:720px) { .nav { flex-direction:column; align-items:flex-start; gap:10px; } .nav-links { width:100%; } .btn-small { width:100%; text-align:center; } table { display:block; overflow:auto; } }
+    .canvas-wrap { width:100%; background:#f8fbfa; border:1px dashed #cfe2de; border-radius:12px; overflow:auto; }
+    canvas { display:block; width:100%; }
+    @media (max-width:720px) { .nav { flex-direction:column; align-items:flex-start; gap:10px; } .nav-links { width:100%; flex-wrap:wrap; } .btn-small { width:100%; text-align:center; } }
   </style>
 </head>
 <body>
@@ -73,74 +59,22 @@
     <section class="card">
       <h1>Click Analytics (Local)</h1>
       <p>Data is stored in your browser via localStorage for testing; a real backend can be added later.</p>
-      <p class="muted">Click a row to see per-page details. Bars are proportional to the most-clicked item.</p>
+      <p class="muted">Events and listing clicks are drawn on the canvas below for a full-width view.</p>
     </section>
 
     <section class="card">
-      <h2 style="margin:0 0 8px;">Top stats</h2>
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div class="stat-label">Total Clicks</div>
-          <div class="stat-value" id="statTotal">0</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Tracked Events</div>
-          <div class="stat-value" id="statEvents">0</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Tracked Listings</div>
-          <div class="stat-value" id="statListings">0</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Last Activity</div>
-          <div class="stat-value" id="statLast">—</div>
-        </div>
+      <h2 style="margin:0 0 8px;">Canvas dashboard</h2>
+      <div class="canvas-wrap" id="reportsCanvasWrap">
+        <canvas id="reportsCanvas"></canvas>
       </div>
-    </section>
-
-    <section class="card">
-      <h2 style="margin:0 0 8px;">Events</h2>
-      <div style="overflow:auto;">
-        <table>
-          <thead>
-            <tr><th>Event ID</th><th>Label</th><th>Total Clicks</th><th style="width:200px;">Activity</th></tr>
-          </thead>
-          <tbody id="summaryBody"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2 style="margin:0 0 8px;">Listings</h2>
-      <div style="overflow:auto;">
-        <table>
-          <thead>
-            <tr><th>Title</th><th>Price</th><th>Location</th><th>Total Clicks</th></tr>
-          </thead>
-          <tbody id="listingBody"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="card" id="detailSection" style="display:none;">
-      <h2 style="margin:0 0 8px;">Event Details</h2>
-      <div class="muted" id="detailLabel"></div>
-      <ul class="detail-list" id="detailList"></ul>
     </section>
   </main>
 
   <script src="../analytics.js"></script>
   <script>
-    const summaryBody = document.getElementById('summaryBody');
-    const listingBody = document.getElementById('listingBody');
-    const detailSection = document.getElementById('detailSection');
-    const detailLabel = document.getElementById('detailLabel');
-    const detailList = document.getElementById('detailList');
-
-    const statTotal = document.getElementById('statTotal');
-    const statEvents = document.getElementById('statEvents');
-    const statListings = document.getElementById('statListings');
-    const statLast = document.getElementById('statLast');
+    const canvas = document.getElementById('reportsCanvas');
+    const canvasWrap = document.getElementById('reportsCanvasWrap');
+    const ctx = canvas.getContext('2d');
 
     function formatDate(value) {
       if (!value) return '—';
@@ -148,99 +82,101 @@
       return isNaN(date.getTime()) ? '—' : date.toLocaleString();
     }
 
-    function renderStats(data) {
-      const events = Object.keys(data.events || {}).length;
-      const listings = Object.keys(data.listings || {}).length;
-      statTotal.textContent = data.meta?.totalClicks || 0;
-      statEvents.textContent = events;
-      statListings.textContent = listings;
-      statLast.textContent = formatDate(data.meta?.lastRecordedAt);
+    function resizeCanvas(eventsCount, listingCount) {
+      const width = canvasWrap.clientWidth - 2;
+      canvas.width = width > 0 ? width : 1000;
+      canvas.height = Math.max(520, 140 + eventsCount * 50 + listingCount * 40);
     }
 
-    function renderEvents(events = []) {
-      summaryBody.innerHTML = '';
-      detailSection.style.display = 'none';
-
-      if (!events.length) {
-        const row = document.createElement('tr');
-        const cell = document.createElement('td');
-        cell.colSpan = 4;
-        cell.textContent = 'No click data recorded yet.';
-        row.appendChild(cell);
-        summaryBody.appendChild(row);
-        return;
-      }
-
-      const max = Math.max(...events.map(e => Number(e.total) || 0), 1);
-      events.sort((a, b) => (Number(b.total) || 0) - (Number(a.total) || 0));
-
-      events.forEach(event => {
-        const row = document.createElement('tr');
-        row.classList.add('clickable');
-        row.innerHTML = `
-          <td>${event.id}</td>
-          <td>${event.label || event.id}</td>
-          <td>${Number(event.total) || 0}</td>
-          <td><div class="bar"><span style="width:${Math.max(((Number(event.total) || 0) / max) * 100, 4)}%"></span></div></td>
-        `;
-        row.addEventListener('click', () => renderDetail(event));
-        summaryBody.appendChild(row);
-      });
+    function drawStatCard(label, value, x, y, w, h) {
+      ctx.fillStyle = '#f5f7f6';
+      ctx.strokeStyle = '#e3ece9';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(x, y, w, h, 12);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#4f615c';
+      ctx.font = '12px Inter';
+      ctx.fillText(label, x + 12, y + 20);
+      ctx.fillStyle = '#0b2520';
+      ctx.font = '800 24px Inter';
+      ctx.fillText(value, x + 12, y + 48);
     }
 
-    function renderListings(listings = []) {
-      listingBody.innerHTML = '';
-      if (!listings.length) {
-        const row = document.createElement('tr');
-        const cell = document.createElement('td');
-        cell.colSpan = 4;
-        cell.textContent = 'No listing interactions yet.';
-        row.appendChild(cell);
-        listingBody.appendChild(row);
-        return;
-      }
-
-      listings.sort((a, b) => (Number(b.totalClicks) || 0) - (Number(a.totalClicks) || 0));
-      listings.forEach(listing => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${listing.title || listing.id || 'Listing'}</td>
-          <td>${listing.price || '—'}</td>
-          <td>${listing.location || '—'}</td>
-          <td>${Number(listing.totalClicks) || 0}</td>
-        `;
-        listingBody.appendChild(row);
-      });
+    function drawSectionTitle(text, y) {
+      ctx.fillStyle = '#0b2520';
+      ctx.font = '700 18px Inter';
+      ctx.fillText(text, 24, y);
     }
 
-    function renderDetail(event) {
-      detailLabel.textContent = `${event.label || event.id} (${event.id})`;
-      detailList.innerHTML = '';
-      const pages = event.pages || {};
-      const entries = Object.keys(pages).length ? Object.entries(pages) : [['No page data', 0]];
-      entries.forEach(([path, count]) => {
-        const item = document.createElement('li');
-        const pageSpan = document.createElement('span');
-        pageSpan.textContent = path;
-        const countSpan = document.createElement('span');
-        countSpan.textContent = count;
-        item.appendChild(pageSpan);
-        item.appendChild(countSpan);
-        detailList.appendChild(item);
-      });
-      detailSection.style.display = 'block';
+    function drawBar(label, value, max, index, baseY, color) {
+      const barWidth = Math.max((value / Math.max(max, 1)) * (canvas.width - 280), 12);
+      const barHeight = 24;
+      const y = baseY + index * 50;
+      ctx.fillStyle = '#3a4c45';
+      ctx.font = '13px Inter';
+      ctx.fillText(label, 32, y + 18);
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.roundRect(200, y + 2, barWidth, barHeight, 10);
+      ctx.fill();
+      ctx.fillStyle = '#0b2520';
+      ctx.font = '700 13px Inter';
+      ctx.fillText(value.toString(), 200 + barWidth + 12, y + 20);
+    }
+
+    function drawEmptyState(message, y) {
+      ctx.fillStyle = '#3f4f49';
+      ctx.font = '14px Inter';
+      ctx.fillText(message, 32, y);
     }
 
     function renderDashboard() {
       const data = window.mntAnalytics.loadAnalytics();
       const events = Object.values(data.events || {});
       const listings = Object.values(data.listings || {});
-      renderStats(data);
-      renderEvents(events);
-      renderListings(listings);
+      resizeCanvas(events.length, listings.length);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Stats row
+      drawSectionTitle('Top stats', 36);
+      drawStatCard('Total Clicks', data.meta?.totalClicks || 0, 24, 48, 220, 70);
+      drawStatCard('Tracked Events', events.length, 256, 48, 220, 70);
+      drawStatCard('Tracked Listings', listings.length, 488, 48, 220, 70);
+      drawStatCard('Last Activity', formatDate(data.meta?.lastRecordedAt), 720, 48, 260, 70);
+
+      // Events section
+      let offsetY = 150;
+      drawSectionTitle('Events', offsetY);
+      offsetY += 16;
+      if (!events.length) {
+        drawEmptyState('No click data recorded yet.', offsetY + 28);
+      } else {
+        events.sort((a, b) => (Number(b.total) || 0) - (Number(a.total) || 0));
+        const maxEvent = Math.max(...events.map(e => Number(e.total) || 0), 1);
+        events.forEach((event, idx) => {
+          drawBar(`${event.label || event.id} (${event.id})`, Number(event.total) || 0, maxEvent, idx, offsetY + 12, '#005e4a');
+        });
+      }
+
+      // Listings section
+      offsetY = 150 + Math.max(events.length, 1) * 50 + 80;
+      drawSectionTitle('Listings', offsetY);
+      offsetY += 16;
+      if (!listings.length) {
+        drawEmptyState('No listing interactions yet.', offsetY + 28);
+      } else {
+        listings.sort((a, b) => (Number(b.totalClicks) || 0) - (Number(a.totalClicks) || 0));
+        const maxListing = Math.max(...listings.map(l => Number(l.totalClicks) || 0), 1);
+        listings.forEach((listing, idx) => {
+          drawBar(`${listing.title || listing.id || 'Listing'} — ${listing.location || 'Unknown'}`, Number(listing.totalClicks) || 0, maxListing, idx, offsetY + 12, '#4a7d6f');
+        });
+      }
     }
 
     document.addEventListener('DOMContentLoaded', renderDashboard);
+    window.addEventListener('resize', renderDashboard);
   </script>
 </body>
 </html>

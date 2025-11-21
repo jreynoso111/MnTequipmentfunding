@@ -19,7 +19,7 @@
     body{font-family:inherit;background:#f5f7f6;color:#0b2520;line-height:1.5;padding:0;}
     a { color: inherit; text-decoration: none; }
     header.site-header { background:#ffffff; position:sticky; top:0; z-index:50; box-shadow:0 2px 6px rgba(0,0,0,.08); }
-    .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:10px 20px; gap:12px; flex-wrap:wrap; }
+    .nav { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:10px 20px;gap:12px; flex-wrap:wrap; }
     .logo { display:flex; align-items:center; gap:10px; }
     .logo img { height:60px; width:auto; object-fit:contain; }
     .nav-links { display:flex; align-items:center; gap:18px; font-size:14px; flex-wrap:wrap; flex:1; justify-content:flex-end; }
@@ -43,17 +43,7 @@
     .btn{border:none;border-radius:999px;padding:10px 16px;font-weight:700;font-size:13px;cursor:pointer;}
     .btn.primary{background:#005e4a;color:#fff;}
     .btn.ghost{background:#fff;color:#005e4a;border:1px solid #005e4a;}
-    .table-wrap{width:100%;overflow-x:auto;}
-    table{width:100%;min-width:1100px;border-collapse:collapse;font-size:12px;margin-top:12px;}
-    th,td{padding:10px;border-bottom:1px solid #e6eeeb;text-align:left;}
-    th{background:#f5faf8;color:#0b2520;font-size:12px;text-transform:uppercase;letter-spacing:.04em;}
-    th.sortable{cursor:pointer;user-select:none;}
-    th.sortable .sort-label{display:inline-flex;align-items:center;gap:6px;}
-    th.sortable .sort-indicator{font-size:10px;opacity:0.65;}
-    .status-pill{padding:4px 8px;border-radius:999px;font-weight:700;font-size:11px;display:inline-block;}
-    .status-pill.available{background:#dff6f0;color:#005e4a;}
-    .status-pill.sold{background:#ffe5e5;color:#b30000;}
-    .actions{display:flex;gap:6px;}
+    .btn[disabled]{opacity:0.5; cursor:not-allowed;}
     .notice{background:#fff7e6;border:1px solid #ffe0a8;color:#6a3a00;padding:10px 12px;border-radius:10px;font-size:12px;margin-bottom:14px;}
     .muted{font-size:12px;color:#555;margin-bottom:10px;}
     .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid #cfe2de;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:700;color:#0b2520;background:#f4faf8;}
@@ -61,6 +51,9 @@
     .thumb{position:relative;border:1px solid #d8e5e0;border-radius:8px;overflow:hidden;background:#f2f6f5;}
     .thumb img{width:100%;height:90px;object-fit:cover;}
     .thumb button{position:absolute;top:6px;right:6px;border:none;background:rgba(0,0,0,0.55);color:#fff;border-radius:6px;padding:4px 6px;font-size:11px;cursor:pointer;}
+    .canvas-wrap{width:100%;background:#f8fbfa;border:1px dashed #cfe2de;border-radius:12px;overflow:auto;margin-top:10px;}
+    canvas{display:block;width:100%;}
+    .status-pill{padding:4px 8px;border-radius:999px;font-weight:700;font-size:11px;display:inline-block;}
   </style>
 </head>
 <body>
@@ -219,34 +212,27 @@
     </div>
 
     <div class="panel" style="margin-top:14px;">
-      <div class="flex" style="justify-content:space-between; align-items:center;">
+      <div class="flex" style="justify-content:space-between; align-items:center; margin-bottom:8px;">
         <h2 style="font-size:16px;">Current listings</h2>
         <button class="btn ghost" id="exportDataSecondary" type="button">Export JSON</button>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th class="sortable" data-sort="title"><span class="sort-label">Title <span class="sort-indicator">⇅</span></span></th>
-              <th class="sortable" data-sort="vin"><span class="sort-label">VIN <span class="sort-indicator">⇅</span></span></th>
-              <th class="sortable" data-sort="year"><span class="sort-label">Year <span class="sort-indicator">⇅</span></span></th>
-              <th class="sortable" data-sort="type"><span class="sort-label">Type <span class="sort-indicator">⇅</span></span></th>
-              <th class="sortable" data-sort="brand"><span class="sort-label">Brand <span class="sort-indicator">⇅</span></span></th>
-              <th class="sortable" data-sort="color"><span class="sort-label">Color <span class="sort-indicator">⇅</span></span></th>
-              <th class="sortable" data-sort="state"><span class="sort-label">State <span class="sort-indicator">⇅</span></span></th>
-              <th class="sortable" data-sort="location"><span class="sort-label">Location <span class="sort-indicator">⇅</span></span></th>
-              <th class="sortable" data-sort="price"><span class="sort-label">Price <span class="sort-indicator">⇅</span></span></th>
-              <th class="sortable" data-sort="mileage"><span class="sort-label">Mileage <span class="sort-indicator">⇅</span></span></th>
-              <th class="sortable" data-sort="engine"><span class="sort-label">Engine <span class="sort-indicator">⇅</span></span></th>
-              <th class="sortable" data-sort="transmission"><span class="sort-label">Trans. <span class="sort-indicator">⇅</span></span></th>
-              <th class="sortable" data-sort="condition"><span class="sort-label">Cond. <span class="sort-indicator">⇅</span></span></th>
-              <th class="sortable" data-sort="phone"><span class="sort-label">Phone <span class="sort-indicator">⇅</span></span></th>
-              <th class="sortable" data-sort="status"><span class="sort-label">Status <span class="sort-indicator">⇅</span></span></th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody"></tbody>
-        </table>
+      <p class="muted" style="margin-top:-6px;">Cards render on the canvas below. Click a card to select it and use the actions panel.</p>
+      <div class="canvas-wrap" id="listingCanvasWrap">
+        <canvas id="listingCanvas"></canvas>
+      </div>
+    </div>
+
+    <div class="panel" id="selectionPanel" style="margin-top:14px;">
+      <div class="flex" style="justify-content:space-between; align-items:center;">
+        <div>
+          <h2 style="font-size:16px;">Selected listing</h2>
+          <p class="muted" id="selectedLabel">Nothing selected. Click a card above.</p>
+        </div>
+        <div class="flex" style="gap:8px; margin-bottom:0;">
+          <button class="btn ghost" id="editSelected" type="button" disabled>Edit</button>
+          <button class="btn primary" id="deleteSelected" type="button" disabled>Delete</button>
+          <button class="btn ghost" id="downloadSelected" type="button" disabled>Download page</button>
+        </div>
       </div>
     </div>
   </div>
@@ -265,6 +251,17 @@
     let imagesState = [];
     let auditLog = [];
     let sortState = { field: 'title', direction: 'asc' };
+    let selectedIndex = null;
+    const canvas = document.getElementById('listingCanvas');
+    const canvasWrap = document.getElementById('listingCanvasWrap');
+    const ctx = canvas.getContext('2d');
+    let cardBounds = [];
+
+    function normalizeStatus(value) {
+      const val = (value || '').toString().trim().toLowerCase();
+      if (val === 'sold') return 'Sold';
+      return 'Available';
+    }
 
     function normalizeStatus(value) {
       const val = (value || '').toString().trim().toLowerCase();
@@ -355,100 +352,121 @@
       return (value ?? '').toString().toLowerCase();
     }
 
+    function resizeCanvas(rowCount) {
+      const width = canvasWrap.clientWidth - 2;
+      const cardHeight = 140;
+      canvas.width = width > 0 ? width : 900;
+      canvas.height = Math.max(360, rowCount * cardHeight + 40);
+    }
+
+    function drawCard(unit, idx, yPosition, isSelected) {
+      const padding = 14;
+      const cardHeight = 120;
+      const status = normalizeStatus(unit.status);
+      const statusColor = status === 'Sold' ? '#b30000' : '#005e4a';
+      const statusBg = status === 'Sold' ? '#ffe5e5' : '#dff6f0';
+
+      ctx.fillStyle = '#ffffff';
+      ctx.strokeStyle = isSelected ? '#005e4a' : '#d8e5e0';
+      ctx.lineWidth = isSelected ? 3 : 1;
+      ctx.beginPath();
+      ctx.roundRect(padding, yPosition, canvas.width - padding * 2, cardHeight, 12);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#0b2520';
+      ctx.font = '700 16px Inter';
+      ctx.fillText(unit.title || 'Untitled', padding + 16, yPosition + 28);
+
+      ctx.fillStyle = '#3f4f49';
+      ctx.font = '13px Inter';
+      ctx.fillText(`VIN: ${unit.vin || '—'}`, padding + 16, yPosition + 52);
+      ctx.fillText(`Year: ${unit.year || '—'}   Type: ${unit.type || '—'}   Brand: ${unit.brand || '—'}   Color: ${unit.color || '—'}`, padding + 16, yPosition + 74);
+      ctx.fillText(`Location: ${unit.location || '—'}   State: ${unit.state || '—'}`, padding + 16, yPosition + 96);
+      ctx.fillText(`Price: $${formatNumber(unit.price)}   Mileage: ${formatNumber(unit.mileage)} mi`, padding + 16, yPosition + 118);
+
+      ctx.fillStyle = statusBg;
+      ctx.strokeStyle = statusColor;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(canvas.width - padding - 120, yPosition + 20, 104, 30, 999);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = statusColor;
+      ctx.font = '700 12px Inter';
+      ctx.fillText(status, canvas.width - padding - 92, yPosition + 41);
+
+      const actionY = yPosition + 86;
+      ctx.fillStyle = '#005e4a';
+      ctx.font = '700 12px Inter';
+      ctx.fillText('Select to Edit / Delete / Download', canvas.width - padding - 250, actionY);
+    }
+
     function renderTable() {
-      const body = document.getElementById('tableBody');
-      body.innerHTML = '';
-      if (!units.length) {
-        body.innerHTML = '<tr><td colspan="16" style="text-align:center;color:#555;">No listings yet. Add one above.</td></tr>';
-        updateSortIndicators();
+      const bodyRows = units.map((unit, idx) => ({ unit, idx }));
+      bodyRows.sort((a, b) => {
+        const field = sortState.field;
+        const dir = sortState.direction === 'asc' ? 1 : -1;
+        const aVal = getSortableValue(a.unit, field);
+        const bVal = getSortableValue(b.unit, field);
+        if (aVal < bVal) return -1 * dir;
+        if (aVal > bVal) return 1 * dir;
+        return 0;
+      });
+
+      resizeCanvas(bodyRows.length || 1);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      cardBounds = [];
+
+      if (!bodyRows.length) {
+        ctx.fillStyle = '#3f4f49';
+        ctx.font = '14px Inter';
+        ctx.fillText('No listings yet. Add one above.', 30, 60);
+        updateSelectionUI();
         return;
       }
-      const rows = units.map((unit, idx) => ({ unit, idx }));
-      rows
-        .sort((a, b) => {
-          const field = sortState.field;
-          const dir = sortState.direction === 'asc' ? 1 : -1;
-          const aVal = getSortableValue(a.unit, field);
-          const bVal = getSortableValue(b.unit, field);
-          if (aVal < bVal) return -1 * dir;
-          if (aVal > bVal) return 1 * dir;
-          return 0;
-        })
-        .forEach(({ unit, idx }) => {
-          const tr = document.createElement('tr');
-          const statusLabel = normalizeStatus(unit.status);
-          const statusClass = statusLabel.toLowerCase() === 'sold' ? 'sold' : 'available';
-          tr.innerHTML = `
-            <td>${unit.title || ''}</td>
-            <td>${unit.vin || ''}</td>
-            <td>${unit.year || ''}</td>
-            <td>${unit.type || ''}</td>
-            <td>${unit.brand || ''}</td>
-            <td>${unit.color || ''}</td>
-            <td>${unit.state || ''}</td>
-            <td>${unit.location || ''}</td>
-            <td>$${formatNumber(unit.price)}</td>
-            <td>${formatNumber(unit.mileage)}</td>
-            <td>${unit.engine || ''}</td>
-            <td>${unit.transmission || ''}</td>
-            <td>${unit.condition || ''}</td>
-            <td>${unit.phone || '000-000-0000'}</td>
-            <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
-            <td class="actions" style="flex-wrap:wrap;">
-              <button class="btn ghost" style="padding:6px 10px;font-size:11px;" onclick="editUnit(${idx})">Edit</button>
-              <button class="btn primary" style="padding:6px 10px;font-size:11px;" onclick="deleteUnit(${idx})">Delete</button>
-              <button class="btn ghost" style="padding:6px 10px;font-size:11px;" onclick="downloadDetailPage(${idx})">Download page</button>
-            </td>
-          `;
-          body.appendChild(tr);
-        });
-      updateSortIndicators();
+
+      const gap = 18;
+      const cardHeight = 140;
+      let currentY = 20;
+      bodyRows.forEach((row) => {
+        const isSelected = row.idx === selectedIndex;
+        drawCard(row.unit, row.idx, currentY, isSelected);
+        cardBounds.push({ x: 14, y: currentY, width: canvas.width - 28, height: cardHeight, index: row.idx });
+        currentY += cardHeight + gap;
+      });
+
+      updateSelectionUI();
     }
 
-    function updateSortIndicators() {
-      document.querySelectorAll('th.sortable').forEach(th => {
-        const indicator = th.querySelector('.sort-indicator');
-        if (!indicator) return;
-        const field = th.dataset.sort;
-        if (sortState.field === field) {
-          indicator.textContent = sortState.direction === 'asc' ? '▲' : '▼';
-        } else {
-          indicator.textContent = '⇅';
-        }
-      });
+    function updateSelectionUI() {
+      const label = document.getElementById('selectedLabel');
+      const editBtn = document.getElementById('editSelected');
+      const deleteBtn = document.getElementById('deleteSelected');
+      const downloadBtn = document.getElementById('downloadSelected');
+      if (selectedIndex === null || selectedIndex === undefined || selectedIndex < 0 || !units[selectedIndex]) {
+        label.textContent = 'Nothing selected. Click a card above.';
+        editBtn.disabled = true;
+        deleteBtn.disabled = true;
+        downloadBtn.disabled = true;
+        return;
+      }
+      const unit = units[selectedIndex];
+      label.textContent = `${unit.title || 'Listing'} — ${normalizeStatus(unit.status)}`;
+      editBtn.disabled = false;
+      deleteBtn.disabled = false;
+      downloadBtn.disabled = false;
     }
 
-    function bindSorters() {
-      document.querySelectorAll('th.sortable').forEach(th => {
-        th.addEventListener('click', () => {
-          const field = th.dataset.sort;
-          if (!field) return;
-          if (sortState.field === field) {
-            sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
-          } else {
-            sortState.field = field;
-            sortState.direction = 'asc';
-          }
-          renderTable();
-        });
-      });
-    }
-
-    function resetForm() {
-      editingIndex = null;
-      imagesState = [];
-      ['title','vin','brand','color','state','year','engine','transmission','location','phone','description','features'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = '';
-      });
-      document.getElementById('type').value = 'Truck';
-      document.getElementById('status').value = 'Available';
-      document.getElementById('condition').value = 'Used';
-      document.getElementById('price').value = '';
-      document.getElementById('mileage').value = '';
-      const phoneInput = document.getElementById('phone');
-      if (phoneInput) phoneInput.value = '000-000-0000';
-      renderImages();
+    function handleCanvasClick(evt) {
+      const rect = canvas.getBoundingClientRect();
+      const x = evt.clientX - rect.left;
+      const y = evt.clientY - rect.top;
+      const hit = cardBounds.find(b => x >= b.x && x <= b.x + b.width && y >= b.y && y <= b.y + b.height);
+      if (hit) {
+        selectedIndex = hit.index;
+        renderTable();
+      }
     }
 
     function renderImages() {
@@ -517,22 +535,20 @@
     }
 
     function summarizeChanges(previous, next) {
-      const keysToCompare = ['title','vin','type','brand','status','price','mileage','state','color','year','engine','transmission','condition','location','phone'];
-      const diffs = [];
-      keysToCompare.forEach(key => {
-        const beforeVal = previous[key] ?? '';
-        const afterVal = next[key] ?? '';
-        if (beforeVal.toString() !== afterVal.toString()) {
-          diffs.push(`${key}: "${beforeVal}" → "${afterVal}"`);
+      const changes = [];
+      const fields = ['title','vin','type','brand','status','price','mileage','state','color','year','engine','transmission','condition','location','phone','description'];
+      fields.forEach(field => {
+        if ((previous?.[field] ?? '') !== (next?.[field] ?? '')) {
+          changes.push(`${field} updated`);
         }
       });
-      if ((previous.features || []).join(',') !== (next.features || []).join(',')) {
-        diffs.push('features updated');
+      if (JSON.stringify(previous.features || []) !== JSON.stringify(next.features || [])) {
+        changes.push('features updated');
       }
-      if ((previous.images || []).join(',') !== (next.images || []).join(',')) {
-        diffs.push('images updated');
+      if (JSON.stringify(previous.images || []) !== JSON.stringify(next.images || [])) {
+        changes.push('images updated');
       }
-      return diffs;
+      return changes.length ? changes : ['Updated listing'];
     }
 
     function loadAuditLog() {
@@ -544,50 +560,50 @@
         }
       } catch (e) {}
       auditLog = [];
-      return auditLog;
+      return [];
     }
 
     function saveAuditLog(entries) {
-      auditLog = entries.slice();
-      localStorage.setItem(auditKey, JSON.stringify(auditLog));
+      auditLog = entries;
+      localStorage.setItem(auditKey, JSON.stringify(entries));
+    }
+
+    function renderImagesFromUnit(unit) {
+      imagesState = (unit.images || []).slice(0, MAX_IMAGES);
+      renderImages();
     }
 
     function saveUnit() {
-      const featureLines = (document.getElementById('features').value || '').split(/\n|,/).map(f => f.trim()).filter(Boolean);
-      const hero = imagesState[0] || '';
-      const previous = editingIndex === null ? null : JSON.parse(JSON.stringify(units[editingIndex] || {}));
       const unit = normalizeUnit({
-        title: document.getElementById('title').value.trim(),
-        vin: document.getElementById('vin').value.trim(),
+        title: document.getElementById('title').value,
+        vin: document.getElementById('vin').value,
         type: document.getElementById('type').value,
-        brand: document.getElementById('brand').value.trim(),
+        brand: document.getElementById('brand').value,
         status: document.getElementById('status').value,
-        price: Number(document.getElementById('price').value || 0),
-        mileage: Number(document.getElementById('mileage').value || 0),
-        state: document.getElementById('state').value.trim() || 'Unknown',
-        color: document.getElementById('color').value.trim() || 'Unknown',
-        image: hero,
+        price: document.getElementById('price').value,
+        mileage: document.getElementById('mileage').value,
+        state: document.getElementById('state').value,
+        color: document.getElementById('color').value,
         year: document.getElementById('year').value,
-        engine: document.getElementById('engine').value.trim(),
-        transmission: document.getElementById('transmission').value.trim(),
+        engine: document.getElementById('engine').value,
+        transmission: document.getElementById('transmission').value,
         condition: document.getElementById('condition').value,
-        location: document.getElementById('location').value.trim(),
-        phone: document.getElementById('phone').value.trim() || '000-000-0000',
-        description: document.getElementById('description').value.trim(),
-        features: featureLines,
-        images: imagesState.slice(0, MAX_IMAGES)
+        location: document.getElementById('location').value,
+        phone: document.getElementById('phone').value,
+        description: document.getElementById('description').value,
+        features: (document.getElementById('features').value || '').split('\n').filter(Boolean),
+        images: imagesState
       });
 
-      if (!unit.title || !unit.vin) {
-        alert('Title and VIN are required.');
-        return;
-      }
-      if (editingIndex === null) {
+      if (editingIndex !== null && editingIndex !== undefined) {
+        const before = units[editingIndex];
+        units[editingIndex] = unit;
+        addAuditEntry('updated', before, unit);
+        selectedIndex = editingIndex;
+      } else {
         units.push(unit);
         addAuditEntry('created', null, unit);
-      } else {
-        units[editingIndex] = unit;
-        addAuditEntry('updated', previous, unit);
+        selectedIndex = units.length - 1;
       }
 
       saveUnits();
@@ -595,10 +611,30 @@
       resetForm();
     }
 
+    function resetForm() {
+      editingIndex = null;
+      imagesState = [];
+      selectedIndex = null;
+      ['title','vin','brand','color','state','year','engine','transmission','location','phone','description','features'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('type').value = 'Truck';
+      document.getElementById('status').value = 'Available';
+      document.getElementById('condition').value = 'Used';
+      document.getElementById('price').value = '';
+      document.getElementById('mileage').value = '';
+      const phoneInput = document.getElementById('phone');
+      if (phoneInput) phoneInput.value = '000-000-0000';
+      renderImages();
+      updateSelectionUI();
+    }
+
     function editUnit(index) {
       const unit = units[index];
       if (!unit) return;
       editingIndex = index;
+      selectedIndex = index;
       document.getElementById('title').value = unit.title || '';
       document.getElementById('vin').value = unit.vin || '';
       document.getElementById('type').value = unit.type || 'Truck';
@@ -616,13 +652,14 @@
       document.getElementById('phone').value = unit.phone || '000-000-0000';
       document.getElementById('description').value = unit.description || '';
       document.getElementById('features').value = (unit.features || []).join('\n');
-      imagesState = (unit.images || []).slice(0, MAX_IMAGES);
-      renderImages();
+      renderImagesFromUnit(unit);
+      renderTable();
     }
 
     function deleteUnit(index) {
       const removed = units.splice(index, 1)[0];
       if (removed) addAuditEntry('deleted', removed, null);
+      selectedIndex = null;
       saveUnits();
       renderTable();
       resetForm();
@@ -708,7 +745,11 @@
       document.getElementById('exportScript').addEventListener('click', exportScript);
       document.getElementById('addImageUrl').addEventListener('click', () => addImage(document.getElementById('imageUrl').value));
       document.getElementById('imageFile').addEventListener('change', handleFileInput);
-      bindSorters();
+      canvas.addEventListener('click', handleCanvasClick);
+      window.addEventListener('resize', () => renderTable());
+      document.getElementById('editSelected').addEventListener('click', () => editUnit(selectedIndex));
+      document.getElementById('deleteSelected').addEventListener('click', () => deleteUnit(selectedIndex));
+      document.getElementById('downloadSelected').addEventListener('click', () => downloadDetailPage(selectedIndex));
     }
 
     units = loadUnits();
