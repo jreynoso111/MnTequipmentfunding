@@ -64,6 +64,8 @@
     .table-hint{font-size:12px; color:#555; margin:6px 0 10px;}
     .scroll-sticky{position:sticky; bottom:0; background:#fff; padding-top:4px;}
     .pill-btn{display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border-radius:999px; border:1px solid #d8e5e0; background:#f8fbfa; font-size:12px; color:#0b2520;}
+    .input-error{border-color:#c1121f !important; background:#fff5f5;}
+    .error-text{color:#c1121f;}
   </style>
 </head>
 <body>
@@ -91,7 +93,7 @@
       <a class="btn ghost" href="../Units for Sale.html">View listings page</a>
       <a class="btn ghost" href="admin-log.html">View change log</a>
     </div>
-    <div class="notice">Changes are saved in this browser only. Export updated data as JSON or JavaScript for manual upload when you are back online.</div>
+    <div class="notice">Changes are saved in this browser only. Export updated data as CSV, Excel, or JavaScript for manual upload when you are back online.</div>
 
     <div class="panel" style="margin-bottom:14px;">
       <div class="row" style="margin-bottom:6px;">
@@ -102,11 +104,16 @@
         </div>
         <div>
           <label>Data tools</label>
-          <div class="flex" style="margin-bottom:0; align-items:center;">
-            <button class="btn ghost" id="exportData" type="button">Export JSON</button>
+          <div class="flex" style="margin-bottom:6px; align-items:center; flex-wrap:wrap;">
+            <button class="btn ghost" id="exportCsv" type="button">Export CSV</button>
+            <button class="btn ghost" id="exportExcel" type="button">Export Excel</button>
             <button class="btn primary" id="exportScript" type="button">Export as JS</button>
           </div>
-          <p class="muted" style="margin-top:6px;">Downloads the current inventory so you can upload it manually later.</p>
+          <div class="flex" style="margin-bottom:0; align-items:center; gap:10px; flex-wrap:wrap;">
+            <input id="csvImport" type="file" accept=".csv" />
+            <button class="btn ghost" id="importCsv" type="button">Import CSV</button>
+          </div>
+          <p class="muted" style="margin-top:6px;">Download the inventory or import new listings. Duplicate VINs will prompt before replacing.</p>
         </div>
       </div>
     </div>
@@ -121,6 +128,7 @@
         <div>
           <label for="vin">VIN</label>
           <input id="vin" placeholder="1FUJHHDR1LLXXXXXX" />
+          <p id="vinError" class="muted" style="margin-top:6px; display:none;"></p>
         </div>
       </div>
       <div class="row">
@@ -224,9 +232,10 @@
     <div class="panel" style="margin-top:14px;">
       <div class="flex" style="justify-content:space-between; align-items:center; margin-bottom:6px;">
         <h2 style="font-size:16px;">Current listings</h2>
-        <div class="flex" style="margin-bottom:0; align-items:center; gap:8px;">
+        <div class="flex" style="margin-bottom:0; align-items:center; gap:8px; flex-wrap:wrap;">
           <button class="btn ghost" id="downloadPagesAll" type="button">Download pages</button>
-          <button class="btn ghost" id="exportDataSecondary" type="button">Export JSON</button>
+          <button class="btn ghost" id="exportCsvSecondary" type="button">Export CSV</button>
+          <button class="btn ghost" id="exportExcelSecondary" type="button">Export Excel</button>
         </div>
       </div>
       <p class="table-hint">Click a row to select it. Scroll vertically inside this box; the horizontal scrollbar stays with the table.</p>
@@ -262,6 +271,36 @@
     const MAX_IMAGES = 10;
     const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg';
     const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
+
+    function sanitizeVin(rawVin) {
+      return (rawVin || '').toString().trim().toUpperCase();
+    }
+
+    function vinHasInvalidChars(vin) {
+      return /[^A-Z0-9]/.test(vin || '');
+    }
+
+    function showVinError(message) {
+      const vinInput = document.getElementById('vin');
+      const vinError = document.getElementById('vinError');
+      if (vinInput) vinInput.classList.add('input-error');
+      if (vinError) {
+        vinError.textContent = message;
+        vinError.style.display = 'block';
+        vinError.classList.add('error-text');
+      }
+    }
+
+    function clearVinError() {
+      const vinInput = document.getElementById('vin');
+      const vinError = document.getElementById('vinError');
+      if (vinInput) vinInput.classList.remove('input-error');
+      if (vinError) {
+        vinError.textContent = '';
+        vinError.style.display = 'none';
+        vinError.classList.remove('error-text');
+      }
+    }
 
     const columns = [
       { key: 'title', label: 'Title' },
@@ -315,10 +354,11 @@
       const features = Array.isArray(unit.features) && unit.features.length ? unit.features : defaultFeatures;
 
       const status = normalizeStatus(unit.status);
+      const vin = sanitizeVin(unit.vin).replace(/[^A-Z0-9]/g, '');
 
       return {
         title,
-        vin: unit.vin || '',
+        vin,
         type: unit.type || 'Truck',
         brand: unit.brand || 'Unknown',
         status,
@@ -582,9 +622,21 @@
     }
 
     function saveUnit() {
+      clearVinError();
+      const vinInput = document.getElementById('vin');
+      const vinValue = sanitizeVin(vinInput.value);
+      if (!vinValue) {
+        showVinError('VIN is required.');
+        return;
+      }
+      if (vinHasInvalidChars(vinValue)) {
+        showVinError('VIN can only contain letters and numbers.');
+        return;
+      }
+
       const unit = normalizeUnit({
         title: document.getElementById('title').value,
-        vin: document.getElementById('vin').value,
+        vin: vinValue,
         type: document.getElementById('type').value,
         brand: document.getElementById('brand').value,
         status: document.getElementById('status').value,
@@ -627,6 +679,7 @@
         const el = document.getElementById(id);
         if (el) el.value = '';
       });
+      clearVinError();
       document.getElementById('type').value = 'Truck';
       document.getElementById('status').value = 'Available';
       document.getElementById('condition').value = 'Used';
@@ -661,6 +714,7 @@
       document.getElementById('description').value = unit.description || '';
       document.getElementById('features').value = (unit.features || []).join('\n');
       renderImagesFromUnit(unit);
+      clearVinError();
       renderTable();
     }
 
@@ -673,12 +727,70 @@
       resetForm();
     }
 
-    function exportData() {
-      const blob = new Blob([JSON.stringify(units, null, 2)], { type: 'application/json' });
+    const exportFields = [
+      { key: 'title', label: 'Title' },
+      { key: 'vin', label: 'VIN' },
+      { key: 'type', label: 'Type' },
+      { key: 'brand', label: 'Brand' },
+      { key: 'status', label: 'Status' },
+      { key: 'price', label: 'Price' },
+      { key: 'mileage', label: 'Mileage' },
+      { key: 'state', label: 'State' },
+      { key: 'color', label: 'Color' },
+      { key: 'year', label: 'Year' },
+      { key: 'engine', label: 'Engine' },
+      { key: 'transmission', label: 'Transmission' },
+      { key: 'condition', label: 'Condition' },
+      { key: 'location', label: 'Location' },
+      { key: 'phone', label: 'Phone' },
+      { key: 'description', label: 'Description' },
+      { key: 'features', label: 'Features' },
+      { key: 'images', label: 'Images' }
+    ];
+
+    function formatCsvValue(value) {
+      const str = (value ?? '').toString();
+      if (/[",\n]/.test(str)) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    }
+
+    function toCsvRows(list) {
+      const header = exportFields.map(f => f.label).join(',');
+      const rows = list.map(item => {
+        return exportFields.map(field => {
+          if (field.key === 'features') {
+            return formatCsvValue((item.features || []).join('; '));
+          }
+          if (field.key === 'images') {
+            const imgs = Array.isArray(item.images) ? item.images.join(' | ') : '';
+            return formatCsvValue(imgs);
+          }
+          return formatCsvValue(item[field.key] ?? '');
+        }).join(',');
+      });
+      return [header, ...rows].join('\n');
+    }
+
+    function exportCsv() {
+      const csv = toCsvRows(units);
+      const blob = new Blob([csv], { type: 'text/csv' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'inventory-data.json';
+      a.download = 'inventory-data.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportExcel() {
+      const csv = toCsvRows(units);
+      const blob = new Blob([csv], { type: 'application/vnd.ms-excel' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'inventory-data.xls';
       a.click();
       URL.revokeObjectURL(url);
     }
@@ -749,11 +861,162 @@
       units.forEach((_, idx) => downloadDetailPage(idx));
     }
 
+    function parseCsv(text) {
+      const rows = [];
+      let current = '';
+      let inQuotes = false;
+      let row = [];
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const next = text[i + 1];
+        if (char === '"') {
+          if (inQuotes && next === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+          continue;
+        }
+        if (char === ',' && !inQuotes) {
+          row.push(current);
+          current = '';
+          continue;
+        }
+        if ((char === '\n' || char === '\r') && !inQuotes) {
+          if (current !== '' || row.length) {
+            row.push(current);
+            rows.push(row);
+            row = [];
+            current = '';
+          }
+          continue;
+        }
+        current += char;
+      }
+      if (current !== '' || row.length) {
+        row.push(current);
+        rows.push(row);
+      }
+      return rows.filter(r => r.some(cell => (cell || '').trim() !== ''));
+    }
+
+    function mapCsvRowToUnit(header, row) {
+      const data = {};
+      header.forEach((key, idx) => {
+        data[key] = row[idx] ?? '';
+      });
+      const features = (data.features || data.feature || '').split(/;|\n/).map(f => f.trim()).filter(Boolean);
+      const images = (data.images || '').split(/\||;|\n/).map(i => i.trim()).filter(Boolean);
+      return {
+        title: data.title,
+        vin: data.vin,
+        type: data.type,
+        brand: data.brand,
+        status: data.status,
+        price: data.price,
+        mileage: data.mileage,
+        state: data.state,
+        color: data.color,
+        year: data.year,
+        engine: data.engine,
+        transmission: data.transmission,
+        condition: data.condition,
+        location: data.location,
+        phone: data.phone,
+        description: data.description,
+        features,
+        images: images.length ? images : undefined
+      };
+    }
+
+    function importCsvData(text) {
+      const parsed = parseCsv(text);
+      if (!parsed.length) {
+        alert('No rows found in CSV.');
+        return;
+      }
+      const header = parsed[0].map(h => (h || '').trim().toLowerCase());
+      const requiredVinIndex = header.indexOf('vin');
+      if (requiredVinIndex === -1) {
+        alert('CSV must include a VIN column.');
+        return;
+      }
+      const mappedHeader = header.map(h => h.replace(/\s+/g, ''));
+      const importedUnits = [];
+      parsed.slice(1).forEach(row => {
+        if (!row || !row.length) return;
+        const raw = mapCsvRowToUnit(mappedHeader, row);
+        if (!raw.vin) return;
+        importedUnits.push(raw);
+      });
+
+      let created = 0;
+      let replaced = 0;
+      let skipped = 0;
+
+      importedUnits.forEach(unit => {
+        const vinKeyRaw = sanitizeVin(unit.vin);
+        if (!vinKeyRaw) return;
+        if (vinHasInvalidChars(vinKeyRaw)) {
+          let corrected = null;
+          let resolved = false;
+          while (!resolved) {
+            const promptVal = prompt(`VIN "${unit.vin}" for "${unit.title || 'Untitled listing'}" has invalid characters. Enter a corrected VIN (letters and numbers only) or leave blank to skip.`);
+            if (promptVal === null) {
+              skipped++;
+              return;
+            }
+            const candidate = sanitizeVin(promptVal);
+            if (!candidate) {
+              skipped++;
+              return;
+            }
+            if (vinHasInvalidChars(candidate)) {
+              alert('VIN must only include letters and numbers.');
+              continue;
+            }
+            corrected = candidate;
+            resolved = true;
+          }
+          if (!corrected) return;
+          unit.vin = corrected;
+        } else {
+          unit.vin = vinKeyRaw;
+        }
+
+        const normalized = normalizeUnit(unit);
+        const vinKey = sanitizeVin(normalized.vin);
+        const existingIndex = units.findIndex(u => sanitizeVin(u.vin) === vinKey);
+        if (existingIndex >= 0) {
+          const existing = units[existingIndex];
+          const shouldReplace = confirm(`VIN ${normalized.vin} already exists for "${existing.title}". Replace with "${normalized.title}"?`);
+          if (shouldReplace) {
+            units[existingIndex] = normalized;
+            addAuditEntry('updated', existing, normalized);
+            replaced++;
+          } else {
+            skipped++;
+          }
+        } else {
+          units.push(normalized);
+          addAuditEntry('created', null, normalized);
+          created++;
+        }
+      });
+
+      saveUnits();
+      renderTable();
+      alert(`Import complete. Added ${created}, replaced ${replaced}, skipped ${skipped}.`);
+    }
+
     function bindEvents() {
       document.getElementById('saveUnit').addEventListener('click', saveUnit);
       document.getElementById('resetForm').addEventListener('click', resetForm);
-      document.getElementById('exportData').addEventListener('click', exportData);
-      document.getElementById('exportDataSecondary').addEventListener('click', exportData);
+      document.getElementById('exportCsv').addEventListener('click', exportCsv);
+      document.getElementById('exportExcel').addEventListener('click', exportExcel);
+      document.getElementById('exportCsvSecondary').addEventListener('click', exportCsv);
+      document.getElementById('exportExcelSecondary').addEventListener('click', exportExcel);
       document.getElementById('exportScript').addEventListener('click', exportScript);
       document.getElementById('addImageUrl').addEventListener('click', () => addImage(document.getElementById('imageUrl').value));
       document.getElementById('imageFile').addEventListener('change', handleFileInput);
@@ -761,6 +1024,18 @@
       document.getElementById('editSelected').addEventListener('click', () => editUnit(selectedIndex));
       document.getElementById('deleteSelected').addEventListener('click', () => deleteUnit(selectedIndex));
       document.getElementById('downloadPagesAll').addEventListener('click', downloadAllPages);
+      document.getElementById('importCsv').addEventListener('click', () => {
+        const input = document.getElementById('csvImport');
+        const file = input?.files?.[0];
+        if (!file) {
+          alert('Choose a CSV file first.');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => importCsvData(e.target.result);
+        reader.readAsText(file);
+        input.value = '';
+      });
       window.addEventListener('resize', renderTable);
     }
 

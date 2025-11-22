@@ -276,6 +276,10 @@ const MAX_IMAGES = 10;
 const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg';
 const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
 
+function formatVin(value) {
+  return (value || '').toString().trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
+
 let currentPage = 1;
 let units = [];
 let filteredUnits = [];
@@ -321,7 +325,7 @@ function normalizeUnit(unit) {
 
   return {
     title,
-    vin: unit?.vin || '',
+    vin: formatVin(unit?.vin || ''),
     type: unit?.type || 'Truck',
     brand: unit?.brand || make || 'Unknown',
     make,

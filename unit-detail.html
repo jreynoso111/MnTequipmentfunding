@@ -172,6 +172,10 @@
       const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
       const BASE_NORMALIZED = BASE_UNITS.map(normalizeUnit);
 
+      function formatVin(value) {
+        return (value || '').toString().trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+      }
+
       function normalizeStatus(value) {
         const val = (value || '').toString().trim().toLowerCase();
         if (val === 'sold') return 'Sold';
@@ -213,7 +217,7 @@
 
         return {
           title,
-          vin: unit?.vin || '',
+          vin: formatVin(unit?.vin || ''),
           type: unit?.type || 'Truck',
           brand: unit?.brand || make || 'Unknown',
           make,
@@ -254,14 +258,14 @@
 
     function lookupUnit() {
       const params = new URLSearchParams(window.location.search);
-      let vin = params.get('vin');
+      let vin = formatVin(params.get('vin'));
       if (!vin) {
         const path = window.location.pathname.split('/').pop();
-        vin = path?.replace('.html','');
+        vin = formatVin(path?.replace('.html',''));
       }
       if (!vin) return null;
       const units = loadUnits();
-      return units.find(u => (u.vin || '').toLowerCase() === vin.toLowerCase()) || null;
+      return units.find(u => formatVin(u.vin) === vin) || null;
     }
 
     function formatNumber(n) { return Number(n || 0).toLocaleString('en-US'); }

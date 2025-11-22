@@ -492,6 +492,10 @@
       const DEFAULT_IMAGE = 'https://imagescdn.dealercarsearch.com/Media/22484/23001914/638930206131273528.jpg';
       const BASE_UNITS = Array.isArray(window.INVENTORY_SEED) ? window.INVENTORY_SEED : [];
 
+      function formatVin(value) {
+        return (value || '').toString().trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+      }
+
       function normalizeImages(unit) {
         const fromArray = Array.isArray(unit.images) ? unit.images.filter(Boolean) : [];
         const merged = [...new Set([unit.image, ...fromArray].filter(Boolean))];
@@ -524,7 +528,7 @@
         return {
           title,
           type: unit?.type || 'Truck',
-          vin: unit?.vin || '',
+          vin: formatVin(unit?.vin || ''),
           mileage: unit?.mileage ? Number(unit.mileage).toLocaleString('en-US') : '0',
           location: unit?.location || 'Available nationwide',
           state: unit?.state || 'Unknown',
