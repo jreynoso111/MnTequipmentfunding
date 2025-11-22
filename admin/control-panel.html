@@ -80,9 +80,6 @@
         <a href="admin-log.html">Admin Log</a>
         <a href="../index.html">Back to Site</a>
       </nav>
-      <div class="nav-actions">
-        <button class="btn-small" type="button" data-track-id="cta_talk_rep" data-track-label="Talk to Representative" onclick="window.location.href='tel:2012013551'">Talk to Representative</button>
-      </div>
     </div>
   </header>
   <main class="page">
@@ -93,7 +90,7 @@
       <a class="btn ghost" href="../Units for Sale.html">View listings page</a>
       <a class="btn ghost" href="admin-log.html">View change log</a>
     </div>
-    <div class="notice">Changes are saved in this browser only. Export updated data as CSV, Excel, or JavaScript for manual upload when you are back online.</div>
+    <div class="notice">Changes are saved in this browser only. Use CSV tools to keep data in sync when you are back online.</div>
 
     <div class="panel" style="margin-bottom:14px;">
       <div class="row" style="margin-bottom:6px;">
@@ -104,16 +101,11 @@
         </div>
         <div>
           <label>Data tools</label>
-          <div class="flex" style="margin-bottom:6px; align-items:center; flex-wrap:wrap;">
-            <button class="btn ghost" id="exportCsv" type="button">Export CSV</button>
-            <button class="btn ghost" id="exportExcel" type="button">Export Excel</button>
-            <button class="btn primary" id="exportScript" type="button">Export as JS</button>
-          </div>
           <div class="flex" style="margin-bottom:0; align-items:center; gap:10px; flex-wrap:wrap;">
             <input id="csvImport" type="file" accept=".csv" />
             <button class="btn ghost" id="importCsv" type="button">Import CSV</button>
           </div>
-          <p class="muted" style="margin-top:6px;">Download the inventory or import new listings. Duplicate VINs will prompt before replacing.</p>
+          <p class="muted" style="margin-top:6px;">Import new listings via CSV. Duplicate VINs will prompt before replacing.</p>
         </div>
       </div>
     </div>
@@ -233,7 +225,6 @@
       <div class="flex" style="justify-content:space-between; align-items:center; margin-bottom:6px;">
         <h2 style="font-size:16px;">Current listings</h2>
         <div class="flex" style="margin-bottom:0; align-items:center; gap:8px; flex-wrap:wrap;">
-          <button class="btn ghost" id="downloadPagesAll" type="button">Download pages</button>
           <button class="btn ghost" id="exportCsvSecondary" type="button">Export CSV</button>
           <button class="btn ghost" id="exportExcelSecondary" type="button">Export Excel</button>
         </div>
@@ -1013,17 +1004,13 @@
     function bindEvents() {
       document.getElementById('saveUnit').addEventListener('click', saveUnit);
       document.getElementById('resetForm').addEventListener('click', resetForm);
-      document.getElementById('exportCsv').addEventListener('click', exportCsv);
-      document.getElementById('exportExcel').addEventListener('click', exportExcel);
       document.getElementById('exportCsvSecondary').addEventListener('click', exportCsv);
       document.getElementById('exportExcelSecondary').addEventListener('click', exportExcel);
-      document.getElementById('exportScript').addEventListener('click', exportScript);
       document.getElementById('addImageUrl').addEventListener('click', () => addImage(document.getElementById('imageUrl').value));
       document.getElementById('imageFile').addEventListener('change', handleFileInput);
       document.getElementById('listingTable').addEventListener('click', handleRowClick);
       document.getElementById('editSelected').addEventListener('click', () => editUnit(selectedIndex));
       document.getElementById('deleteSelected').addEventListener('click', () => deleteUnit(selectedIndex));
-      document.getElementById('downloadPagesAll').addEventListener('click', downloadAllPages);
       document.getElementById('importCsv').addEventListener('click', () => {
         const input = document.getElementById('csvImport');
         const file = input?.files?.[0];
